@@ -1,8 +1,10 @@
 package com.michalowicz.inzynierka.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class UsergroupModel {
@@ -11,6 +13,10 @@ public class UsergroupModel {
     private Long id;
 
     private String name;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonIgnoreProperties(value = {"usergroups"})
+    private List<UserModel> users = new ArrayList<>();
 
     public UsergroupModel() {
     }
@@ -35,4 +41,17 @@ public class UsergroupModel {
         this.name = name;
     }
 
+    public List<UserModel> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserModel> users) {
+        this.users = users;
+    }
+
+    public void addUser(UserModel user) {
+        this.users.add(user);
+        user.getUsergroups()
+                .add(this);
+    }
 }
