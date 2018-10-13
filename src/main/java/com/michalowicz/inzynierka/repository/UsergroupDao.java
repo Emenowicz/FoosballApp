@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UsergroupDao extends JpaRepository<UsergroupModel, Long> {
-    UsergroupModel findByName(String name);
+    UsergroupModel findByNameIgnoreCase(String name);
 }

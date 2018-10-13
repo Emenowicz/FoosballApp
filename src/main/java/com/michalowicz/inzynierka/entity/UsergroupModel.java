@@ -3,8 +3,8 @@ package com.michalowicz.inzynierka.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class UsergroupModel {
@@ -14,9 +14,9 @@ public class UsergroupModel {
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JsonIgnoreProperties(value = {"usergroups"})
-    private List<UserModel> users = new ArrayList<>();
+    private Set<UserModel> users = new HashSet<>();
 
     public UsergroupModel() {
     }
@@ -41,11 +41,11 @@ public class UsergroupModel {
         this.name = name;
     }
 
-    public List<UserModel> getUsers() {
+    public Set<UserModel> getUsers() {
         return users;
     }
 
-    public void setUsers(List<UserModel> users) {
+    public void setUsers(Set<UserModel> users) {
         this.users = users;
     }
 

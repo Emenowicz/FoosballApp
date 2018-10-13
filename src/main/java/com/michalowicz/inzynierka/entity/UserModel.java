@@ -5,22 +5,25 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class UserModel {
     @Id
     @GeneratedValue
     private long id;
+    @NotBlank
     private String username;
+    @NotBlank
     private String password;
     @Email
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JsonIgnoreProperties(value = {"users"})
-    private List<UsergroupModel> usergroups = new ArrayList<>();
+    private Set<UsergroupModel> usergroups = new HashSet<>();
 
     public UserModel() {
     }
@@ -28,12 +31,6 @@ public class UserModel {
     public UserModel(String username, String password) {
         this.username = username;
         this.password = password;
-    }
-
-    public UserModel(String username, String password, List<UsergroupModel> usergroups) {
-        this.username = username;
-        this.password = password;
-        this.usergroups = usergroups;
     }
 
     public long getId() {
@@ -68,11 +65,11 @@ public class UserModel {
         this.email = email;
     }
 
-    public List<UsergroupModel> getUsergroups() {
+    public Set<UsergroupModel> getUsergroups() {
         return usergroups;
     }
 
-    public void setUsergroups(List<UsergroupModel> usergroups) {
+    public void setUsergroups(Set<UsergroupModel> usergroups) {
         this.usergroups = usergroups;
     }
 

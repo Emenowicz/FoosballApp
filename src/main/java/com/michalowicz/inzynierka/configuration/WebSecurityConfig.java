@@ -21,15 +21,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource(name = "defaultUserDetailsService")
     UserDetailsService userDetailsService;
 
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .csrf().disable()
-//                .authorizeRequests().antMatchers("/oauth/token").permitAll()
-//                .and()
-//                .cors();
-//    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);

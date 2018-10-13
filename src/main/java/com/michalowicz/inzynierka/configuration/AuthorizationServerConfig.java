@@ -24,7 +24,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         clients.inMemory()
                 .withClient("fusball")
                 .secret(passwordEncoder.encode("secret"))
-                .authorizedGrantTypes("password", "refresh token")
+                .authorizedGrantTypes("password", "refresh_token")
                 .scopes("all")
                 .accessTokenValiditySeconds(5 * 60)
                 .refreshTokenValiditySeconds(30 * 60)
