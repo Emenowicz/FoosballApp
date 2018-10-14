@@ -23,7 +23,7 @@ public class UserService {
 
     public void registerUser(UserModel userModel) throws Exception {
         if (userDao.findByUsername(userModel.getUsername()) == null) {
-            userModel.addUsergroup(usergroupDao.findByNameIgnoreCase("USER"));
+            userModel.addUsergroup(usergroupDao.findByNameIgnoreCase("user"));
             userDao.save(userModel);
         } else {
             throw new Exception("User with that username already exists");
