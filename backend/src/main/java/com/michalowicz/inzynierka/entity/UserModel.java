@@ -1,6 +1,7 @@
 package com.michalowicz.inzynierka.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class UserModel {
     @NotBlank
     private String username;
     @NotBlank
+    @JsonIgnore
     private String password;
     @Email
     private String email;

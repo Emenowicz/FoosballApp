@@ -5,7 +5,7 @@ import {USER_REQUEST} from "../actions/user";
 
 const state = {
     token: localStorage.getItem('user-token') || '',
-    status: '',
+    status: ''
 }
 const mutations = {
     [AUTH_REQUEST]: (state) => {
@@ -57,13 +57,14 @@ const actions = {
         return new Promise((resolve, reject) => {
             commit(AUTH_LOGOUT)
             localStorage.removeItem('user-token')
+            delete axios.defaults.headers.common['Authorization']
             resolve()
         })
     }
 }
 const getters = {
     isAuthenticated: state => !!state.token,
-    authStatus: state => state.status,
+    authStatus: state => state.status
 }
 
 export default {

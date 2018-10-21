@@ -12,19 +12,9 @@
 
     export default {
         name: 'App',
-        data: () => ({
-            drawer: null
-        }),
         components: {
             Navbar,
             Footer
-        },
-        props: {
-            source: String
-        },
-        created: function () {
-            this.$store.state.isLoggedIn = false
         }
-
     }
 </script>

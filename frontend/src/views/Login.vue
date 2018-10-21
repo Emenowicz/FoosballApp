@@ -37,12 +37,9 @@
                     .then(() => {
                         this.$router.push('/')
                     })
-                console.log(this.username)
-                console.log(this.password)
             },
             register() {
                 this.$router.push('/register')
-                console.log("register")
             }
         }
 

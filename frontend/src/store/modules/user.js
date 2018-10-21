@@ -2,7 +2,10 @@ import {USER_ERROR, USER_REQUEST, USER_SUCCESS} from "../actions/user";
 import {AUTH_LOGOUT} from "../actions/authentication";
 import axios from "axios";
 
-const state = {status: '', profile: {}}
+const state = {
+    status: '',
+    profile: {}
+}
 
 const getters = {
     getProfile: state => state.profile,
