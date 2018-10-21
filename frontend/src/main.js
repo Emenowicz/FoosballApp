@@ -4,11 +4,20 @@ import './plugins/vuetify'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import axios from "axios";
+import {USER_REQUEST} from "./store/actions/user";
 
 Vue.config.productionTip = false
 
+
+const token = localStorage.getItem('user-token')
+if (token) {
+    axios.defaults.headers.common = {'Authorization': "bearer" + token}
+    store.dispatch(USER_REQUEST)
+}
+
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app')
