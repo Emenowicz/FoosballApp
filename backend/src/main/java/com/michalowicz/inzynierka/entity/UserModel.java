@@ -22,6 +22,8 @@ public class UserModel {
     private String password;
     @Email
     private String email;
+    @Lob
+    private byte[] avatar;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JsonIgnoreProperties(value = {"users"})
@@ -80,4 +82,11 @@ public class UserModel {
         usergroupModel.getUsers().add(this);
     }
 
+    public byte[] getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
+    }
 }
