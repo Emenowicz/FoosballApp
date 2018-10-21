@@ -29,4 +29,8 @@ public class UserService {
             throw new Exception("User with that username already exists");
         }
     }
+
+    public UserModel getLoggedUser(String username) {
+        return userDao.findByUsername(username);
+    }
 }

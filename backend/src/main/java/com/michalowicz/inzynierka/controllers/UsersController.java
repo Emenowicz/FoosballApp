@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -19,6 +20,13 @@ public class UsersController {
 
     @Resource
     UserService userService;
+
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    public ResponseEntity<UserModel> getLoggedUser(Principal principal){
+        UserModel loggedUser = userService.getLoggedUser(principal.getName());
+
+        return loggedUser!=null ? new ResponseEntity<>(loggedUser,HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<UserModel>> getAllUsers() {

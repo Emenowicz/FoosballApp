@@ -39,9 +39,9 @@ const actions = {
                     method: 'POST'
                 })
                 .then(resp => {
-                    debugger;
                     const token = resp.data.access_token
                     localStorage.setItem('user-token', token)
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
                     commit(AUTH_SUCCESS, token)
                     dispatch(USER_REQUEST)
                     resolve(resp)
