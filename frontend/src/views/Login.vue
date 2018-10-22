@@ -3,7 +3,8 @@
         <v-layout align-center justify-center>
 
             <v-flex xs12 sm6>
-                <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert" transition="fade-transition">Coś poszło nie
+                <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert" transition="fade-transition">
+                    Coś poszło nie
                     tak. Popraw dane
                     logowania i spróbuj ponownie
                 </v-alert>
@@ -49,6 +50,7 @@
         },
         methods: {
             login() {
+                this.errors = []
                 const {grant_type, username, password} = this
                 this.$store.dispatch(AUTH_REQUEST, {grant_type, username, password})
                     .then(() => {
@@ -62,6 +64,14 @@
             },
             closeAlert() {
                 this.errors = []
+            }
+        },
+        validations: {
+            username: {
+                required
+            },
+            password: {
+                required
             }
         }
 

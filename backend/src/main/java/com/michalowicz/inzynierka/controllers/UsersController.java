@@ -22,10 +22,10 @@ public class UsersController {
     UserService userService;
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
-    public ResponseEntity<UserModel> getLoggedUser(Principal principal){
+    public ResponseEntity<UserModel> getLoggedUser(Principal principal) {
         UserModel loggedUser = userService.getLoggedUser(principal.getName());
 
-        return loggedUser!=null ? new ResponseEntity<>(loggedUser,HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return loggedUser != null ? new ResponseEntity<>(loggedUser, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -35,12 +35,12 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<List<UserModel>> addUser(@RequestBody @Valid UserModel user) {
+    public ResponseEntity addUser(@RequestBody @Valid UserModel user) {
         try {
             userService.registerUser(user);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
 }

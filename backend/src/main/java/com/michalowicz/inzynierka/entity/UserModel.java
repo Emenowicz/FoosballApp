@@ -3,6 +3,7 @@ package com.michalowicz.inzynierka.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -18,7 +19,6 @@ public class UserModel {
     @NotBlank
     private String username;
     @NotBlank
-    @JsonIgnore
     private String password;
     @Email
     private String email;
@@ -53,10 +53,12 @@ public class UserModel {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
