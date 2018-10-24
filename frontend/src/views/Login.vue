@@ -1,34 +1,35 @@
 <template>
-    <v-container fill-height>
-        <v-layout align-center justify-center>
-
-            <v-flex xs12 sm6>
-                <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert" transition="fade-transition">
-                    Coś poszło nie
-                    tak. Popraw dane
-                    logowania i spróbuj ponownie
-                </v-alert>
-                <div class="headline text-xs-center">Zaloguj się</div>
-                <v-form @submit.prevent="login">
-                    <v-text-field prepend-icon="person" name="Username" label="Login"
-                                  v-model="username" :error-messages="usernameErrors" @input="$v.username.$touch()"
-                                  @blur="$v.username.$touch()"></v-text-field>
-                    <v-text-field prepend-icon="lock" name="Password" label="Hasło" type="password"
-                                  v-model="password" :error-messages="passwordErrors" @input="$v.password.$touch()"
-                                  @blur="$v.password.$touch()"></v-text-field>
-                    <v-layout>
-                        <v-flex xs6>
-                            <v-btn block type="submit">Zaloguj</v-btn>
-                        </v-flex>
-                        <v-flex xs6>
-                            <v-btn block v-on:click="register">Zarejestruj się</v-btn>
-                        </v-flex>
-                    </v-layout>
-                </v-form>
-            </v-flex>
-        </v-layout>
-    </v-container>
-
+    <v-fade-transition>
+        <v-container fill-height>
+            <v-layout align-center justify-center>
+                <v-flex xs12 sm6>
+                    <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert"
+                             transition="fade-transition">
+                        Coś poszło nie
+                        tak. Popraw dane
+                        logowania i spróbuj ponownie
+                    </v-alert>
+                    <div class="headline text-xs-center">Zaloguj się</div>
+                    <v-form @submit.prevent="login">
+                        <v-text-field prepend-icon="person" name="Username" label="Login"
+                                      v-model="username" :error-messages="usernameErrors" @input="$v.username.$touch()"
+                                      @blur="$v.username.$touch()"></v-text-field>
+                        <v-text-field prepend-icon="lock" name="Password" label="Hasło" type="password"
+                                      v-model="password" :error-messages="passwordErrors" @input="$v.password.$touch()"
+                                      @blur="$v.password.$touch()"></v-text-field>
+                        <v-layout>
+                            <v-flex xs6>
+                                <v-btn block type="submit">Zaloguj</v-btn>
+                            </v-flex>
+                            <v-flex xs6>
+                                <v-btn block v-on:click="register">Zarejestruj się</v-btn>
+                            </v-flex>
+                        </v-layout>
+                    </v-form>
+                </v-flex>
+            </v-layout>
+        </v-container>
+    </v-fade-transition>
 </template>
 
 <script>

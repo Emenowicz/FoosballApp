@@ -11,10 +11,10 @@
                     <v-layout pa-2 row align-end class="lightbox white--text">
                         <v-flex shrink>
                             <div class="title">{{ userProfile.username }}</div>
-                            <div class="body-1">{{ userProfile.email }} dawid@dawid.dawid</div>
+                            <div class="body-1">{{ userProfile.email }}</div>
                         </v-flex>
                         <v-spacer/>
-                        <v-btn to="/myaccount" large flat dark icon >
+                        <v-btn to="/myaccount" large flat dark icon>
                             <v-icon>person</v-icon>
                         </v-btn>
                         <v-btn @click="logout" large flat dark icon>
@@ -46,6 +46,7 @@
                         justify-center
                         align-center
                 >
+                    <router-view/>
                 </v-layout>
             </v-container>
         </v-content>
