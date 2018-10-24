@@ -27,10 +27,10 @@ public class InitialDataLoader implements ApplicationRunner {
         UsergroupModel userUsergroup = new UsergroupModel("user");
         usergroupDao.save(adminUsergroup);
         usergroupDao.save(userUsergroup);
-        UserModel user1 = new UserModel("admin", passwordEncoder.encode("admin"));
+        UserModel user1 = new UserModel("admin", passwordEncoder.encode("admin"), "admin@admin.admin");
         user1.addUsergroup(adminUsergroup);
         userDao.save(user1);
-        UserModel user2 = new UserModel("dawid",passwordEncoder.encode("dawid"));
+        UserModel user2 = new UserModel("dawid",passwordEncoder.encode("dawid"), "dawid@dawid.dawid");
         user2.addUsergroup(userUsergroup);
         userDao.save(user2);
 

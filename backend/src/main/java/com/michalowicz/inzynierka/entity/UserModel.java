@@ -32,9 +32,10 @@ public class UserModel {
     public UserModel() {
     }
 
-    public UserModel(String username, String password) {
+    public UserModel(String username, String password, String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
     public long getId() {
