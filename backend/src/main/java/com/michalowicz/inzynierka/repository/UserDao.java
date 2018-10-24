@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserDao extends JpaRepository<UserModel, Long> {
     UserModel findByUsername(String username);
+    UserModel findByEmail(String email);
 }

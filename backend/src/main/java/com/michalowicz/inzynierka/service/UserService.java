@@ -1,5 +1,6 @@
 package com.michalowicz.inzynierka.service;
 
+import com.michalowicz.inzynierka.dto.UpdateUserDetailsForm;
 import com.michalowicz.inzynierka.entity.UserModel;
 import com.michalowicz.inzynierka.repository.UserDao;
 import com.michalowicz.inzynierka.repository.UsergroupDao;
@@ -33,6 +34,25 @@ public class UserService {
         } else {
             throw new Exception("User with that username already exists");
         }
+    }
+
+    public void updateUserDetails(UserModel userModel, UpdateUserDetailsForm form) throws Exception {
+        UserModel conflictUser = userDao.findByUsername(form.getUsername());
+        if (conflictUser != null && !conflictUser.equals(userModel)) {
+            throw new Exception("Login zajęty");
+        }
+        conflictUser = userDao.findByEmail(form.getEmail());
+        if (conflictUser != null && !conflictUser.equals(userModel)) {
+            throw new Exception("Email zajęty");
+        }
+        try {
+            userModel.setUsername(form.getUsername());
+            userModel.setEmail(form.getEmail());
+            userDao.save(userModel);
+        } catch (Exception e) {
+            throw new Exception("Błąd danych");
+        }
+
     }
 
     public UserModel getLoggedUser(String username) {

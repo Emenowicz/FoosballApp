@@ -4,9 +4,13 @@
             <v-layout align-center justify-center>
                 <v-flex xs6 text-xs-center>
                     <div class="my-4 headline">Zarządzanie kontem</div>
-                    <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert"
+                    <v-alert class="my-0" :value="hasErrors" type="error" @click="closeAlert"
                              transition="fade-transition">
-                        Coś poszło nie tak.
+                        {{errors[0]}}
+                    </v-alert>
+                    <v-alert class="my-0" :value="hasInfos" type="success" @click="closeInfos"
+                             transition="fade-transition">
+                        {{infos[0]}}
                     </v-alert>
                     <v-tabs v-model="activeTab" color="green" dark grow>
                         <v-tab ripple>
@@ -128,6 +132,9 @@
             },
             closeAlert() {
                 this.errors = []
+            },
+            closeInfos() {
+                this.infos = []
             }
         },
         validations: {
@@ -159,6 +166,9 @@
             },
             hasErrors() {
                 return !!this.errors.length
+            },
+            hasInfos(){
+                return !!this.infos.length
             },
             usernameErrors() {
                 const errors = []
