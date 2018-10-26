@@ -73,7 +73,7 @@
                         .then(() => {
                             this.$router.push('/')
                         }).catch(err => {
-                        this.errors = [...this.errors, err]
+                        this.errors = [...this.errors, err.response.data]
                     })
                 }
             },

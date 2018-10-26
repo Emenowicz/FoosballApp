@@ -25,7 +25,7 @@
                                               :error-messages="emailErrors" @blur="$v.email.$touch()"
                                               @input="$v.email.$touch()"></v-text-field>
                                 <v-btn type="submit">Zapisz zmiany</v-btn>
-                                <v-btn v-on:click="loadUserData"><v-icon>replay</v-icon></v-btn>
+
                             </v-form>
                         </v-tab-item>
 
@@ -50,7 +50,7 @@
                                 <v-btn type="submit">Zapisz zmiany</v-btn>
                             </v-form>
                         </v-tab-item>
-
+                        <v-btn flat icon v-on:click="loadUserData"><v-icon>replay</v-icon></v-btn>
                     </v-tabs>
                 </v-flex>
             </v-layout>
@@ -69,6 +69,7 @@
     import email from "vuelidate/src/validators/email";
     import sameAs from "vuelidate/src/validators/sameAs";
     import ApiConstants from "../libs/ApiConstants";
+    import {USER_REQUEST} from "../store/actions/user";
 
     export default {
         name: "MyAccount",
@@ -93,11 +94,11 @@
                 this.email = this.userProfile.email
             },
             saveUserDetails() {
-                // this.$v.username.$touch()
-                // this.$v.email.$touch()
-                // if (!this.$v.$anyError) {
+                this.$v.username.$touch()
+                this.$v.email.$touch()
+                if (!this.$v.username.$anyError&&!this.$v.email.$anyError) {
                     this.errors = [];
-                    // debugger;
+
                     axios(
                         {
                             url: ApiConstants.UPDATE_USER_DETAILS,
@@ -110,25 +111,31 @@
                     ).then(() => {
                         this.infos = [...this.infos, "Zaktualizowano poprawnie"]
                     }).catch(err => {
-                        this.errors = [...this.errors, err]
+                        this.errors = [...this.errors, err.response.data]
                     })
-                // }
+                }
             },
             updatePassword(){
-                axios(
-                    {
-                        url: ApiConstants.UPDATE_USER_PASSWORD,
-                        data: {
-                            'currentPassword': this.currentPassword,
-                            'newPassword': this.newPassword
-                        },
-                        method: 'POST'
-                    }
-                ).then(() => {
-                    this.infos = [...this.infos, "Zaktualizowano poprawnie"]
-                }).catch(err => {
-                    this.errors = [...this.errors, err]
-                })
+                this.$v.currentPassword.$touch()
+                this.$v.newPassword.$touch()
+                this.$v.confirmPassword.$touch()
+                if(!this.$v.currentPassword.$anyError && !this.$v.newPassword.$anyError && !this.$v.confirmPassword.$anyError){
+                    axios(
+                        {
+                            url: ApiConstants.UPDATE_USER_PASSWORD,
+                            data: {
+                                'currentPassword': this.currentPassword,
+                                'newPassword': this.newPassword
+                            },
+                            method: 'POST'
+                        }
+                    ).then(() => {
+                        this.infos = [...this.infos, "Zaktualizowano poprawnie"]
+                        this.$store.dispatch(USER_REQUEST)
+                    }).catch(err => {
+                        this.errors = [...this.errors, err.response.data]
+                    })
+                }
             },
             closeAlert() {
                 this.errors = []
@@ -157,7 +164,7 @@
             },
             confirmPassword: {
                 required,
-                sameAsPassword: sameAs('password')
+                sameAsPassword: sameAs('newPassword')
             },
         },
         computed: {
@@ -195,8 +202,8 @@
             confirmPasswordErrors() {
                 const errors = []
                 if (!this.$v.confirmPassword.$dirty) return errors
-                !this.$v.confirmPassword.sameAsPassword && errors.push('Hasła muszą się zgadzać')
                 !this.$v.confirmPassword.required && errors.push('Powtórzenie hasła jest wymagane')
+                !this.$v.confirmPassword.sameAsPassword && errors.push('Hasła muszą się zgadzać')
                 return errors
             },
             emailErrors() {

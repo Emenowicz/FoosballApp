@@ -1,5 +1,6 @@
 package com.michalowicz.inzynierka.controllers;
 
+import com.michalowicz.inzynierka.dto.UpdatePasswordForm;
 import com.michalowicz.inzynierka.dto.UpdateUserDetailsForm;
 import com.michalowicz.inzynierka.entity.UserModel;
 import com.michalowicz.inzynierka.service.UserService;
@@ -43,12 +44,21 @@ public class UsersController {
     }
 
     @RequestMapping(value = "/updateDetails", method = RequestMethod.POST)
-    public ResponseEntity updateDetails(@RequestBody UpdateUserDetailsForm form,
-                                        Principal principal) {
+    public ResponseEntity updateDetails(@RequestBody UpdateUserDetailsForm form, Principal principal) {
         try {
             userService.updateUserDetails(getLoggedUser(principal), form);
         } catch (Exception e) {
-            return new ResponseEntity(e, HttpStatus.CONFLICT);
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/updatePassword")
+    public ResponseEntity updatePassword(@RequestBody UpdatePasswordForm form, Principal principal) {
+        try {
+            userService.updatePassword(getLoggedUser(principal), form);
+        } catch (Exception e){
+            return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity(HttpStatus.OK);
     }

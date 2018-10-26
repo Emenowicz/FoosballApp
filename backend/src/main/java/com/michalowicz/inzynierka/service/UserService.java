@@ -1,5 +1,6 @@
 package com.michalowicz.inzynierka.service;
 
+import com.michalowicz.inzynierka.dto.UpdatePasswordForm;
 import com.michalowicz.inzynierka.dto.UpdateUserDetailsForm;
 import com.michalowicz.inzynierka.entity.UserModel;
 import com.michalowicz.inzynierka.repository.UserDao;
@@ -57,5 +58,14 @@ public class UserService {
 
     public UserModel getLoggedUser(String username) {
         return userDao.findByUsername(username);
+    }
+
+    public void updatePassword(final UserModel loggedUser, final UpdatePasswordForm form) throws Exception {
+        if (passwordEncoder.matches(form.getCurrentPassword(), loggedUser.getPassword())) {
+            loggedUser.setPassword(passwordEncoder.encode(form.getNewPassword()));
+            userDao.save(loggedUser);
+        } else {
+            throw new Exception("Aktualne hasło niepoprawne");
+        }
     }
 }
