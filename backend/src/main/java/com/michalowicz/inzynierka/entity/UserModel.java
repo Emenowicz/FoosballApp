@@ -29,6 +29,14 @@ public class UserModel {
     @JsonIgnoreProperties(value = {"users"})
     private Set<UsergroupModel> usergroups = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = {"owner"})
+    private Set<TournamentModel> ownedTournaments = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = {"participants"})
+    private Set<TournamentModel> joinedTournaments = new HashSet<>();
+
     public UserModel() {
     }
 
@@ -80,7 +88,7 @@ public class UserModel {
         this.usergroups = usergroups;
     }
 
-    public void addUsergroup(UsergroupModel usergroupModel){
+    public void addUsergroup(UsergroupModel usergroupModel) {
         this.usergroups.add(usergroupModel);
         usergroupModel.getUsers().add(this);
     }
@@ -91,5 +99,31 @@ public class UserModel {
 
     public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
+    }
+
+    public Set<TournamentModel> getOwnedTournaments() {
+        return ownedTournaments;
+    }
+
+    public void setOwnedTournaments(final Set<TournamentModel> ownedTournaments) {
+        this.ownedTournaments = ownedTournaments;
+    }
+
+    public void addOwnedTournament(TournamentModel tournamentModel) {
+        tournamentModel.setOwner(this);
+        this.getOwnedTournaments().add(tournamentModel);
+    }
+
+    public Set<TournamentModel> getJoinedTournaments() {
+        return joinedTournaments;
+    }
+
+    public void setJoinedTournaments(final Set<TournamentModel> joinedTournaments) {
+        this.joinedTournaments = joinedTournaments;
+    }
+
+    public void joinToTournament(final TournamentModel tournament) {
+        this.joinedTournaments.add(tournament);
+        tournament.getParticipants().add(this);
     }
 }

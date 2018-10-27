@@ -1,7 +1,9 @@
 package com.michalowicz.inzynierka.data;
 
+import com.michalowicz.inzynierka.entity.TournamentModel;
 import com.michalowicz.inzynierka.entity.UserModel;
 import com.michalowicz.inzynierka.entity.UsergroupModel;
+import com.michalowicz.inzynierka.repository.TournamentDao;
 import com.michalowicz.inzynierka.repository.UserDao;
 import com.michalowicz.inzynierka.repository.UsergroupDao;
 import org.springframework.boot.ApplicationArguments;
@@ -19,6 +21,8 @@ public class InitialDataLoader implements ApplicationRunner {
     @Resource
     UsergroupDao usergroupDao;
     @Resource
+    TournamentDao tournamentDao;
+    @Resource
     PasswordEncoder passwordEncoder;
 
     @Override
@@ -30,8 +34,13 @@ public class InitialDataLoader implements ApplicationRunner {
         UserModel user1 = new UserModel("admin", passwordEncoder.encode("admin"), "admin@admin.admin");
         user1.addUsergroup(adminUsergroup);
         userDao.save(user1);
-        UserModel user2 = new UserModel("dawid",passwordEncoder.encode("dawid"), "dawid@dawid.dawid");
+        UserModel user2 = new UserModel("dawid", passwordEncoder.encode("dawid"), "dawid@dawid.dawid");
         user2.addUsergroup(userUsergroup);
+        TournamentModel tournament = new TournamentModel("turnej dawida");
+//        tournamentDao.save(tournament);
+        user2.addOwnedTournament(tournament);
+        tournamentDao.save(tournament);
+        user2.joinToTournament(tournament);
         userDao.save(user2);
 
     }

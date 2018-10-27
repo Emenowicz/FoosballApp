@@ -9,6 +9,11 @@
                             <template slot="items" slot-scope="props">
                                 <td>{{props.item.name}}</td>
                                 <td>{{props.item.status}}</td>
+                                <td>{{moment(props.item.timeCreated).format('LT')}}
+                                    {{moment(props.item.timeCreated).format('dddd')}}
+                                    <br>
+                                    {{moment(props.item.timeCreated).format('ll')}}
+                                </td>
                             </template>
                         </v-data-table>
                     </v-card-text>
@@ -19,10 +24,15 @@
                 <v-card>
                     <v-card-title primary class="title">Moje turnieje</v-card-title>
                     <v-card-text>
-                        <v-data-table :headers="tournamentHeaders" :items="allTournaments">
+                        <v-data-table :headers="tournamentHeaders" :items="ownedTournaments">
                             <template slot="items" slot-scope="props">
                                 <td>{{props.item.name}}</td>
                                 <td>{{props.item.status}}</td>
+                                <td>{{moment(props.item.timeCreated).format('LT')}}
+                                    {{moment(props.item.timeCreated).format('dddd')}}
+                                    <br>
+                                    {{moment(props.item.timeCreated).format('ll')}}
+                                </td>
                             </template>
                         </v-data-table>
                     </v-card-text>
@@ -33,6 +43,9 @@
 </template>
 
 <script>
+    import ApiConstants from "../libs/ApiConstants";
+    import axios from 'axios';
+
     export default {
         name: "MainPage",
         data() {
@@ -46,16 +59,37 @@
                     {
                         text: 'Status',
                         value: 'status'
+                    },
+                    {
+                        text: 'Czas utworzenia',
+                        value: 'timeCreated'
                     }
                 ],
-                allTournaments: [
+                allTournaments: [],
+
+            }
+        },
+        computed: {
+            ownedTournaments: function () {
+                return this.$store.getters.getProfile.ownedTournaments
+            }
+        },
+        mounted: function () {
+            this.getAllTournaments()
+        },
+        methods: {
+            getAllTournaments() {
+                axios(
                     {
-                        name: 'dawid',
-                        status: 'created'
+                        url: ApiConstants.GET_ALL_TOURNAMENTS,
+                        method: "GET"
                     }
-                ]
+                ).then(resp => {
+                    this.allTournaments = resp.data
+                })
             }
         }
+
     }
 </script>
 

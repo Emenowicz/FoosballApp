@@ -6,5 +6,6 @@ export default {
     CURRENT_USER_ENDPOINT: API_ROOT + "users/me",
     REGISTER_ENDPOINT: API_ROOT + "users/register",
     UPDATE_USER_DETAILS: API_ROOT + "users/updateDetails",
-    UPDATE_USER_PASSWORD: API_ROOT + "users/updatePassword"
+    UPDATE_USER_PASSWORD: API_ROOT + "users/updatePassword",
+    GET_ALL_TOURNAMENTS: API_ROOT + "tournaments/",
 }
