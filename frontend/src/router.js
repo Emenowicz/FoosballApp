@@ -4,6 +4,7 @@ import store from './store'
 import Register from './views/Register.vue'
 import Login from './views/Login.vue'
 import MyAccount from './views/MyAccount.vue'
+import MainPage from './views/MainPage.vue'
 
 Vue.use(Router)
 
@@ -16,7 +17,7 @@ const ifNotAuthenticated = (to, from, next) => {
 }
 
 const ifAuthenticated = (to, from, next) => {
-    if(store.getters.isAuthenticated) {
+    if (store.getters.isAuthenticated) {
         next()
         return
     }
@@ -39,10 +40,15 @@ export default new Router({
             beforeEnter: ifNotAuthenticated
         },
         {
+            path: '/',
+            name: 'MainPage',
+            component: MainPage,
+        },
+        {
             path: '/myaccount',
             name: 'MyAccount',
             component: MyAccount,
-            beforeEnter:ifAuthenticated
+            beforeEnter: ifAuthenticated
         }
     ]
 })
