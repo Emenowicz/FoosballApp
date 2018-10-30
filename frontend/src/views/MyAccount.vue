@@ -18,7 +18,7 @@
                         </v-tab>
                         <v-tab-item>
                             <v-form @submit.prevent="saveUserDetails">
-                                <v-text-field prepend-icon="person" name="Username" label="Login" v-model="username"
+                                <v-text-field readonly prepend-icon="person" name="Username" label="Login" v-model="username"
                                               :error-messages="usernameErrors" @input="$v.username.$touch()"
                                               @blur="$v.username.$touch()"></v-text-field>
                                 <v-text-field prepend-icon="mail" name="Email" label="E-mail" v-model="email"
@@ -110,6 +110,7 @@
                         }
                     ).then(() => {
                         this.infos = [...this.infos, "Zaktualizowano poprawnie"]
+                        this.$store.dispatch(USER_REQUEST)
                     }).catch(err => {
                         this.errors = [...this.errors, err.response.data]
                     })

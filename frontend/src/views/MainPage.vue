@@ -20,7 +20,7 @@
 
                 </v-card>
             </v-flex>
-            <v-flex d-flex xs12 sm6>
+            <v-flex v-if="this.$store.getters.isAuthenticated" d-flex xs12 sm6>
                 <v-card>
                     <v-card-title primary class="title">Moje turnieje</v-card-title>
                     <v-card-text>

@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class UsergroupModel {
+public class Usergroup {
     @Id
     @GeneratedValue
     private Long id;
@@ -16,12 +16,12 @@ public class UsergroupModel {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JsonIgnoreProperties(value = {"usergroups"})
-    private Set<UserModel> users = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 
-    public UsergroupModel() {
+    public Usergroup() {
     }
 
-    public UsergroupModel(String name) {
+    public Usergroup(String name) {
         this.name = name;
     }
 
@@ -41,15 +41,15 @@ public class UsergroupModel {
         this.name = name;
     }
 
-    public Set<UserModel> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<UserModel> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
     }
 
-    public void addUser(UserModel user) {
+    public void addUser(User user) {
         this.users.add(user);
         user.getUsergroups()
                 .add(this);

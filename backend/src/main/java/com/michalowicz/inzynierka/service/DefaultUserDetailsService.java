@@ -1,9 +1,8 @@
 package com.michalowicz.inzynierka.service;
 
-import com.michalowicz.inzynierka.entity.UserModel;
-import com.michalowicz.inzynierka.repository.UserDao;
+import com.michalowicz.inzynierka.entity.User;
+import com.michalowicz.inzynierka.dao.UserDao;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,11 +19,11 @@ public class DefaultUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserModel user = userDao.findByUsername(username);
+        User user = userDao.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("Invalid username or password");
         }
-        return new User(user.getUsername(),
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
                         user.getPassword(),
                         user.getUsergroups()
                                 .stream()

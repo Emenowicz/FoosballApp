@@ -12,13 +12,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class TournamentModel {
+public class Tournament {
     @Id
     @GeneratedValue
     private Long id;
@@ -32,22 +33,26 @@ public class TournamentModel {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timeCreated = LocalDateTime.now();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value = {"ownedTournaments","joinedTournaments"})
-    private UserModel owner;
+    private User owner;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JsonIgnoreProperties(value = {"joinedTournaments","ownedTournaments"})
-    private Set<UserModel> participants = new HashSet<>();
+    private Set<User> participants = new HashSet<>();
 
-    public TournamentModel() {
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = {"tournament"})
+    private Set<Team> teams = new HashSet<>();
+
+    public Tournament() {
     }
 
-    public TournamentModel(@NotBlank final String name) {
+    public Tournament(@NotBlank final String name) {
         this.name = name;
     }
 
-    public TournamentModel(@NotBlank final String name, final UserModel owner) {
+    public Tournament(@NotBlank final String name, final User owner) {
         this.name = name;
         this.owner = owner;
     }
@@ -68,12 +73,17 @@ public class TournamentModel {
         this.name = name;
     }
 
-    public UserModel getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(final UserModel owner) {
+    public void setOwner(final User owner) {
         this.owner = owner;
+    }
+
+    public void addOwner(final User owner) {
+        this.owner = owner;
+        owner.getOwnedTournaments().add(this);
     }
 
     public TournamentStatus getStatus() {
@@ -92,16 +102,29 @@ public class TournamentModel {
         this.timeCreated = timeCreated;
     }
 
-    public Set<UserModel> getParticipants() {
+    public Set<User> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(final Set<UserModel> participants) {
+    public void setParticipants(final Set<User> participants) {
         this.participants = participants;
     }
 
-    public void addParticipant(final UserModel user){
+    public void addParticipant(final User user){
         this.participants.add(user);
         user.getJoinedTournaments().add(this);
+    }
+
+    public Set<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(final Set<Team> teams) {
+        this.teams = teams;
+    }
+
+    public void addTeam(final Team team) {
+        this.teams.add(team);
+        team.setTournament(this);
     }
 }

@@ -1,4 +1,4 @@
-package com.michalowicz.inzynierka.controllers;
+package com.michalowicz.inzynierka.controller;
 
 import com.michalowicz.inzynierka.service.TournamentService;
 import org.springframework.http.HttpStatus;

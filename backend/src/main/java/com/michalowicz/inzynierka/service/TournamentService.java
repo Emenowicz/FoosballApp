@@ -1,7 +1,7 @@
 package com.michalowicz.inzynierka.service;
 
-import com.michalowicz.inzynierka.entity.TournamentModel;
-import com.michalowicz.inzynierka.repository.TournamentDao;
+import com.michalowicz.inzynierka.entity.Tournament;
+import com.michalowicz.inzynierka.dao.TournamentDao;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -12,7 +12,7 @@ public class TournamentService {
     @Resource
     TournamentDao tournamentDao;
 
-    public List<TournamentModel> getAllTournaments(){
+    public List<Tournament> getAllTournaments(){
         return tournamentDao.findAll();
     }
 }
