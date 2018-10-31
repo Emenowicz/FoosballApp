@@ -34,16 +34,19 @@ public class Tournament {
     private LocalDateTime timeCreated = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JsonIgnoreProperties(value = {"ownedTournaments","joinedTournaments"})
+    @JsonIgnoreProperties(value = {"ownedTournaments", "joinedTournaments"})
     private User owner;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JsonIgnoreProperties(value = {"joinedTournaments","ownedTournaments"})
+    @JsonIgnoreProperties(value = {"joinedTournaments", "ownedTournaments"})
     private Set<User> participants = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = {"tournament"})
     private Set<Team> teams = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    private RuleSet ruleSet;
 
     public Tournament() {
     }
@@ -110,7 +113,7 @@ public class Tournament {
         this.participants = participants;
     }
 
-    public void addParticipant(final User user){
+    public void addParticipant(final User user) {
         this.participants.add(user);
         user.getJoinedTournaments().add(this);
     }
@@ -126,5 +129,18 @@ public class Tournament {
     public void addTeam(final Team team) {
         this.teams.add(team);
         team.setTournament(this);
+    }
+
+    public RuleSet getRuleSet() {
+        return ruleSet;
+    }
+
+    public void setRuleSet(final RuleSet ruleSet) {
+        this.ruleSet = ruleSet;
+    }
+
+    public void addRuleSet(final RuleSet ruleSet) {
+        this.ruleSet = ruleSet;
+        ruleSet.getTournaments().add(this);
     }
 }

@@ -5,6 +5,7 @@ import Register from './views/Register.vue'
 import Login from './views/Login.vue'
 import MyAccount from './views/MyAccount.vue'
 import MainPage from './views/MainPage.vue'
+import NewTournament from './views/NewTournament.vue'
 
 Vue.use(Router)
 
@@ -48,6 +49,12 @@ export default new Router({
             path: '/myaccount',
             name: 'MyAccount',
             component: MyAccount,
+            beforeEnter: ifAuthenticated
+        },
+        {
+            path: '/new-tournament',
+            name: 'NewTournament',
+            component: NewTournament,
             beforeEnter: ifAuthenticated
         }
     ]
