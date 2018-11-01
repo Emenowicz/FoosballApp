@@ -11,9 +11,11 @@
                             <v-text-field prepend-icon="home" name="Name" label="Nazwa turnieju" counter="40"
                                     v-model="name" :error-messages="nameErrors" @blur="$v.name.$touch()"
                                     @input="$v.name.$touch()"></v-text-field>
+
+                            <v-textarea prepend-icon="subject" name="Description" label="Opis turnieju" counter
+                                    v-model="description"></v-textarea>
                         </v-card-text>
                     </v-card>
-
                 </v-flex>
             </v-layout>
         </v-container>
@@ -25,12 +27,17 @@
     import required from "vuelidate/src/validators/required";
     import minLength from "vuelidate/src/validators/minLength";
     import maxLength from "vuelidate/src/validators/maxLength";
+    import axios from 'axios';
+    import ApiConstants from "../libs/ApiConstants";
 
     export default {
         name: "NewTournament",
         data() {
             return {
-                name: ''
+                name: '',
+                description: '',
+                ruleSetSelect: {},
+                ruleSets: []
             }
         },
         validations: {
@@ -53,7 +60,21 @@
         methods: {
             submitForm() {
 
+            },
+            loadRuleSets() {
+                axios({
+                    url: ApiConstants.GET_DEFAULT_RULESETS,
+                    method: "GET"
+                }).then(resp => {
+                    this.ruleSets.push.apply(this.ruleSets,resp.data)
+                    this.ruleSets.push({name: "Niestandardowy"})
+                }).catch(() => {
+                    this.ruleSets.push({name: "Niestandardowy"})
+                })
             }
+        },
+        mounted() {
+            this.loadRuleSets()
         }
     }
 </script>

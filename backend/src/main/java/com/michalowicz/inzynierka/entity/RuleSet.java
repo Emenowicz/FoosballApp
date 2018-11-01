@@ -1,9 +1,14 @@
 package com.michalowicz.inzynierka.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.HashSet;
@@ -13,10 +18,13 @@ import java.util.Set;
 public class RuleSet {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String name = "Niestandardowe";
+
+    @Enumerated(EnumType.STRING)
+    private RuleSetType ruleSetType = RuleSetType.CUSTOM;
 
     private int pointsToWin;
 
@@ -25,13 +33,21 @@ public class RuleSet {
     private int teamSize;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JsonIgnore
     private Set<Tournament> tournaments = new HashSet<>();
 
     public RuleSet() {
     }
 
-    public RuleSet(final String name, final int pointsToWin, final int roundsToWin, final int teamSize) {
+    public RuleSet(final int pointsToWin, final int roundsToWin, final int teamSize) {
+        this.pointsToWin = pointsToWin;
+        this.roundsToWin = roundsToWin;
+        this.teamSize = teamSize;
+    }
+
+    public RuleSet(final String name, final RuleSetType type, final int pointsToWin, final int roundsToWin, final int teamSize) {
         this.name = name;
+        this.ruleSetType = type;
         this.pointsToWin = pointsToWin;
         this.roundsToWin = roundsToWin;
         this.teamSize = teamSize;
@@ -85,8 +101,16 @@ public class RuleSet {
         this.tournaments = tournaments;
     }
 
-    public void addTournament(final Tournament tournament){
+    public void addTournament(final Tournament tournament) {
         this.tournaments.add(tournament);
         tournament.addRuleSet(this);
+    }
+
+    public RuleSetType getRuleSetType() {
+        return ruleSetType;
+    }
+
+    public void setRuleSetType(final RuleSetType ruleSetType) {
+        this.ruleSetType = ruleSetType;
     }
 }

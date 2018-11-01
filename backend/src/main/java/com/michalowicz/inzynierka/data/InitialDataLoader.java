@@ -1,8 +1,11 @@
 package com.michalowicz.inzynierka.data;
 
+import com.michalowicz.inzynierka.dao.RuleSetDao;
 import com.michalowicz.inzynierka.dao.TournamentDao;
 import com.michalowicz.inzynierka.dao.UserDao;
 import com.michalowicz.inzynierka.dao.UsergroupDao;
+import com.michalowicz.inzynierka.entity.RuleSet;
+import com.michalowicz.inzynierka.entity.RuleSetType;
 import com.michalowicz.inzynierka.entity.Tournament;
 import com.michalowicz.inzynierka.entity.User;
 import com.michalowicz.inzynierka.entity.Usergroup;
@@ -26,6 +29,8 @@ public class InitialDataLoader implements ApplicationRunner {
     @Resource
     TournamentDao tournamentDao;
     @Resource
+    RuleSetDao ruleSetDao;
+    @Resource
     PasswordEncoder passwordEncoder;
 
     Random random = new Random();
@@ -48,6 +53,9 @@ public class InitialDataLoader implements ApplicationRunner {
         }
         userDao.saveAll(users);
 
+        //RULESETS
+        RuleSet standardRuleSet = new RuleSet("Standardowy", RuleSetType.DEFAULT, 5, 3, 2);
+        ruleSetDao.save(standardRuleSet);
 
         //TOURNAMENTS
         String[] tournamentNames = {"Wyborna rozgrywka Kielce", "Nowa nazwa turnieju", "Robimy turniej", "Soccer 11", "MiniSoccer18", "Fajna gra", "Turniej Polski", "Turniej Czeski", "Weekendowe granie", "Na śmierć i życie", "Teksańska masakra grillem piłkarzykowym", "Piłkarzyki 2011", "Firmowe granie", "PWr piłkarzyki", "Zagrajmy w grę"};
@@ -55,14 +63,14 @@ public class InitialDataLoader implements ApplicationRunner {
         for (String tournamentName : tournamentNames) {
             Tournament tournament = new Tournament(tournamentName);
             tournament.addOwner(users.get(random.nextInt(users.size())));
-            for(int i = 0; i<10; i++){
+            tournament.addRuleSet(standardRuleSet);
+            for (int i = 0; i < 10; i++) {
                 tournament.addParticipant(users.get(random.nextInt(users.size())));
             }
             tournaments.add(tournament);
         }
 
         tournamentDao.saveAll(tournaments);
-
 
         //        user1.addUsergroup(adminUsergroup);
 //        userDao.save(user1);
