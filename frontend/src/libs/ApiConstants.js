@@ -8,5 +8,7 @@ export default {
     UPDATE_USER_DETAILS: API_ROOT + "users/updateDetails",
     UPDATE_USER_PASSWORD: API_ROOT + "users/updatePassword",
     GET_ALL_TOURNAMENTS: API_ROOT + "tournaments/",
-    GET_DEFAULT_RULESETS: API_ROOT + "rulesets/default"
+    CREATE_NEW_TOURNAMENT: API_ROOT + "tournaments/create",
+    GET_DEFAULT_RULESETS: API_ROOT + "rulesets/default",
+
 }

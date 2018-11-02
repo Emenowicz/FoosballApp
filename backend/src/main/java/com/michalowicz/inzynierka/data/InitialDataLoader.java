@@ -69,7 +69,6 @@ public class InitialDataLoader implements ApplicationRunner {
             }
             tournaments.add(tournament);
         }
-
         tournamentDao.saveAll(tournaments);
 
         //        user1.addUsergroup(adminUsergroup);

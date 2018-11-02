@@ -28,6 +28,8 @@ public class Tournament {
     @NotBlank
     private String name;
 
+    private String description;
+
     @Enumerated(EnumType.STRING)
     private TournamentStatus status = TournamentStatus.Otwarty;
 
@@ -46,7 +48,7 @@ public class Tournament {
     @JsonIgnoreProperties(value = {"tournament"})
     private Set<Team> teams = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     private RuleSet ruleSet;
 
     public Tournament() {
@@ -143,5 +145,13 @@ public class Tournament {
     public void addRuleSet(final RuleSet ruleSet) {
         this.ruleSet = ruleSet;
         ruleSet.getTournaments().add(this);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
     }
 }

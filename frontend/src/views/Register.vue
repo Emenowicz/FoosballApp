@@ -1,7 +1,7 @@
 <template>
     <v-container fill-height>
         <v-layout align-center justify-center>
-            <v-flex xs6>
+            <v-flex xs12 sm8>
                 <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert" transition="fade-transition">
                     Coś poszło nie
                     tak. Popraw dane

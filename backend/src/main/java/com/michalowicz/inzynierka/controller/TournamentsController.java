@@ -1,7 +1,9 @@
 package com.michalowicz.inzynierka.controller;
 
 import com.michalowicz.inzynierka.dto.CreateTournamentForm;
+import com.michalowicz.inzynierka.entity.User;
 import com.michalowicz.inzynierka.service.TournamentService;
+import com.michalowicz.inzynierka.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,14 +21,23 @@ public class TournamentsController {
     @Resource
     TournamentService tournamentService;
 
+    @Resource
+    UserService userService;
+
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity getAllTournaments(){
+    public ResponseEntity getAllTournaments() {
         return new ResponseEntity(tournamentService.getAllTournaments(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity addNewTournament(@RequestBody CreateTournamentForm form, Principal principal){
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public ResponseEntity addNewTournament(@RequestBody CreateTournamentForm form, Principal principal) {
+        try {
+            User loggedUser = userService.getLoggedUser(principal.getName());
+            tournamentService.createTournament(form, loggedUser);
 
-        return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
     }
 }

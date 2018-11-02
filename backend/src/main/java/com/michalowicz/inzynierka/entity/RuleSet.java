@@ -32,7 +32,7 @@ public class RuleSet {
 
     private int teamSize;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @JsonIgnore
     private Set<Tournament> tournaments = new HashSet<>();
 
