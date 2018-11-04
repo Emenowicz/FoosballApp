@@ -51,6 +51,7 @@
     import maxLength from "vuelidate/src/validators/maxLength";
     import axios from 'axios';
     import ApiConstants from "../libs/ApiConstants";
+    import {USER_REQUEST} from "../store/actions/user";
 
     export default {
         name: "NewTournament",
@@ -99,6 +100,7 @@
                     },
                     method: "POST"
                 }).then(() => {
+                    this.$store.dispatch(USER_REQUEST)
                     this.$router.push("/")
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]

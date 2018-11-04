@@ -2,11 +2,11 @@
     <v-fade-transition>
         <v-container fluid fill-height grid-list-xl>
             <v-layout row wrap justify-center>
-                <v-flex d-flex xs12 sm6>
+                <v-flex d-flex xs12 sm6 v-if="this.$store.getters.isAuthenticated">
                     <v-card>
-                        <v-card-title primary class="title">Aktualne turnieje</v-card-title>
+                        <v-card-title primary class="title">Twoje turnieje</v-card-title>
                         <v-card-text fill-height>
-                            <v-data-table class="mb-5" :headers="tournamentHeaders" :items="allTournaments">
+                            <v-data-table class="mb-5" :headers="tournamentHeaders" :items="ownedTournaments">
                                 <template slot="items" slot-scope="props">
                                     <td>{{props.item.name}}</td>
                                     <td>{{props.item.status}}</td>
@@ -22,9 +22,9 @@
                 </v-flex>
                 <v-flex d-flex xs12 sm6 v-if="this.$store.getters.isAuthenticated">
                     <v-card>
-                        <v-card-title primary class="title">Moje turnieje</v-card-title>
+                        <v-card-title primary class="title">Turnieje w których bierzesz udział</v-card-title>
                         <v-card-text>
-                            <v-data-table class="mb-5" :headers="tournamentHeaders" :items="ownedTournaments">
+                            <v-data-table class="mb-5" :headers="tournamentHeaders" :items="joinedTournaments">
                                 <template slot="items" slot-scope="props">
                                     <td>{{props.item.name}}</td>
                                     <td>{{props.item.status}}</td>
@@ -66,13 +66,14 @@
                         value: 'timeCreated'
                     }
                 ],
-                allTournaments: [],
-
             }
         },
         computed: {
             ownedTournaments: function () {
                 return this.$store.getters.getProfile.ownedTournaments
+            },
+            joinedTournaments: function (){
+                return this.$store.getters.getProfile.joinedTournaments
             }
         },
         mounted: function () {
