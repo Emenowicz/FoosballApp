@@ -8,13 +8,29 @@
                         <v-card-text fill-height>
                             <v-data-table class="mb-5" :headers="tournamentHeaders" :items="ownedTournaments">
                                 <template slot="items" slot-scope="props">
-                                    <td>{{props.item.name}}</td>
-                                    <td>{{props.item.status}}</td>
-                                    <td>{{moment(props.item.timeCreated).format('LT')}}
-                                        {{moment(props.item.timeCreated).format('dddd')}}
-                                        <br>
-                                        {{moment(props.item.timeCreated).format('ll')}}
-                                    </td>
+                                    <tr @click="props.expanded = !props.expanded">
+                                        <td>{{props.item.name}}</td>
+                                        <td>{{props.item.status}}</td>
+                                        <td>{{props.item.ruleSet.pointsToWin}}</td>
+                                        <td>{{props.item.ruleSet.roundsToWin}}</td>
+                                        <td>{{props.item.ruleSet.teamSize}}</td>
+                                        <td>{{moment(props.item.timeCreated).format('LT')}}
+                                            {{moment(props.item.timeCreated).format('dddd')}}
+                                            <br>
+                                            {{moment(props.item.timeCreated).format('ll')}}
+                                        </td>
+                                    </tr>
+                                </template>
+                                <template slot="expand" slot-scope="props">
+                                    <v-card flat>
+                                        <v-card-text>
+                                            <p class="mx-3">{{props.item.description}}</p>
+                                            <v-btn @click="openTournamentPage(props.item.id)">Zobacz turniej</v-btn>
+                                            <v-btn>Usuń turniej</v-btn>
+                                            <v-btn v-if="props.item.status==='Otwarty'">Rozpocznij</v-btn>
+                                            <v-btn v-if="props.item.status==='W trakcie'">Zakończ</v-btn>
+                                        </v-card-text>
+                                    </v-card>
                                 </template>
                             </v-data-table>
                         </v-card-text>
@@ -28,6 +44,9 @@
                                 <template slot="items" slot-scope="props">
                                     <td>{{props.item.name}}</td>
                                     <td>{{props.item.status}}</td>
+                                    <td>{{props.item.ruleSet.pointsToWin}}</td>
+                                    <td>{{props.item.ruleSet.roundsToWin}}</td>
+                                    <td>{{props.item.ruleSet.teamSize}}</td>
                                     <td>{{moment(props.item.timeCreated).format('LT')}}
                                         {{moment(props.item.timeCreated).format('dddd')}}
                                         <br>
@@ -44,11 +63,9 @@
 </template>
 
 <script>
-    import ApiConstants from "../libs/ApiConstants";
-    import axios from 'axios';
 
     export default {
-        name: "MainPage",
+        name: "UserMainPage",
         data() {
             return {
                 tournamentHeaders: [
@@ -64,6 +81,18 @@
                     {
                         text: 'Czas utworzenia',
                         value: 'timeCreated'
+                    },
+                    {
+                        text: 'Punkty do zwycięstwa',
+                        value: 'ruleSet.pointsToWin'
+                    },
+                    {
+                        text: 'Rundy do zwycięstwa',
+                        value: 'ruleSet.pointsToWin'
+                    },
+                    {
+                        text: 'Wielkość drużyny',
+                        value: 'ruleSet.teamSize'
                     }
                 ],
             }
@@ -72,26 +101,15 @@
             ownedTournaments: function () {
                 return this.$store.getters.getProfile.ownedTournaments
             },
-            joinedTournaments: function (){
+            joinedTournaments: function () {
                 return this.$store.getters.getProfile.joinedTournaments
             }
         },
-        mounted: function () {
-            this.getAllTournaments()
-        },
         methods: {
-            getAllTournaments() {
-                axios(
-                    {
-                        url: ApiConstants.GET_ALL_TOURNAMENTS,
-                        method: "GET"
-                    }
-                ).then(resp => {
-                    this.allTournaments = resp.data
-                })
+            openTournamentPage(tournamentId) {
+                this.$router.push({path: "/tournament/"+tournamentId})
             }
         }
-
     }
 </script>
 

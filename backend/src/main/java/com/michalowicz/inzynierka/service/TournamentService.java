@@ -5,6 +5,7 @@ import com.michalowicz.inzynierka.dao.TournamentDao;
 import com.michalowicz.inzynierka.dto.CreateTournamentForm;
 import com.michalowicz.inzynierka.entity.Tournament;
 import com.michalowicz.inzynierka.entity.User;
+import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,5 +36,13 @@ public class TournamentService {
         } catch (Exception e) {
             throw new Exception("Błąd danych");
         }
+    }
+
+    public Tournament getTournamentWithId(Long id) throws NotFoundException {
+        Tournament tournament = tournamentDao.getById(id);
+        if (tournament != null) {
+            return tournament;
+        }
+        throw new NotFoundException("Nie znaleziono turnieju");
     }
 }

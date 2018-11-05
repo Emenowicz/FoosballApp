@@ -1,4 +1,4 @@
-import ApiConstants from "../../libs/ApiConstants";
+import ApiConstants from "../../constants/ApiConstants";
 import axios from 'axios'
 import {AUTH_ERROR, AUTH_LOGOUT, AUTH_REQUEST, AUTH_SUCCESS} from "../actions/authentication";
 import {USER_REQUEST} from "../actions/user";

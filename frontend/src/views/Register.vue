@@ -32,7 +32,7 @@
 
 <script>
     import axios from "axios";
-    import ApiConstants from "../libs/ApiConstants";
+    import ApiConstants from "../constants/ApiConstants";
     import required from "vuelidate/src/validators/required";
     import minLength from "vuelidate/src/validators/minLength";
     import email from "vuelidate/src/validators/email";

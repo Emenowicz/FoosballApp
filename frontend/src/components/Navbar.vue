@@ -13,7 +13,7 @@
                             <div class="title">{{ userProfile.username }}</div>
                             <div class="body-1">{{ userProfile.email }}</div>
                         </v-flex>
-                        <v-spacer/>
+                        <v-spacer />
                         <v-btn to="/myaccount" large flat dark icon>
                             <v-icon>person</v-icon>
                         </v-btn>
@@ -49,14 +49,7 @@
             <v-btn v-if="!loggedIn" flat @click="goToLogin">Zaloguj się</v-btn>
         </v-toolbar>
         <v-content>
-            <v-container fluid fill-height>
-                <v-layout
-                        justify-center
-                        align-center
-                >
-                    <router-view/>
-                </v-layout>
-            </v-container>
+            <router-view />
         </v-content>
     </v-layout>
 

@@ -50,7 +50,7 @@
     import minLength from "vuelidate/src/validators/minLength";
     import maxLength from "vuelidate/src/validators/maxLength";
     import axios from 'axios';
-    import ApiConstants from "../libs/ApiConstants";
+    import ApiConstants from "../constants/ApiConstants";
     import {USER_REQUEST} from "../store/actions/user";
 
     export default {

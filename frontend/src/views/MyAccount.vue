@@ -68,7 +68,7 @@
     import maxLength from "vuelidate/src/validators/maxLength";
     import email from "vuelidate/src/validators/email";
     import sameAs from "vuelidate/src/validators/sameAs";
-    import ApiConstants from "../libs/ApiConstants";
+    import ApiConstants from "../constants/ApiConstants";
     import {USER_REQUEST} from "../store/actions/user";
 
     export default {

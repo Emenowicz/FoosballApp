@@ -4,8 +4,9 @@ import store from './store'
 import Register from './views/Register.vue'
 import Login from './views/Login.vue'
 import MyAccount from './views/MyAccount.vue'
-import MainPage from './views/MainPage.vue'
 import NewTournament from './views/NewTournament.vue'
+import UserMainPage from './views/UserMainPage.vue'
+import TournamentPage from './views/TournamentPage'
 
 Vue.use(Router)
 
@@ -42,8 +43,9 @@ export default new Router({
         },
         {
             path: '/',
-            name: 'MainPage',
-            component: MainPage,
+            name: 'UserMainPage',
+            component: UserMainPage,
+            beforeEnter: ifAuthenticated
         },
         {
             path: '/myaccount',
@@ -55,6 +57,12 @@ export default new Router({
             path: '/new-tournament',
             name: 'NewTournament',
             component: NewTournament,
+            beforeEnter: ifAuthenticated
+        },
+        {
+            path: '/tournament/:id',
+            name: TournamentPage,
+            component: TournamentPage,
             beforeEnter: ifAuthenticated
         }
     ]

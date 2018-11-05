@@ -1,11 +1,14 @@
 package com.michalowicz.inzynierka.controller;
 
 import com.michalowicz.inzynierka.dto.CreateTournamentForm;
+import com.michalowicz.inzynierka.entity.Tournament;
 import com.michalowicz.inzynierka.entity.User;
 import com.michalowicz.inzynierka.service.TournamentService;
 import com.michalowicz.inzynierka.service.UserService;
+import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,6 +41,16 @@ public class TournamentsController {
             return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @RequestMapping(value = "/{tournamentId}", method = RequestMethod.GET)
+    public ResponseEntity getTournamentById(@PathVariable("tournamentId") Long id) {
+        try {
+            Tournament tournament = tournamentService.getTournamentWithId(id);
+            return new ResponseEntity(tournament, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         }
     }
 }
