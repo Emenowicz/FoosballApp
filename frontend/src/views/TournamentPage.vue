@@ -48,7 +48,7 @@
                             </v-flex>
                         </v-layout>
                         <v-divider></v-divider>
-                        <v-layout>
+                        <v-layout class="mb-3" wrap>
                             <v-flex>
                                 <v-card>
                                     <v-card-title class="subheading">
@@ -153,7 +153,6 @@
         overflow-wrap: break-word;
     }
     .floating-button-corner {
-        position: fixed;
         bottom: 10%;
         right: 5%;
     }
