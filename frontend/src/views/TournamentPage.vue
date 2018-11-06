@@ -6,7 +6,7 @@
                     <v-card-title class="headline pb-0">
                         <p class="text-uppercase pb-0 mb-0">{{tournament.name}}</p>
                         <v-spacer />
-                        <p class="subheading pb-0 mb-0">Status: &nbsp</p>
+                        <p class="subheading pb-0 mb-0">Status: &nbsp;</p>
                         <p class="subheading pb-0 mb-0 green--text" v-if="tournament.status==='Otwarty'">{{tournament.status}}</p>
                         <p class="subheading pb-0 mb-0 orange--text"
                                 v-if="tournament.status==='W trakcie'">{{tournament.status}}</p>

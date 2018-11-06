@@ -1,6 +1,6 @@
 <template>
     <v-footer color="green" app>
-        <div class="white--text">&nbsp &copy; Dawid Michałowicz 2018</div>
+        <div class="white--text">&nbsp; &copy; Dawid Michałowicz 2018</div>
     </v-footer>
 </template>
 
