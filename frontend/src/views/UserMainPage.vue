@@ -27,8 +27,7 @@
                                             <v-card-text>
                                                 <p>Opis: {{props.item.description}}</p>
                                                 <v-btn @click="openTournamentPage(props.item.id)">Zobacz turniej</v-btn>
-                                                <v-btn>Usuń turniej</v-btn>
-                                                <v-btn v-if="props.item.status==='Otwarty'">Rozpocznij</v-btn>
+                                                <v-btn @click="startTournament(props.item.id)" v-if="props.item.status==='Otwarty'">Rozpocznij</v-btn>
                                                 <v-btn v-if="props.item.status==='W trakcie'">Zakończ</v-btn>
                                             </v-card-text>
                                         </v-card>
@@ -66,6 +65,10 @@
 
 <script>
 
+    import ApiConstants from "../constants/ApiConstants";
+    import axios from 'axios';
+    import {USER_REQUEST} from "../store/actions/user";
+
     export default {
         name: "UserMainPage",
         data() {
@@ -97,6 +100,7 @@
                         value: 'timeCreated'
                     },
                 ],
+                errors: [],
             }
         },
         computed: {
@@ -110,6 +114,16 @@
         methods: {
             openTournamentPage(tournamentId) {
                 this.$router.push({path: "/tournament/"+tournamentId})
+            },
+            startTournament(tournamentId){
+                axios({
+                    url: ApiConstants.START_TOURNAMENT(tournamentId),
+                    method: "POST"
+                }).then(resp=>{
+                    this.$router.dispatch(USER_REQUEST)
+                }).catch(err =>{
+                    this.errors = [...this.errors, err.response.data]
+                })
             }
         }
     }

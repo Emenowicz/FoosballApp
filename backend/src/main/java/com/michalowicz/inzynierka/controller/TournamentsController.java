@@ -64,10 +64,24 @@ public class TournamentsController {
         try {
             User user = userService.getLoggedUser(principal.getName());
             Tournament tournament = tournamentService.getTournamentWithId(id);
-            Team team = teamService.createNewTeam(form,tournament, user);
+            Team team = teamService.createNewTeam(form, tournament, user);
             return new ResponseEntity(HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/{tournamentId}/start", method = RequestMethod.POST)
+    public ResponseEntity startTournament(@PathVariable("tournamentId") Long id, Principal principal){
+        try {
+            Tournament tournament = tournamentService.getTournamentWithId(id);
+            User loggedUser = userService.getLoggedUser(principal.getName());
+            if(tournament.getOwner().equals(loggedUser)){
+                tournamentService.startTournament(tournament);
+            }
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
         }
     }
 }

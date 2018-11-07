@@ -52,4 +52,8 @@ public class TournamentService {
         tournament.addTeam(team);
         tournamentDao.save(tournament);
     }
+
+    public void startTournament(final Tournament tournament) {
+
+    }
 }

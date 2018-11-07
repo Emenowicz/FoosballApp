@@ -1,10 +1,12 @@
 package com.michalowicz.inzynierka.data;
 
+import com.michalowicz.inzynierka.dao.MatchDao;
 import com.michalowicz.inzynierka.dao.RuleSetDao;
 import com.michalowicz.inzynierka.dao.TeamDao;
 import com.michalowicz.inzynierka.dao.TournamentDao;
 import com.michalowicz.inzynierka.dao.UserDao;
 import com.michalowicz.inzynierka.dao.UsergroupDao;
+import com.michalowicz.inzynierka.entity.Match;
 import com.michalowicz.inzynierka.entity.RuleSet;
 import com.michalowicz.inzynierka.entity.RuleSetType;
 import com.michalowicz.inzynierka.entity.Team;
@@ -18,8 +20,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Component
 public class InitialDataLoader implements ApplicationRunner {
@@ -34,6 +38,8 @@ public class InitialDataLoader implements ApplicationRunner {
     RuleSetDao ruleSetDao;
     @Resource
     TeamDao teamDao;
+    @Resource
+    MatchDao matchDao;
     @Resource
     PasswordEncoder passwordEncoder;
 
@@ -102,8 +108,25 @@ public class InitialDataLoader implements ApplicationRunner {
         team.setPrivate(true);
         team.setPassword("password");
         team.addPlayer(users.get(random.nextInt(users.size())));
+        team.addPlayer(users.get(random.nextInt(users.size())));
         team.addTournament(dawidTournament);
         teamDao.save(team);
+
+        Team team2 = new Team();
+        team.setName("antydawdziakowyTeam");
+        team.addPlayer(users.get(random.nextInt(users.size())));
+        team.addPlayer(users.get(random.nextInt(users.size())));
+        team.addTournament(dawidTournament);
+        teamDao.save(team2);
+
+        //MATCHES
+        Set<Match> matches = new HashSet<>();
+        Match match = new Match();
+        match.addTournament(dawidTournament);
+        match.setTeamOne(team);
+        match.setTeamTwo(team2);
+        matches.add(match);
+        matchDao.saveAll(matches);
 
     }
 }

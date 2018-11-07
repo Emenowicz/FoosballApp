@@ -95,4 +95,5 @@ public class Team {
     public void setPassword(final String password) {
         this.password = password;
     }
+
 }

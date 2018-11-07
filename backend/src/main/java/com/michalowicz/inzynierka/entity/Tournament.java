@@ -55,6 +55,10 @@ public class Tournament {
     @JsonIgnoreProperties(value = {"tournaments"})
     private RuleSet ruleSet;
 
+    @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = {"tournament"})
+    private Set<Match> matches = new HashSet<>();
+
     public Tournament() {
     }
 
@@ -162,5 +166,18 @@ public class Tournament {
 
     public void setDescription(final String description) {
         this.description = description;
+    }
+
+    public Set<Match> getMatches() {
+        return matches;
+    }
+
+    public void setMatches(final Set<Match> matches) {
+        this.matches = matches;
+    }
+
+    public void addMatch(final Match match){
+        this.matches.add(match);
+        match.setTournament(this);
     }
 }

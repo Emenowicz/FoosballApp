@@ -211,6 +211,7 @@
     import required from "vuelidate/src/validators/required";
     import minLength from "vuelidate/src/validators/minLength";
     import sameAs from "vuelidate/src/validators/sameAs";
+    import {USER_REQUEST} from "../store/actions/user";
 
     export default {
         name: "TournamentPage",
@@ -237,14 +238,15 @@
             }
         },
         mounted() {
-            this.loadTournament()
+            this.loadData()
         },
         methods: {
-            loadTournament() {
+            loadData() {
                 axios({
                     url: ApiConstants.GET_TOURNAMENT + this.$route.params.id,
                     method: "GET"
                 }).then(resp => {
+                    this.$store.dispatch(USER_REQUEST)
                     this.tournament = resp.data
                 }).catch(err => {
                     this.closeAlerts()
@@ -252,6 +254,7 @@
                 })
             },
             createNewTeam() {
+                if(!this.isParticipant)
                 axios({
                     url: ApiConstants.CREATE_TEAM(this.$route.params.id),
                     data: {
@@ -263,7 +266,7 @@
                     method: "POST"
                 }).then(() => {
                     this.dialog = false
-                    this.loadTournament()
+                    this.loadData()
                 }).catch(err => {
                     this.closeAlerts()
                     this.errors = [...this.errors, err.response.data]
@@ -280,7 +283,7 @@
                         },
                         method: "POST"
                     }).then(() => {
-                        this.loadTournament()
+                        this.loadData()
                         this.closeAlerts()
                     }).catch(err => {
                         this.closeAlerts()
@@ -329,6 +332,8 @@
                 const errors = []
                 if (!this.$v.password.$dirty) return errors
                 !this.$v.password.required && errors.push('Hasło jest wymagane')
+                !this.$v.password.minLength && errors.push('Hasło musi mieć minimum 4 znaki')
+
                 return errors
             },
             confirmPasswordErrors() {

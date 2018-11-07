@@ -61,6 +61,7 @@
 <script>
     import ApiConstants from "../constants/ApiConstants";
     import axios from 'axios';
+    import {USER_REQUEST} from "../store/actions/user";
 
     export default {
         name: "AllTournaments",
@@ -70,11 +71,12 @@
             }
         },
         methods: {
-            loadTournaments() {
+            loadData() {
                 axios({
                     url: ApiConstants.GET_ALL_TOURNAMENTS,
                     method: "GET"
                 }).then(resp => {
+                    this.$store.dispatch(USER_REQUEST)
                     this.tournaments = resp.data
                 })
             },
@@ -83,7 +85,7 @@
             }
         },
         created() {
-            this.loadTournaments()
+            this.loadData()
         }
     }
 </script>
