@@ -51,31 +51,18 @@
                         <v-layout class="mb-3" wrap>
                             <v-flex>
                                 <v-card>
-                                    <v-card-title class="subheading">
-                                        Uczestnicy
-                                    </v-card-title>
-                                    <v-card-text>
-                                        <v-data-iterator :items="tournament.participants" content-tag="v-layout" row wrap
-                                                hide-actions>
-                                            <v-flex slot="item" slot-scope="props" xs12 sm6 md4 lg3>
-                                                <v-card>
-                                                    <v-card-title><h4>{{props.item.username}}</h4></v-card-title>
-                                                </v-card>
-                                            </v-flex>
-                                        </v-data-iterator>
-                                    </v-card-text>
-                                </v-card>
-                            </v-flex>
-                            <v-flex>
-                                <v-card>
-                                    <v-card-title class="subheading">
-                                        Drużyny
+                                    <v-card-title>
+                                        <p class="subheading">Drużyny</p>
+                                        <v-spacer></v-spacer>
+                                        <v-btn class="green" @click="dialog=!dialog" dark>Dołącz do turnieju</v-btn>
                                     </v-card-title>
                                     <v-card-text>
                                         <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap hide-actions>
                                             <v-flex slot="item" slot-scope="props" xs12 sm6 md4 lg3>
                                                 <v-card v-if="props.item.size!==0">
-                                                    <v-card-title><h4>{{props.item.name}}</h4></v-card-title>
+                                                    <v-card-title>
+                                                        <h4>{{props.item.name}}</h4>
+                                                    </v-card-title>
                                                     <v-card-text>
                                                         <v-list>
                                                             <v-list-tile v-for="player in props.item.players"
@@ -100,7 +87,7 @@
                                     <v-icon>account_circle</v-icon>
                                     <v-icon>close</v-icon>
                                 </v-btn>
-                                <v-btn fab dark small color="green" >
+                                <v-btn fab dark small color="green">
                                     <v-icon>edit</v-icon>
                                 </v-btn>
                                 <v-btn fab dark small color="indigo">
@@ -115,18 +102,74 @@
                 </v-card>
             </v-flex>
         </v-layout>
+        <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <v-card>
+                <v-toolbar dark color="green">
+                    <v-btn icon dark @click.native="dialog = false">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Utwórz drużynę lub dołącz do istniejącej</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-toolbar-items>
+                        <v-btn dark flat @click.native="createNewTeam">Dołącz</v-btn>
+                    </v-toolbar-items>
+                </v-toolbar>
+                <v-card-text>
+                    <v-layout wrap justify-space-around>
+                        <v-flex xs12 md4>
+                            <v-card>
+                                <v-card-title class="headline">
+                                    Nowa drużyna
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-form @submit.prevent="createNewTeam">
+                                        <v-text-field v-model="newTeam.name" label="Nazwa drużyny"></v-text-field>
+                                        <v-radio-group v-model="newTeam.privacy" label="Prywatność">
+                                            <v-layout>
+                                                <v-radio value="open" label="Otwarta" color="green"></v-radio>
+                                                <v-radio value="private" label="Na zaproszenie" color="red"></v-radio>
+                                            </v-layout>
+                                        </v-radio-group>
+                                        <v-layout v-if="newTeam.privacy==='private'">
+                                            <v-text-field prepend-icon="lock" v-model="password" name="Password"
+                                                    label="Hasło dołączania" type="password"
+                                                    :error-messages="passwordErrors" @blur="$v.password.$touch()"
+                                                    @click="$v.password.$touch()"></v-text-field>
+                                            <v-text-field prepend-icon="lock" v-model="confirmPassword" name="ConfirmPassword"
+                                                    label="Potwierdź hasło" type="password"
+                                                    :error-messages="confirmPasswordErrors" @blur="$v.confirmPassword.$touch()"
+                                                    @click="$v.confirmPassword.$touch()"></v-text-field>
+                                        </v-layout>
+                                    </v-form>
+                                </v-card-text>
+                            </v-card>
+                        </v-flex>
+                    </v-layout>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
 <script>
     import axios from 'axios'
     import ApiConstants from "../constants/ApiConstants";
+    import required from "vuelidate/src/validators/required";
+    import minLength from "vuelidate/src/validators/minLength";
+    import sameAs from "vuelidate/src/validators/sameAs";
 
     export default {
         name: "TournamentPage",
         data() {
             return {
                 tournament: '',
+                newTeam: {
+                    name: '',
+                    privacy: 'open',
+                },
+                password: '',
+                confirmPassword: '',
+                dialog: false,
                 errors: []
             }
         },
@@ -143,7 +186,51 @@
                 }).catch(err => {
                     this.errors.push(...this.errors + err)
                 })
+            },
+            createNewTeam() {
+                axios({
+                    url: ApiConstants.CREATE_TEAM(this.$route.params.id),
+                    data: {
+                        name: this.newTeam.name,
+                        privacy: this.newTeam.privacy,
+                        password: this.newTeam.privacy === "private" ? this.password : ''
+
+                    },
+                    method: "POST"
+                }).then(() => {
+                    this.dialog = false
+                }).catch(err => {
+                    this.errors.push(...this.errors + err)
+                })
             }
+        },
+        validations: {
+            password: {
+                required,
+                minLength: minLength(4)
+            },
+            confirmPassword: {
+                required,
+                sameAsPassword: sameAs('password')
+            },
+        },
+        computed: {
+            isParticipant() {
+                return null
+            },
+            passwordErrors() {
+                const errors = []
+                if (!this.$v.password.$dirty) return errors
+                !this.$v.password.required && errors.push('Hasło jest wymagane')
+                return errors
+            },
+            confirmPasswordErrors() {
+                const errors = []
+                if (!this.$v.confirmPassword.$dirty) return errors
+                !this.$v.confirmPassword.required && errors.push('Powtórzenie hasła jest wymagane')
+                !this.$v.confirmPassword.sameAsPassword && errors.push('Hasła muszą się zgadzać')
+                return errors
+            },
         }
     }
 </script>
@@ -152,6 +239,7 @@
     p {
         overflow-wrap: break-word;
     }
+
     .floating-button-corner {
         bottom: 10%;
         right: 5%;

@@ -10,6 +10,12 @@ export default {
     GET_ALL_TOURNAMENTS: API_ROOT + "tournaments/",
     CREATE_NEW_TOURNAMENT: API_ROOT + "tournaments/create",
     GET_DEFAULT_RULESETS: API_ROOT + "rulesets/default",
-    GET_TOURNAMENT: API_ROOT + "tournaments/"
+    GET_TOURNAMENT: API_ROOT + "tournaments/",
+    /**
+     * @return {string}
+     */
+    CREATE_TEAM: function (tournamentId) {
+        return this.GET_TOURNAMENT + tournamentId + "/createTeam"
+    }
 
 }

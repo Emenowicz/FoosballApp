@@ -22,15 +22,17 @@
                                     </tr>
                                 </template>
                                 <template slot="expand" slot-scope="props">
-                                    <v-card flat>
-                                        <v-card-text>
-                                            <p class="mx-3">{{props.item.description}}</p>
-                                            <v-btn @click="openTournamentPage(props.item.id)">Zobacz turniej</v-btn>
-                                            <v-btn>Usuń turniej</v-btn>
-                                            <v-btn v-if="props.item.status==='Otwarty'">Rozpocznij</v-btn>
-                                            <v-btn v-if="props.item.status==='W trakcie'">Zakończ</v-btn>
-                                        </v-card-text>
-                                    </v-card>
+                                    <v-flex>
+                                        <v-card flat>
+                                            <v-card-text>
+                                                <p>Opis: {{props.item.description}}</p>
+                                                <v-btn @click="openTournamentPage(props.item.id)">Zobacz turniej</v-btn>
+                                                <v-btn>Usuń turniej</v-btn>
+                                                <v-btn v-if="props.item.status==='Otwarty'">Rozpocznij</v-btn>
+                                                <v-btn v-if="props.item.status==='W trakcie'">Zakończ</v-btn>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-flex>
                                 </template>
                             </v-data-table>
                         </v-card-text>
@@ -79,10 +81,6 @@
                         value: 'status'
                     },
                     {
-                        text: 'Czas utworzenia',
-                        value: 'timeCreated'
-                    },
-                    {
                         text: 'Punkty do zwycięstwa',
                         value: 'ruleSet.pointsToWin'
                     },
@@ -93,7 +91,11 @@
                     {
                         text: 'Wielkość drużyny',
                         value: 'ruleSet.teamSize'
-                    }
+                    },
+                    {
+                        text: 'Czas utworzenia',
+                        value: 'timeCreated'
+                    },
                 ],
             }
         },
