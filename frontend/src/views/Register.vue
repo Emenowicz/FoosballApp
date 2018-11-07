@@ -1,33 +1,35 @@
 <template>
-    <v-container fill-height>
-        <v-layout align-center justify-center>
-            <v-flex xs12 sm8>
-                <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert" transition="fade-transition">
-                    Coś poszło nie
-                    tak. Popraw dane
-                    i spróbuj ponownie
-                </v-alert>
-                <h3 class="headline">Zarejestruj się</h3>
-                <v-form @submit.prevent="register">
-                    <v-text-field prepend-icon="person" name="Username" label="Login"
-                                  v-model="username" :error-messages="usernameErrors" @blur="$v.username.$touch()"
-                                  @input="$v.username.$touch()"></v-text-field>
-                    <v-text-field prepend-icon="lock" name="Password" label="Hasło" type="password"
-                                  v-model="password" :error-messages="passwordErrors" @blur="$v.password.$touch()"
-                                  @click="$v.password.$touch()"></v-text-field>
-                    <v-text-field prepend-icon="repeat" name="ConfirmPassword" label="Potwierdź hasło"
-                                  type="password" v-model="confirmPassword" :error-messages="confirmPasswordErrors"
-                                  @blur="$v.confirmPassword.$touch()"
-                                  @input="$v.confirmPassword.$touch()"></v-text-field>
-                    <v-text-field prepend-icon="mail" name="Email" label="E-mail" v-model="email"
-                                  :error-messages="emailErrors" @blur="$v.email.$touch()"
-                                  @input="$v.email.$touch()"></v-text-field>
-                    <v-btn type="submit">Zarejestruj się</v-btn>
-                    <v-btn v-on:click="redirectToLogin">Posiadam konto</v-btn>
-                </v-form>
-            </v-flex>
-        </v-layout>
-    </v-container>
+    <v-fade-transition>
+        <v-container fill-height>
+            <v-layout align-center justify-center>
+                <v-flex xs12 sm8>
+                    <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert" transition="fade-transition">
+                        Coś poszło nie
+                        tak. Popraw dane
+                        i spróbuj ponownie
+                    </v-alert>
+                    <h3 class="headline">Zarejestruj się</h3>
+                    <v-form @submit.prevent="register">
+                        <v-text-field prepend-icon="person" name="Username" label="Login"
+                                v-model="username" :error-messages="usernameErrors" @blur="$v.username.$touch()"
+                                @input="$v.username.$touch()"></v-text-field>
+                        <v-text-field prepend-icon="lock" name="Password" label="Hasło" type="password"
+                                v-model="password" :error-messages="passwordErrors" @blur="$v.password.$touch()"
+                                @click="$v.password.$touch()"></v-text-field>
+                        <v-text-field prepend-icon="repeat" name="ConfirmPassword" label="Potwierdź hasło"
+                                type="password" v-model="confirmPassword" :error-messages="confirmPasswordErrors"
+                                @blur="$v.confirmPassword.$touch()"
+                                @input="$v.confirmPassword.$touch()"></v-text-field>
+                        <v-text-field prepend-icon="mail" name="Email" label="E-mail" v-model="email"
+                                :error-messages="emailErrors" @blur="$v.email.$touch()"
+                                @input="$v.email.$touch()"></v-text-field>
+                        <v-btn type="submit">Zarejestruj się</v-btn>
+                        <v-btn v-on:click="redirectToLogin">Posiadam konto</v-btn>
+                    </v-form>
+                </v-flex>
+            </v-layout>
+        </v-container>
+    </v-fade-transition>
 </template>
 
 <script>

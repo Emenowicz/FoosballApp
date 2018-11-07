@@ -99,7 +99,8 @@ public class InitialDataLoader implements ApplicationRunner {
         tournamentDao.save(dawidTournament);
         Team team = new Team();
         team.setName("dawdziakowyTeam");
-        team.setPrivate(false);
+        team.setPrivate(true);
+        team.setPassword("password");
         team.addPlayer(users.get(random.nextInt(users.size())));
         team.addTournament(dawidTournament);
         teamDao.save(team);

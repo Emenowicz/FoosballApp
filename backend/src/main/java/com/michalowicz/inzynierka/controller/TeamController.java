@@ -1,5 +1,6 @@
 package com.michalowicz.inzynierka.controller;
 
+import com.michalowicz.inzynierka.dto.TeamPasswordForm;
 import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.User;
 import com.michalowicz.inzynierka.service.TeamService;
@@ -24,12 +25,12 @@ public class TeamController {
     UserService userService;
 
     @RequestMapping(value = "/{teamId}/join", method = RequestMethod.POST)
-    public ResponseEntity joinToTournament(@PathVariable("teamId") Long teamId, @RequestBody(required = false) String teamPassword, Principal principal) {
+    public ResponseEntity joinToTournament(@PathVariable("teamId") Long teamId, @RequestBody(required = false) TeamPasswordForm teamPasswordForm, Principal principal) {
         try {
             Team team = teamService.getTeam(teamId);
             User loggedUser = userService.getLoggedUser(principal.getName());
-            if (team.isPrivate() && teamPassword != null) {
-                if (!team.getPassword().equals(teamPassword)) {
+            if (team.isPrivate() && teamPasswordForm.getPassword() != null) {
+                if (!team.getPassword().equals(teamPasswordForm.getPassword())) {
                     throw new Exception("Hasło się nie zgadza");
                 }
             }
