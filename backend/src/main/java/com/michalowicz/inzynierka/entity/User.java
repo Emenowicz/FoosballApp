@@ -4,8 +4,9 @@ package com.michalowicz.inzynierka.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.sql.Blob;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class User {
@@ -30,25 +34,27 @@ public class User {
     @NotBlank
     private String username;
     @NotBlank
+    @JsonIgnore
     private String password;
     @Email
     private String email;
     @Lob
     private Blob avatar;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JsonIgnoreProperties(value = {"users"})
     private Set<Usergroup> usergroups = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner",fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"owner"})
     private Set<Tournament> ownedTournaments = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Transient
     @JsonIgnoreProperties(value = {"participants"})
     private Set<Tournament> joinedTournaments = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "players",fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"players"})
     private List<Team> teams = new ArrayList<>();
 
@@ -140,8 +146,9 @@ public class User {
         return joinedTournaments;
     }
 
-    public void setJoinedTournaments(final Set<Tournament> joinedTournaments) {
-        this.joinedTournaments = joinedTournaments;
+    @PostLoad
+    public void setJoinedTournaments(){
+        this.joinedTournaments = teams.stream().map(Team::getTournament).collect(Collectors.toSet());
     }
 
     public void joinToTournament(final Tournament tournament) {

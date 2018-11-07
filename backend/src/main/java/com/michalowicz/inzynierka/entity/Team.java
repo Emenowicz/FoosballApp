@@ -1,8 +1,10 @@
 package com.michalowicz.inzynierka.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,7 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Team {
@@ -21,11 +24,17 @@ public class Team {
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonIgnoreProperties(value = {"teams"})
-    private List<User> players;
+    private boolean isPrivate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = {"teams","joinedTournaments","ownedTournaments"})
+    private Set<User> players = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.SAVE_UPDATE)
     @JsonIgnoreProperties(value = {"teams"})
     private Tournament tournament;
 
@@ -45,11 +54,11 @@ public class Team {
         this.name = name;
     }
 
-    public List<User> getPlayers() {
+    public Set<User> getPlayers() {
         return players;
     }
 
-    public void setPlayers(final List<User> players) {
+    public void setPlayers(final Set<User> players) {
         this.players = players;
     }
 
@@ -69,5 +78,21 @@ public class Team {
     public void addTournament(final Tournament tournament) {
         this.tournament = tournament;
         tournament.getTeams().add(this);
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(final boolean privacy) {
+        this.isPrivate = privacy;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(final String password) {
+        this.password = password;
     }
 }

@@ -1,9 +1,10 @@
 package com.michalowicz.inzynierka.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,9 +12,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -36,19 +38,21 @@ public class Tournament {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timeCreated = LocalDateTime.now();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JsonIgnoreProperties(value = {"ownedTournaments", "joinedTournaments"})
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.MERGE})
+    @JsonIgnoreProperties(value = {"ownedTournaments", "joinedTournaments", "teams"})
     private User owner;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JsonIgnoreProperties(value = {"joinedTournaments", "ownedTournaments"})
+    @Transient
+    @JsonIgnoreProperties(value = {"joinedTournaments", "ownedTournaments", "teams"})
     private Set<User> participants = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"tournament"})
     private Set<Team> teams = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.SAVE_UPDATE)
+    @JsonIgnoreProperties(value = {"tournaments"})
     private RuleSet ruleSet;
 
     public Tournament() {
@@ -112,7 +116,10 @@ public class Tournament {
         return participants;
     }
 
-    public void setParticipants(final Set<User> participants) {
+    @PostLoad
+    public void setParticipants() {
+        Set<User> participants = new HashSet<>();
+        teams.stream().map(Team::getPlayers).forEach(participants::addAll);
         this.participants = participants;
     }
 

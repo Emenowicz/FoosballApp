@@ -1,8 +1,7 @@
 package com.michalowicz.inzynierka.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,8 +31,8 @@ public class RuleSet {
 
     private int teamSize;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
-    @JsonIgnore
+    @OneToMany(mappedBy = "ruleSet",fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = {"ruleSet"})
     private Set<Tournament> tournaments = new HashSet<>();
 
     public RuleSet() {
