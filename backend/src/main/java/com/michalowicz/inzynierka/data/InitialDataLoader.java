@@ -73,6 +73,25 @@ public class InitialDataLoader implements ApplicationRunner {
         }
         tournamentDao.saveAll(tournaments);
 
+        //PLAYERS
+        String[] teamNames = {"Super drużyna", "Najlepsi","TurboGracze", "Janusze", "Drużyna śmierci", "Andrzej", "Tygrysy", "Cośtam", "Inne cośtam"};
+        List<Team> teams = new ArrayList<>();
+        for(String teamName : teamNames){
+            Team team = new Team();
+            team.setName(teamName);
+            Tournament teamTournament = tournaments.get(random.nextInt(tournaments.size()));
+            team.addTournament(teamTournament);
+            for(int i=0;i<teamTournament.getRuleSet().getTeamSize();i++){
+                if(team.getPlayers().isEmpty()){
+                    while(team.getPlayers().isEmpty()){
+                        team.addPlayer(users.get(random.nextInt(users.size())));
+                    }
+                }else{
+                    team.addPlayer(users.get(random.nextInt(users.size())));
+                }
+            }
+            teamDao.saveAll(teams);
+        }
         //DAWID
         Tournament dawidTournament = new Tournament("Dawdziakowy turniej");
         dawidTournament.addOwner(dawid);
@@ -81,7 +100,7 @@ public class InitialDataLoader implements ApplicationRunner {
         Team team = new Team();
         team.setName("dawdziakowyTeam");
         team.setPrivate(false);
-        team.addPlayer(dawid);
+        team.addPlayer(users.get(random.nextInt(users.size())));
         team.addTournament(dawidTournament);
         teamDao.save(team);
 

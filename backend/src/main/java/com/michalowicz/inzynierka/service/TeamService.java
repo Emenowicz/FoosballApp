@@ -19,7 +19,7 @@ public class TeamService {
         Team team = new Team();
         team.setName(teamForm.getName());
         team.setPrivate(teamForm.getPrivacy().equals("private"));
-        if(team.isPrivate()){
+        if (team.isPrivate()) {
             team.setPassword(teamForm.getPassword());
         }
         team.addTournament(tournament);
@@ -28,8 +28,18 @@ public class TeamService {
         return team;
     }
 
-    public void addPlayer(final Team team, final User user) {
-        team.addPlayer(user);
-        teamDao.save(team);
+    public Team getTeam(final Long teamId) {
+        return teamDao.getById(teamId);
+
     }
+
+    public void addPlayer(final Team team, final User user) throws Exception {
+        if(!team.getTournament().getParticipants().contains(user)){
+            team.addPlayer(user);
+            teamDao.save(team);
+        } else {
+            throw new Exception("Użytkownik jest już dołączony do turnieju");
+        }
+    }
+
 }

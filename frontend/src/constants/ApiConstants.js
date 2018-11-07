@@ -16,6 +16,13 @@ export default {
      */
     CREATE_TEAM: function (tournamentId) {
         return this.GET_TOURNAMENT + tournamentId + "/createTeam"
+    },
+
+    /**
+     * @return {string}
+     */
+    JOIN_TO_TEAM: function (teamId) {
+        return API_ROOT + "teams/" + teamId + "/join"
     }
 
 }

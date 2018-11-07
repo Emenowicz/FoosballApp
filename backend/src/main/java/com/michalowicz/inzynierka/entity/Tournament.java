@@ -113,6 +113,8 @@ public class Tournament {
     }
 
     public Set<User> getParticipants() {
+        Set<User> participants = new HashSet<>();
+        teams.stream().map(Team::getPlayers).forEach(participants::addAll);
         return participants;
     }
 

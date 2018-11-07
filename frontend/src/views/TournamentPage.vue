@@ -1,6 +1,9 @@
 <template>
     <v-container fluid fill-height grid-list-xl>
-        <v-layout align-center justify-center>
+        <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlerts" transition="fade-transition">
+            {{errors[0]}}
+        </v-alert>
+        <v-layout row align-center justify-center>
             <v-flex d-flex fill-height>
                 <v-card>
                     <v-card-title class="headline pb-0">
@@ -54,18 +57,23 @@
                                     <v-card-title>
                                         <p class="subheading">Drużyny</p>
                                         <v-spacer></v-spacer>
-                                        <v-btn class="green" @click="dialog=!dialog" dark>Dołącz do turnieju</v-btn>
+                                        <v-btn v-if="!isParticipant" class="green" @click="dialog=!dialog"
+                                                dark>Dołącz do turnieju
+                                        </v-btn>
                                     </v-card-title>
                                     <v-card-text>
                                         <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap hide-actions>
                                             <v-flex slot="item" slot-scope="props" xs12 sm6 md4 lg3>
                                                 <v-card v-if="props.item.size!==0">
-                                                    <v-card-title>
+                                                    <v-card-title class="pb-1">
                                                         <h4>{{props.item.name}}</h4>
+                                                        <v-spacer></v-spacer>
+                                                        <h4>{{props.item.players.length}}/{{tournament.ruleSet.teamSize}}</h4>
                                                     </v-card-title>
-                                                    <v-card-text>
+                                                    <v-card-text class="pt-1">
                                                         <v-list>
-                                                            <v-list-tile v-for="player in props.item.players"
+                                                            <v-subheader class="pa-1">Skład:</v-subheader>
+                                                            <v-list-tile class="py-1" v-for="player in props.item.players"
                                                                     :key="player.username">
                                                                 <v-list-tile-content>
                                                                     <v-list-tile-title
@@ -73,6 +81,12 @@
                                                                 </v-list-tile-content>
                                                             </v-list-tile>
                                                         </v-list>
+                                                        <v-layout justify-end>
+                                                            <v-btn v-if="!isParticipant" @click="joinToTeam(props.item)" icon dark
+                                                                    color="green">
+                                                                <v-icon>add</v-icon>
+                                                            </v-btn>
+                                                        </v-layout>
                                                     </v-card-text>
                                                 </v-card>
                                             </v-flex>
@@ -81,7 +95,7 @@
                                 </v-card>
                             </v-flex>
                         </v-layout>
-                        <v-layout>
+                        <v-layout v-if="isOwner">
                             <v-speed-dial fixed right bottom class="floating-button-corner">
                                 <v-btn slot="activator" color="blue darken-2" dark fab>
                                     <v-icon>account_circle</v-icon>
@@ -102,6 +116,9 @@
                 </v-card>
             </v-flex>
         </v-layout>
+        <v-dialog v-model="passwordDialog">
+
+        </v-dialog>
         <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
             <v-card>
                 <v-toolbar dark color="green">
@@ -152,7 +169,8 @@
 </template>
 
 <script>
-    import axios from 'axios'
+    import
+        axios from 'axios'
     import ApiConstants from "../constants/ApiConstants";
     import required from "vuelidate/src/validators/required";
     import minLength from "vuelidate/src/validators/minLength";
@@ -162,7 +180,15 @@
         name: "TournamentPage",
         data() {
             return {
-                tournament: '',
+                tournament: {
+                    teams: [
+                        {
+                            players: [
+                                {username: ''}
+                            ]
+                        }
+                    ]
+                },
                 newTeam: {
                     name: '',
                     privacy: 'open',
@@ -170,6 +196,7 @@
                 password: '',
                 confirmPassword: '',
                 dialog: false,
+                passwordDialog: false,
                 errors: []
             }
         },
@@ -199,9 +226,30 @@
                     method: "POST"
                 }).then(() => {
                     this.dialog = false
+                    this.loadTournament()
                 }).catch(err => {
                     this.errors.push(...this.errors + err)
                 })
+            },
+            joinToTeam(team) {
+                if (team.private && !this.passwordDialog) {
+                    this.passwordDialog = true
+                } else if (!this.isParticipant) {
+                    axios({
+                        url: ApiConstants.JOIN_TO_TEAM(team.id),
+                        data: {
+                            password: team.private ? this.password : ''
+                        },
+                        method: "POST"
+                    }).then(() => {
+                        this.loadTournament()
+                    }).catch(err => {
+                        this.errors.push(...this.errors + err)
+                    })
+                }
+            },
+            closeAlerts() {
+                this.errors = []
             }
         },
         validations: {
@@ -216,7 +264,17 @@
         },
         computed: {
             isParticipant() {
-                return null
+                return this.$store.getters.getProfile.joinedTournaments.filter(tournament => {
+                    return tournament.id === this.tournament.id;
+                }).length !== 0;
+            },
+            isOwner() {
+                return this.$store.getters.getProfile.ownedTournaments.filter(tournament => {
+                    return tournament.id === this.tournament.id;
+                }).length !== 0;
+            },
+            hasErrors() {
+                return !!this.errors.length
             },
             passwordErrors() {
                 const errors = []
