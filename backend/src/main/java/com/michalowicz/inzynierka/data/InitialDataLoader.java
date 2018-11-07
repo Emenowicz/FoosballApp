@@ -1,11 +1,13 @@
 package com.michalowicz.inzynierka.data;
 
 import com.michalowicz.inzynierka.dao.RuleSetDao;
+import com.michalowicz.inzynierka.dao.TeamDao;
 import com.michalowicz.inzynierka.dao.TournamentDao;
 import com.michalowicz.inzynierka.dao.UserDao;
 import com.michalowicz.inzynierka.dao.UsergroupDao;
 import com.michalowicz.inzynierka.entity.RuleSet;
 import com.michalowicz.inzynierka.entity.RuleSetType;
+import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.Tournament;
 import com.michalowicz.inzynierka.entity.User;
 import com.michalowicz.inzynierka.entity.Usergroup;
@@ -31,6 +33,8 @@ public class InitialDataLoader implements ApplicationRunner {
     @Resource
     RuleSetDao ruleSetDao;
     @Resource
+    TeamDao teamDao;
+    @Resource
     PasswordEncoder passwordEncoder;
 
     Random random = new Random();
@@ -45,6 +49,7 @@ public class InitialDataLoader implements ApplicationRunner {
         //USERS
         List<User> users = new ArrayList<>();
         User dawid = new User("dawid", passwordEncoder.encode("dawid"), "dawid@dawid.dawid");
+        dawid.addUsergroup(usergroup);
         users.add(dawid);
         for (int i = 0; i < 30; i++) {
             String login = "user" + i;
@@ -64,20 +69,21 @@ public class InitialDataLoader implements ApplicationRunner {
             Tournament tournament = new Tournament(tournamentName);
             tournament.addOwner(users.get(random.nextInt(users.size())));
             tournament.addRuleSet(standardRuleSet);
-            for (int i = 0; i < 10; i++) {
-                tournament.addParticipant(users.get(random.nextInt(users.size())));
-            }
             tournaments.add(tournament);
         }
         tournamentDao.saveAll(tournaments);
 
-        //        user1.addUsergroup(adminUsergroup);
-//        userDao.save(user1);
-//        Tournament tournament = new Tournament("turnej dawida");
-//        user2.addOwnedTournament(tournament);
-//        tournamentDao.save(tournament);
-//        user2.joinToTournament(tournament);
-//        userDao.save(user2);
+        //DAWID
+        Tournament dawidTournament = new Tournament("Dawdziakowy turniej");
+        dawidTournament.addOwner(dawid);
+        dawidTournament.addRuleSet(standardRuleSet);
+        tournamentDao.save(dawidTournament);
+        Team team = new Team();
+        team.setName("dawdziakowyTeam");
+        team.setPrivate(false);
+        team.addPlayer(dawid);
+        team.addTournament(dawidTournament);
+        teamDao.save(team);
 
     }
 }

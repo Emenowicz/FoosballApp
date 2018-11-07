@@ -3,6 +3,7 @@ package com.michalowicz.inzynierka.service;
 import com.michalowicz.inzynierka.dao.RuleSetDao;
 import com.michalowicz.inzynierka.dao.TournamentDao;
 import com.michalowicz.inzynierka.dto.CreateTournamentForm;
+import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.Tournament;
 import com.michalowicz.inzynierka.entity.User;
 import javassist.NotFoundException;
@@ -18,6 +19,7 @@ public class TournamentService {
 
     @Resource
     RuleSetDao ruleSetDao;
+
 
     public List<Tournament> getAllTournaments() {
         return tournamentDao.findAll();
@@ -44,5 +46,10 @@ public class TournamentService {
             return tournament;
         }
         throw new NotFoundException("Nie znaleziono turnieju");
+    }
+
+    public void addTeam(final Tournament tournament, final Team team) {
+        tournament.addTeam(team);
+        tournamentDao.save(tournament);
     }
 }

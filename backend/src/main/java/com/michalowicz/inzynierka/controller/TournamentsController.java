@@ -1,8 +1,11 @@
 package com.michalowicz.inzynierka.controller;
 
 import com.michalowicz.inzynierka.dto.CreateTournamentForm;
+import com.michalowicz.inzynierka.dto.NewTeamForm;
+import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.Tournament;
 import com.michalowicz.inzynierka.entity.User;
+import com.michalowicz.inzynierka.service.TeamService;
 import com.michalowicz.inzynierka.service.TournamentService;
 import com.michalowicz.inzynierka.service.UserService;
 import javassist.NotFoundException;
@@ -26,6 +29,8 @@ public class TournamentsController {
 
     @Resource
     UserService userService;
+    @Resource
+    TeamService teamService;
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getAllTournaments() {
@@ -49,6 +54,18 @@ public class TournamentsController {
         try {
             Tournament tournament = tournamentService.getTournamentWithId(id);
             return new ResponseEntity(tournament, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/{tournamentId}/createTeam", method = RequestMethod.POST)
+    public ResponseEntity createTeam(@PathVariable("tournamentId") Long id, @RequestBody NewTeamForm form, Principal principal) {
+        try {
+            User user = userService.getLoggedUser(principal.getName());
+            Tournament tournament = tournamentService.getTournamentWithId(id);
+            Team team = teamService.createNewTeam(form,tournament, user);
+            return new ResponseEntity(HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         }
