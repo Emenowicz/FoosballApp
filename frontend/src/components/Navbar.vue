@@ -32,6 +32,14 @@
                         <v-list-tile-title>Strona główna</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
+                <v-list-tile ripple @click="goToSearchTournament">
+                    <v-list-tile-action>
+                        <v-icon>list</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Lista turniejów</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
                 <v-list-tile v-if="this.$store.getters.isAuthenticated" ripple @click="createTournament">
                     <v-list-tile-action>
                         <v-icon>add</v-icon>
@@ -58,8 +66,6 @@
 
 <script>
     import {AUTH_LOGOUT} from "../store/actions/authentication";
-    import VListTile from "vuetify/lib/components/VList/VListTile";
-    import VListTileAction from "vuetify/lib/components/VList/VListTileAction";
 
     export default {
         name: "Navbar",
@@ -75,7 +81,6 @@
                 return this.$store.getters.getProfile
             },
         },
-        components: {VListTileAction, VListTile},
         methods: {
             goHome: function () {
                 this.$router.push('/')
@@ -89,6 +94,9 @@
             },
             createTournament: function () {
                 this.$router.push('/new-tournament')
+            },
+            goToSearchTournament: function () {
+                this.$router.push('/all-tournaments')
             }
         }
 
