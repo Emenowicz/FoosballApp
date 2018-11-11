@@ -1,5 +1,7 @@
 package com.michalowicz.inzynierka.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,14 +15,15 @@ public class Round {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("rounds")
     Match match;
 
-    int scoreTeamOne;
+    private int scoreTeamOne;
 
-    int scoreTeamTwo;
+    private int scoreTeamTwo;
 
-    int maxScore;
+    private int pointsToWin;
 
     public Long getId() {
         return id;
@@ -54,11 +57,11 @@ public class Round {
         this.scoreTeamTwo = scoreTeamTwo;
     }
 
-    public int getMaxScore() {
-        return maxScore;
+    public int getPointsToWin() {
+        return pointsToWin;
     }
 
-    public void setMaxScore(final int maxScore) {
-        this.maxScore = maxScore;
+    public void setPointsToWin(final int pointsToWin) {
+        this.pointsToWin = pointsToWin;
     }
 }

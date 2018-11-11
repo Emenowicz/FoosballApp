@@ -18,7 +18,7 @@
                             <v-icon>person</v-icon>
                         </v-btn>
                         <v-btn @click="logout" large flat dark icon>
-                            <v-icon>power_off</v-icon>
+                            <v-icon>power_settings_new</v-icon>
                         </v-btn>
                     </v-layout>
                 </v-layout>

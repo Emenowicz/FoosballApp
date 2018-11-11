@@ -84,7 +84,7 @@
                 this.$router.push("/tournament/"+id);
             }
         },
-        created() {
+        mounted() {
             this.loadData()
         }
     }

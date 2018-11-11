@@ -32,6 +32,8 @@ public class Tournament {
 
     private String description;
 
+    private int teamsNeeded;
+
     @Enumerated(EnumType.STRING)
     private TournamentStatus status = TournamentStatus.Otwarty;
 
@@ -40,10 +42,10 @@ public class Tournament {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @Cascade({CascadeType.SAVE_UPDATE, CascadeType.MERGE})
-    @JsonIgnoreProperties(value = {"ownedTournaments", "joinedTournaments", "teams"})
+    @JsonIgnoreProperties(value = {"ownedTournaments", "joinedTournaments", "teams", "usergroup"})
     private User owner;
     @Transient
-    @JsonIgnoreProperties(value = {"joinedTournaments", "ownedTournaments", "teams"})
+    @JsonIgnoreProperties(value = {"joinedTournaments", "ownedTournaments", "teams", "usergroup"})
     private Set<User> participants = new HashSet<>();
 
     @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER)
@@ -56,6 +58,7 @@ public class Tournament {
     private RuleSet ruleSet;
 
     @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER)
+    @Cascade(CascadeType.ALL)
     @JsonIgnoreProperties(value = {"tournament"})
     private Set<Match> matches = new HashSet<>();
 
@@ -176,8 +179,16 @@ public class Tournament {
         this.matches = matches;
     }
 
-    public void addMatch(final Match match){
+    public void addMatch(final Match match) {
         this.matches.add(match);
         match.setTournament(this);
+    }
+
+    public int getTeamsNeeded() {
+        return teamsNeeded;
+    }
+
+    public void setTeamsNeeded(final int teamsNeeded) {
+        this.teamsNeeded = teamsNeeded;
     }
 }

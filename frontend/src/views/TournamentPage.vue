@@ -14,7 +14,7 @@
                             <p class="subheading pb-0 mb-0 green--text"
                                     v-if="tournament.status==='Otwarty'">{{tournament.status}}</p>
                             <p class="subheading pb-0 mb-0 orange--text"
-                                    v-if="tournament.status==='W trakcie'">{{tournament.status}}</p>
+                                    v-if="tournament.status==='Trwający'">{{tournament.status}}</p>
                             <p class="subheading pb-0 mb-0 red--text"
                                     v-if="tournament.status==='Zakończony'">{{tournament.status}}</p>
                         </v-card-title>
@@ -40,6 +40,10 @@
                             </v-layout>
                             <v-layout wrap align-center justify-space-around>
                                 <v-flex>
+                                    <v-text-field flat readonly label="Wymagana liczba drużyn" v-model="tournament.teamsNeeded">
+                                    </v-text-field>
+                                </v-flex>
+                                <v-flex>
                                     <v-text-field flat readonly label="Liczba graczy w drużynie"
                                             v-model="tournament.ruleSet.teamSize"></v-text-field>
                                 </v-flex>
@@ -59,23 +63,27 @@
                                         <v-card-title>
                                             <p class="subheading">Drużyny</p>
                                             <v-spacer></v-spacer>
-                                            <v-btn v-if="!isParticipant" class="green" @click="dialog=!dialog"
+                                            <v-btn v-if="!isParticipant && tournament.status === 'Otwarty'" class="green"
+                                                    @click="dialog=!dialog"
                                                     dark>Dołącz do turnieju
                                             </v-btn>
                                         </v-card-title>
                                         <v-card-text>
                                             <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap
                                                     hide-actions>
-                                                <v-flex slot="item" slot-scope="props" xs12 sm6 md4 lg3>
+                                                <v-flex slot="item" slot-scope="props" xs12 md6>
                                                     <v-card v-if="props.item.size!==0">
                                                         <v-card-title class="pb-1">
                                                             <h4>{{props.item.name}}</h4>
                                                             <v-spacer></v-spacer>
-                                                            <h4>{{props.item.players.length}}/{{tournament.ruleSet.teamSize}}</h4>
                                                         </v-card-title>
                                                         <v-card-text class="pt-1">
                                                             <v-list>
-                                                                <v-subheader class="pa-1">Skład:</v-subheader>
+                                                                <v-subheader class="pa-1">Skład drużyny:
+                                                                    <v-spacer />
+                                                                    <h4>{{props.item.players.length}}/{{tournament.ruleSet.teamSize}}</h4>
+                                                                </v-subheader>
+
                                                                 <v-list-tile class="py-1" v-for="player in props.item.players"
                                                                         :key="player.username">
                                                                     <v-list-tile-content>
@@ -85,7 +93,8 @@
                                                                 </v-list-tile>
                                                             </v-list>
                                                             <v-layout justify-end>
-                                                                <v-btn v-if="!isParticipant" @click="joinToTeam(props.item)" icon
+                                                                <v-btn v-if="!isParticipant && tournament.status==='Otwarty'"
+                                                                        @click="joinToTeam(props.item)" icon
                                                                         dark
                                                                         color="green">
                                                                     <v-icon>add</v-icon>
@@ -131,6 +140,32 @@
                                         </v-card-text>
                                     </v-card>
                                 </v-flex>
+                                <v-flex v-if="tournament.status!=='Otwarty'">
+                                    <v-card>
+                                        <v-card-title>
+                                            <p class="subheading">Mecze</p>
+                                        </v-card-title>
+                                        <v-card-text>
+                                            <v-card v-for="match in tournament.matches" class="text-xs-center">
+                                                <v-card-text>
+                                                    <v-layout justify-space-between>
+                                                        <v-flex xs5>
+                                                            <h3 class="subheading">{{match.teamOne.name}}</h3>
+                                                        </v-flex>
+                                                        <v-flex xs2>
+                                                            <h3 class="subheading">vs.</h3>
+                                                        </v-flex>
+                                                        <v-flex xs5>
+                                                            <h3 class="subheading">{{match.teamTwo.name}}</h3>
+                                                        </v-flex>
+                                                    </v-layout>
+                                                    <h2 class="display-1">{{match.scoreOne}} - {{match.scoreTwo}}</h2>
+                                                    <v-btn v-if="isInMatch(match.id)"></v-btn>
+                                                </v-card-text>
+                                            </v-card>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-flex>
                             </v-layout>
                             <v-layout v-if="isOwner">
                                 <v-speed-dial fixed right bottom class="floating-button-corner">
@@ -138,8 +173,9 @@
                                         <v-icon>account_circle</v-icon>
                                         <v-icon>close</v-icon>
                                     </v-btn>
-                                    <v-btn fab dark small color="green">
-                                        <v-icon>edit</v-icon>
+                                    <v-btn v-if="tournament.status==='Otwarty'" @click="startTournament" fab dark small
+                                            color="green">
+                                        <v-icon>play_arrow</v-icon>
                                     </v-btn>
                                     <v-btn fab dark small color="indigo">
                                         <v-icon>add</v-icon>
@@ -159,7 +195,7 @@
                         <v-btn icon dark @click.native="dialog = false">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>Utwórz drużynę lub dołącz do istniejącej</v-toolbar-title>
+                        <v-toolbar-title>Utwórz drużynę</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
                             <v-btn dark flat @click.native="createNewTeam">Dołącz</v-btn>
@@ -205,8 +241,7 @@
 </template>
 
 <script>
-    import
-        axios from 'axios'
+    import axios from 'axios'
     import ApiConstants from "../constants/ApiConstants";
     import required from "vuelidate/src/validators/required";
     import minLength from "vuelidate/src/validators/minLength";
@@ -217,15 +252,7 @@
         name: "TournamentPage",
         data() {
             return {
-                tournament: {
-                    teams: [
-                        {
-                            players: [
-                                {username: ''}
-                            ]
-                        }
-                    ]
-                },
+                tournament: {},
                 newTeam: {
                     name: '',
                     privacy: 'open',
@@ -254,23 +281,23 @@
                 })
             },
             createNewTeam() {
-                if(!this.isParticipant)
-                axios({
-                    url: ApiConstants.CREATE_TEAM(this.$route.params.id),
-                    data: {
-                        name: this.newTeam.name,
-                        privacy: this.newTeam.privacy,
-                        password: this.newTeam.privacy === "private" ? this.password : ''
+                if (!this.isParticipant)
+                    axios({
+                        url: ApiConstants.CREATE_TEAM(this.$route.params.id),
+                        data: {
+                            name: this.newTeam.name,
+                            privacy: this.newTeam.privacy,
+                            password: this.newTeam.privacy === "private" ? this.password : ''
 
-                    },
-                    method: "POST"
-                }).then(() => {
-                    this.dialog = false
-                    this.loadData()
-                }).catch(err => {
-                    this.closeAlerts()
-                    this.errors = [...this.errors, err.response.data]
-                })
+                        },
+                        method: "POST"
+                    }).then(() => {
+                        this.dialog = false
+                        this.loadData()
+                    }).catch(err => {
+                        this.closeAlerts()
+                        this.errors = [...this.errors, err.response.data]
+                    })
             },
             joinToTeam(team) {
                 if (team.private && !this.passwordDialog) {
@@ -288,17 +315,32 @@
                     }).catch(err => {
                         this.closeAlerts()
                         this.errors = [...this.errors, err.response.data]
-                    }).finally(()=>{
+                    }).finally(() => {
                         this.passwordDialog = false
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             this.password = ''
                             this.confirmPassword = ''
-                        },1000)
+                        }, 1000)
                     })
                 }
-                setTimeout(()=>{
+                setTimeout(() => {
 
                 }, 1000)
+            },
+            startTournament() {
+                axios({
+                    url: ApiConstants.START_TOURNAMENT(this.tournament.id),
+                    method: "POST"
+                }).then(() => {
+                    this.loadData()
+                }).catch(err => {
+                    this.errors = [...this.errors, err.response.data]
+                })
+            },
+            isInMatch(id) {
+                return this.$store.getters.getProfile.teams.filter(team => {
+                    return team.id === id;
+                }).length !== 0;
             },
             closeAlerts() {
                 this.errors = []

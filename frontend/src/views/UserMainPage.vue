@@ -25,7 +25,7 @@
                                     <v-flex>
                                         <v-card flat>
                                             <v-card-text>
-                                                <p>Opis: {{props.item.description}}</p>
+                                                <p v-if="props.item.description">Opis: {{props.item.description}}</p>
                                                 <v-btn @click="openTournamentPage(props.item.id)">Zobacz turniej</v-btn>
                                                 <v-btn @click="startTournament(props.item.id)" v-if="props.item.status==='Otwarty'">Rozpocznij</v-btn>
                                                 <v-btn v-if="props.item.status==='W trakcie'">Zakończ</v-btn>
@@ -119,8 +119,8 @@
                 axios({
                     url: ApiConstants.START_TOURNAMENT(tournamentId),
                     method: "POST"
-                }).then(resp=>{
-                    this.$router.dispatch(USER_REQUEST)
+                }).then(()=>{
+                    this.$store.dispatch(USER_REQUEST)
                 }).catch(err =>{
                     this.errors = [...this.errors, err.response.data]
                 })

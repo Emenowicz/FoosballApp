@@ -6,7 +6,6 @@ import com.michalowicz.inzynierka.dao.TeamDao;
 import com.michalowicz.inzynierka.dao.TournamentDao;
 import com.michalowicz.inzynierka.dao.UserDao;
 import com.michalowicz.inzynierka.dao.UsergroupDao;
-import com.michalowicz.inzynierka.entity.Match;
 import com.michalowicz.inzynierka.entity.RuleSet;
 import com.michalowicz.inzynierka.entity.RuleSetType;
 import com.michalowicz.inzynierka.entity.Team;
@@ -20,10 +19,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 @Component
 public class InitialDataLoader implements ApplicationRunner {
@@ -96,12 +93,14 @@ public class InitialDataLoader implements ApplicationRunner {
                     team.addPlayer(users.get(random.nextInt(users.size())));
                 }
             }
-            teamDao.saveAll(teams);
+            teams.add(team);
         }
+        teamDao.saveAll(teams);
         //DAWID
         Tournament dawidTournament = new Tournament("Dawdziakowy turniej");
         dawidTournament.addOwner(dawid);
         dawidTournament.addRuleSet(standardRuleSet);
+        dawidTournament.setTeamsNeeded(2);
         tournamentDao.save(dawidTournament);
         Team team = new Team();
         team.setName("dawdziakowyTeam");
@@ -113,20 +112,23 @@ public class InitialDataLoader implements ApplicationRunner {
         teamDao.save(team);
 
         Team team2 = new Team();
-        team.setName("antydawdziakowyTeam");
-        team.addPlayer(users.get(random.nextInt(users.size())));
-        team.addPlayer(users.get(random.nextInt(users.size())));
-        team.addTournament(dawidTournament);
+        team2.setName("antydawdziakowyTeam");
+        team2.addPlayer(users.get(random.nextInt(users.size())));
+        team2.addPlayer(users.get(random.nextInt(users.size())));
+        team2.addTournament(dawidTournament);
         teamDao.save(team2);
 
-        //MATCHES
-        Set<Match> matches = new HashSet<>();
-        Match match = new Match();
-        match.addTournament(dawidTournament);
-        match.setTeamOne(team);
-        match.setTeamTwo(team2);
-        matches.add(match);
-        matchDao.saveAll(matches);
+//        //MATCHES
+//        Set<Match> matches = new HashSet<>();
+//        Match match = new Match();
+//        match.addTournament(dawidTournament);
+//        match.setTeamOne(team);
+//        match.setTeamTwo(team2);
+//        matches.add(match);
+//        for(int i = 0; i<match.getTournament().getRuleSet().getRoundsToWin()*2 - 1; i++){
+//            match.addRound(new Round());
+//        }
+//        matchDao.saveAll(matches);
 
     }
 }

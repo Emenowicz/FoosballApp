@@ -3,13 +3,17 @@ package com.michalowicz.inzynierka.service;
 import com.michalowicz.inzynierka.dao.RuleSetDao;
 import com.michalowicz.inzynierka.dao.TournamentDao;
 import com.michalowicz.inzynierka.dto.CreateTournamentForm;
+import com.michalowicz.inzynierka.entity.Match;
 import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.Tournament;
+import com.michalowicz.inzynierka.entity.TournamentStatus;
 import com.michalowicz.inzynierka.entity.User;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -19,6 +23,9 @@ public class TournamentService {
 
     @Resource
     RuleSetDao ruleSetDao;
+
+    @Resource
+    MatchService matchService;
 
 
     public List<Tournament> getAllTournaments() {
@@ -54,6 +61,18 @@ public class TournamentService {
     }
 
     public void startTournament(final Tournament tournament) {
-
+        List<Team> teams = new ArrayList<>(tournament.getTeams());
+        Collections.shuffle(teams);
+        if (teams.size() == tournament.getTeamsNeeded()) {
+            for (int i = 0; i <teams.size(); i+=2) {
+                Match match = new Match();
+//                matchService.generateRounds(match,tournament.getRuleSet().getRoundsToWin(),tournament.getRuleSet().getPointsToWin());
+                match.setTeamOne(teams.get(i));
+                match.setTeamTwo(teams.get(i+1));
+                tournament.addMatch(match);
+            }
+            tournament.setStatus(TournamentStatus.Trwający);
+            tournamentDao.save(tournament);
+        }
     }
 }

@@ -2,7 +2,7 @@ package com.michalowicz.inzynierka.entity;
 
 public enum TournamentStatus {
     Otwarty ("Otwarty"),
-    Trwajacy ("W trakcie"),
+    Trwający ("W trakcie"),
     Zakończony ("Zakończony");
 
     private final String name;

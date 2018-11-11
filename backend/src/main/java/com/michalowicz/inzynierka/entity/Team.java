@@ -30,7 +30,7 @@ public class Team {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonIgnoreProperties(value = {"teams","joinedTournaments","ownedTournaments"})
+    @JsonIgnoreProperties(value = {"teams","joinedTournaments","ownedTournaments", "usergroups"})
     private Set<User> players = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)

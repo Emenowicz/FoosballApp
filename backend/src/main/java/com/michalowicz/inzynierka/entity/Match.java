@@ -1,5 +1,9 @@
 package com.michalowicz.inzynierka.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -7,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,16 +22,30 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @Cascade(CascadeType.SAVE_UPDATE)
+    @JsonIgnoreProperties({"matches", "teams"})
     private Tournament tournament;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.SAVE_UPDATE)
+    @JsonIgnoreProperties("tournament")
     private Team teamOne;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.SAVE_UPDATE)
+    @JsonIgnoreProperties("tournament")
     private Team teamTwo;
 
     @OneToMany(mappedBy = "match", fetch = FetchType.EAGER)
+    @Cascade(CascadeType.ALL)
+    @JsonIgnoreProperties("match")
     private List<Round> rounds = new ArrayList<>();
+
+    @Transient
+    private int scoreOne;
+
+    @Transient
+    private int scoreTwo;
 
     public Long getId() {
         return id;
@@ -60,6 +80,11 @@ public class Match {
         this.rounds = rounds;
     }
 
+    public void addRound(Round round) {
+        this.rounds.add(round);
+        round.setMatch(this);
+    }
+
     public Tournament getTournament() {
         return tournament;
     }
@@ -68,10 +93,31 @@ public class Match {
         this.tournament = tournament;
     }
 
-    public void addTournament(Tournament tournament){
+    public void addTournament(Tournament tournament) {
         this.tournament = tournament;
         tournament.getMatches().add(this);
     }
 
+    public int getScoreOne() {
+        return scoreOne;
+    }
+
+    @PostLoad
+    public void setScores() {
+        scoreOne = 0;
+        scoreTwo = 0;
+        rounds.forEach(round -> {
+            if (round.getScoreTeamOne() == round.getPointsToWin()) {
+                scoreOne++;
+            } else if (round.getScoreTeamTwo() == round.getPointsToWin()) {
+                scoreTwo++;
+            }
+        });
+
+    }
+
+    public int getScoreTwo() {
+        return scoreTwo;
+    }
 
 }
