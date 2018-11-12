@@ -24,7 +24,7 @@
                                 </v-flex>
                                 <v-flex>
                                     <v-layout column align-center justify-center>
-                                        <v-flex xs12 sm4 class="text-xs-center">Właściciel turnieju: {{tournament.owner.username}}
+                                        <v-flex v-if="!!tournament.owner" xs12 sm4 class="text-xs-center">Właściciel turnieju: {{tournament.owner.username}}
                                         </v-flex>
                                         <v-flex xs12 sm4 class="text-xs-center">
                                             Utworzony:
@@ -38,7 +38,7 @@
                                 </v-flex>
 
                             </v-layout>
-                            <v-layout wrap align-center justify-space-around>
+                            <v-layout v-if="!!tournament.ruleSet" wrap align-center justify-space-around>
                                 <v-flex>
                                     <v-text-field flat readonly label="Wymagana liczba drużyn" v-model="tournament.teamsNeeded">
                                     </v-text-field>
@@ -146,7 +146,7 @@
                                             <p class="subheading">Mecze</p>
                                         </v-card-title>
                                         <v-card-text>
-                                            <v-card v-for="match in tournament.matches" class="text-xs-center">
+                                            <v-card v-for="match in tournament.matches" :key="match.id" class="text-xs-center">
                                                 <v-card-text>
                                                     <v-layout justify-space-between>
                                                         <v-flex xs5>
@@ -274,8 +274,8 @@
                     url: ApiConstants.GET_TOURNAMENT + this.$route.params.id,
                     method: "GET"
                 }).then(resp => {
-                    this.$store.dispatch(USER_REQUEST)
                     this.tournament = resp.data
+                    this.$store.dispatch(USER_REQUEST)
                 }).catch(err => {
                     this.closeAlerts()
                     this.errors = [...this.errors, err.response.data]

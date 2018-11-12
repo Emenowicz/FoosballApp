@@ -18,7 +18,7 @@ const actions = {
         axios.get('http://localhost:8088/users/me')
             .then(resp => {
                 commit(USER_SUCCESS, resp.data)
-            }).catch(resp => {
+            }).catch(() => {
             commit(USER_ERROR)
             dispatch(AUTH_LOGOUT)
         })

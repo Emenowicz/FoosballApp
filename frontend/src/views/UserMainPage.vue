@@ -9,7 +9,7 @@
                                 <v-card-title primary class="title">Twoje oczekujące mecze</v-card-title>
                                 <v-card-text>
                                     <v-list>
-                                        <v-list-tile @click="setScoreDialog(match)" v-for="match in awaitingMatches">
+                                        <v-list-tile @click="setScoreDialog(match)" v-for="match in awaitingMatches" :key="match.id">
                                             <v-list-tile-content>
                                                 <v-list-tile-title v-if="!!match.teamTwo"
                                                         class="green--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
@@ -36,7 +36,7 @@
                                             <v-divider></v-divider>
                                             <v-card-text>
                                                 <v-form @submit.prevent="saveScore">
-                                                    <v-flex v-for="(round,index) in matchToSetScore.rounds">
+                                                    <v-flex v-for="(round,index) in matchToSetScore.rounds" :key="index">
                                                         <v-flex row class="text-xs-center">
                                                             <p class="subheading">Runda {{index+1}} </p>
                                                             <v-btn @click="matchToSetScore.rounds.splice(index,1)" absolute right
@@ -232,7 +232,7 @@
                 return tournaments[0].teams.length === tournaments[0].teamsNeeded
             },
             setScoreDialog(match) {
-                if (!!match.teamTwo) {
+                if (match.teamTwo) {
                     this.scoreDialog = true;
                     this.matchToSetScore = match
                 }
@@ -251,7 +251,7 @@
                         rounds: this.matchToSetScore.rounds,
                     },
                     method: "POST"
-                }).then(resp => {
+                }).then(() => {
                     this.loadData()
                     this.scoreDialog = false
                 }).catch(err => {

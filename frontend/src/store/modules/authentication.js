@@ -53,8 +53,8 @@ const actions = {
                 })
         })
     },
-    [AUTH_LOGOUT]: ({commit, dispatch}) => {
-        return new Promise((resolve, reject) => {
+    [AUTH_LOGOUT]: ({commit}) => {
+        return new Promise((resolve) => {
             commit(AUTH_LOGOUT)
             localStorage.removeItem('user-token')
             delete axios.defaults.headers.common['Authorization']
