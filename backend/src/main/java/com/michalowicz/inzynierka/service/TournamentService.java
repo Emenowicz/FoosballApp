@@ -68,11 +68,11 @@ public class TournamentService {
         List<Team> teams = new ArrayList<>(tournament.getTeams());
         Collections.shuffle(teams);
         if (teams.size() == tournament.getTeamsNeeded()) {
-            for (int i = 0; i <teams.size(); i+=2) {
+            for (int i = 0; i < teams.size(); i += 2) {
                 Match match = new Match();
 //                matchService.generateRounds(match,tournament.getRuleSet().getRoundsToWin(),tournament.getRuleSet().getPointsToWin());
                 match.setTeamOne(teams.get(i));
-                match.setTeamTwo(teams.get(i+1));
+                match.setTeamTwo(teams.get(i + 1));
                 tournament.addMatch(match);
             }
             tournament.setStatus(TournamentStatus.Trwający);
@@ -81,15 +81,21 @@ public class TournamentService {
     }
 
     public void advance(final Tournament tournament, final Team winner, final int level) {
-        List<Match> matches = tournament.getMatches().stream().filter(match -> match.getLevel()==level+1 && match.getTeamOne()!=null && match.getTeamTwo()==null).collect(Collectors.toList());
-        if(matches.size()==0){
-            Match match = new Match();
-            match.setTeamOne(winner);
-            match.setLevel(level+1);
-            tournament.addMatch(match);
+        int finalLevel = (int) ((int) Math.log(tournament.getTeamsNeeded()) / Math.log(2));
+        if (level == finalLevel) {
+            tournament.setWinner(winner);
+            tournament.setStatus(TournamentStatus.Zakończony);
         } else {
-            Match match = matches.get(random.nextInt(matches.size()));
-            match.setTeamTwo(winner);
+            List<Match> matches = tournament.getMatches().stream().filter(match -> match.getLevel() == level + 1 && match.getTeamOne() != null && match.getTeamTwo() == null).collect(Collectors.toList());
+            if (matches.size() == 0) {
+                Match match = new Match();
+                match.setTeamOne(winner);
+                match.setLevel(level + 1);
+                tournament.addMatch(match);
+            } else {
+                Match match = matches.get(random.nextInt(matches.size()));
+                match.setTeamTwo(winner);
+            }
         }
         tournamentDao.save(tournament);
 

@@ -48,7 +48,7 @@ public class Match {
     private int scoreTwo;
 
     @ManyToOne
-    @JsonIgnoreProperties({"tournament",""})
+    @JsonIgnoreProperties({"tournament"})
     private Team winner;
 
     public Long getId() {

@@ -31,11 +31,10 @@ public class MatchService {
     }
 
     public List<Match> getAwaitingMatches(User user) {
-        List<Match> matches = matchDao.findAll();
-        matches = matches.stream().filter(match -> match.getStatus().equals("Open")
-                && (match.getTeamOne().getPlayers().contains(user) ||
+        List<Match> matches = matchDao.getAllByStatus("Open");
+        matches = matches.stream().filter(match -> match.getTeamOne().getPlayers().contains(user) ||
                 (match.getTeamTwo() != null && match.getTeamTwo().getPlayers().contains(user))
-        )).collect(Collectors.toList());
+        ).collect(Collectors.toList());
         return matches;
     }
 

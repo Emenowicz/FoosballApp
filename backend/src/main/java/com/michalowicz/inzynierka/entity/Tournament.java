@@ -62,6 +62,10 @@ public class Tournament {
     @JsonIgnoreProperties(value = {"tournament"})
     private Set<Match> matches = new HashSet<>();
 
+    @ManyToOne
+    @JsonIgnoreProperties({"tournament"})
+    Team winner;
+
     public Tournament() {
     }
 
@@ -190,5 +194,13 @@ public class Tournament {
 
     public void setTeamsNeeded(final int teamsNeeded) {
         this.teamsNeeded = teamsNeeded;
+    }
+
+    public Team getWinner() {
+        return winner;
+    }
+
+    public void setWinner(final Team winner) {
+        this.winner = winner;
     }
 }
