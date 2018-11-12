@@ -36,9 +36,12 @@ public class MatchController {
     }
 
     @RequestMapping(value = "/{id}/setScore", method = RequestMethod.POST)
-    public ResponseEntity saveScore(@PathVariable("id") Long matchId, Principal principal,@RequestBody SetRoundsScoreForm form) {
+    public ResponseEntity saveScore(@PathVariable("id") Long matchId, Principal principal, @RequestBody SetRoundsScoreForm form) {
         User loggedUser = userService.getLoggedUser(principal.getName());
         Match match = matchService.getMatchWithId(matchId);
+        if(match.getStatus().equals("Closed")){
+            return new ResponseEntity("Mecz został już zamknięty wcześniej", HttpStatus.FORBIDDEN);
+        }
         if (match != null && (match.getTeamOne().getPlayers().contains(loggedUser) || match.getTeamTwo().getPlayers().contains(loggedUser))) {
             try {
                 matchService.finishMatch(match, form.getRounds());
@@ -50,7 +53,7 @@ public class MatchController {
                 return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
             }
         } else {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Wystąpił błąd, Spróbuj ponownie później", HttpStatus.FORBIDDEN);
         }
     }
 }

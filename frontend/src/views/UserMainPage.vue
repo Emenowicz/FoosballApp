@@ -11,8 +11,12 @@
                                     <v-list>
                                         <v-list-tile @click="setScoreDialog(match)" v-for="match in awaitingMatches">
                                             <v-list-tile-content>
-                                                <v-list-tile-title v-if="!!match.teamTwo" class="green--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}</v-list-tile-title>
-                                                <v-list-tile-title v-else class="orange--text">{{match.teamOne.name}} vs Oczekiwanie na drużynę</v-list-tile-title>
+                                                <v-list-tile-title v-if="!!match.teamTwo"
+                                                        class="green--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
+                                                </v-list-tile-title>
+                                                <v-list-tile-title v-else
+                                                        class="orange--text">{{match.teamOne.name}} vs Oczekiwanie na drużynę
+                                                </v-list-tile-title>
                                                 <v-list-tile-sub-title>{{match.tournament.name}}</v-list-tile-sub-title>
                                             </v-list-tile-content>
                                         </v-list-tile>
@@ -20,6 +24,10 @@
                                     <v-dialog v-if="scoreDialog" v-model="scoreDialog" max-width="400">
                                         <v-card>
                                             <v-card-title class="headline text-xs-center">Podaj wyniki meczu</v-card-title>
+                                            <v-alert ref="alert" class="my-4" :value="hasErrors" type="error" @click="closeAlerts"
+                                                    transition="fade-transition">
+                                                {{errors[0]}}
+                                            </v-alert>
                                             <p class="subheading font-weight-bold text-xs-center">{{matchToSetScore.teamOne.name}} vs {{matchToSetScore.teamTwo.name}}</p>
                                             <p class="subheading text-xs-center">Rundy do zwycięstwa meczu:
                                                 <b>{{matchToSetScore.tournament.ruleSet.roundsToWin}}</b></p>
@@ -27,36 +35,39 @@
                                                 <b>{{matchToSetScore.tournament.ruleSet.pointsToWin}}</b></p>
                                             <v-divider></v-divider>
                                             <v-card-text>
-                                                <v-flex v-for="(round,index) in matchToSetScore.rounds">
-                                                    <v-flex row class="text-xs-center">
-                                                        <p class="subheading">Runda {{index+1}} </p>
-                                                        <v-btn @click="matchToSetScore.rounds.splice(index,1)" absolute right icon>
-                                                            <v-icon>delete</v-icon>
-                                                        </v-btn>
+                                                <v-form @submit.prevent="saveScore">
+                                                    <v-flex v-for="(round,index) in matchToSetScore.rounds">
+                                                        <v-flex row class="text-xs-center">
+                                                            <p class="subheading">Runda {{index+1}} </p>
+                                                            <v-btn @click="matchToSetScore.rounds.splice(index,1)" absolute right
+                                                                    icon>
+                                                                <v-icon>delete</v-icon>
+                                                            </v-btn>
+                                                        </v-flex>
+                                                        <v-flex>
+                                                            <v-layout justify-center>
+                                                                <v-flex xs2>
+                                                                    <v-text-field v-model="round.scoreTeamOne"
+                                                                            mask="##"
+                                                                            :rules="[()=>!!round.scoreTeamOne || 'Wpisz wynik']"></v-text-field>
+                                                                </v-flex>
+                                                                <v-flex xs2 class="text-xs-center">
+                                                                    <p class="headline"> - </p>
+                                                                </v-flex>
+                                                                <v-flex xs2>
+                                                                    <v-text-field v-model="round.scoreTeamTwo"
+                                                                            mask="##"
+                                                                            :rules="[()=>!!round.scoreTeamTwo || 'Wpisz wynik']"></v-text-field>
+                                                                </v-flex>
+                                                            </v-layout>
+                                                        </v-flex>
+                                                        <v-divider></v-divider>
                                                     </v-flex>
-                                                    <v-flex>
-                                                        <v-layout justify-center>
-                                                            <v-flex xs2>
-                                                                <v-text-field v-model="round.scoreTeamOne"
-                                                                        mask="##"
-                                                                        :rules="[()=>!!round.scoreTeamOne || 'Wpisz wynik']"></v-text-field>
-                                                            </v-flex>
-                                                            <v-flex xs2 class="text-xs-center">
-                                                                <p class="headline"> - </p>
-                                                            </v-flex>
-                                                            <v-flex xs2>
-                                                                <v-text-field v-model="round.scoreTeamTwo"
-                                                                        mask="##"
-                                                                        :rules="[()=>!!round.scoreTeamTwo || 'Wpisz wynik']"></v-text-field>
-                                                            </v-flex>
-                                                        </v-layout>
-                                                    </v-flex>
-                                                    <v-divider></v-divider>
-                                                </v-flex>
-                                                <v-layout justify-center>
-                                                    <v-btn v-if="!isEnoughRounds" @click="addRound">Dodaj rundę</v-btn>
-                                                    <v-btn @click="saveScore">Zapisz</v-btn>
-                                                </v-layout>
+                                                    <v-layout justify-center>
+                                                        <v-btn v-if="!isEnoughRounds" @click="addRound">Dodaj rundę</v-btn>
+                                                        <v-btn type="submit">Zapisz</v-btn>
+                                                    </v-layout>
+                                                </v-form>
                                             </v-card-text>
                                         </v-card>
                                     </v-dialog>
@@ -184,7 +195,10 @@
             },
             isEnoughRounds: function () {
                 return this.matchToSetScore.rounds.length >= this.matchToSetScore.tournament.ruleSet.roundsToWin * 2 - 1;
-            }
+            },
+            hasErrors() {
+                return !!this.errors.length
+            },
         },
         methods: {
             loadData() {
@@ -218,26 +232,34 @@
                 return tournaments[0].teams.length === tournaments[0].teamsNeeded
             },
             setScoreDialog(match) {
-                if(!!match.teamTwo){
+                if (!!match.teamTwo) {
                     this.scoreDialog = true;
                     this.matchToSetScore = match
                 }
             },
             addRound() {
-                this.matchToSetScore.rounds = [...this.matchToSetScore.rounds, {scoreTeamOne: '', scoreTeamTwo: '', pointsToWin: this.matchToSetScore.tournament.ruleSet.pointsToWin}]
+                this.matchToSetScore.rounds = [...this.matchToSetScore.rounds, {
+                    scoreTeamOne: '',
+                    scoreTeamTwo: '',
+                    pointsToWin: this.matchToSetScore.tournament.ruleSet.pointsToWin
+                }]
             },
-            saveScore(){
+            saveScore() {
                 axios({
                     url: ApiConstants.SAVE_SCORE(this.matchToSetScore.id),
-                    data:{
-                      rounds: this.matchToSetScore.rounds,
+                    data: {
+                        rounds: this.matchToSetScore.rounds,
                     },
-                    method:"POST"
-                }).then(resp =>{
+                    method: "POST"
+                }).then(resp => {
                     this.loadData()
-                }).catch(err =>{
+                    this.scoreDialog = false
+                }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
                 })
+            },
+            closeAlerts() {
+                this.errors = []
             }
         },
         mounted() {

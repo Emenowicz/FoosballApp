@@ -32,10 +32,10 @@ public class MatchService {
 
     public List<Match> getAwaitingMatches(User user) {
         List<Match> matches = matchDao.findAll();
-        matches = matches.stream().filter(match ->
-                match.getScoreOne() == 0
-                        && match.getScoreTwo() == 0
-                        && (match.getTeamOne().getPlayers().contains(user) || match.getTeamTwo().getPlayers().contains(user))).collect(Collectors.toList());
+        matches = matches.stream().filter(match -> match.getStatus().equals("Open")
+                && (match.getTeamOne().getPlayers().contains(user) ||
+                (match.getTeamTwo() != null && match.getTeamTwo().getPlayers().contains(user))
+        )).collect(Collectors.toList());
         return matches;
     }
 
@@ -49,8 +49,16 @@ public class MatchService {
         if (validRounds.size() != rounds.size()) {
             throw new Exception("Wprowadzono błędne wyniki");
         }
-        setStatus(match,rounds);
-        matchDao.save(match);
+        int pointsTeamOne = validRounds.stream().filter(round -> round.getScoreTeamOne() == round.getPointsToWin()).collect(Collectors.toList()).size();
+        int pointsTeamTwo = validRounds.stream().filter(round -> round.getScoreTeamTwo() == round.getPointsToWin()).collect(Collectors.toList()).size();
+        int neededPoints = match.getTournament().getRuleSet().getRoundsToWin();
+        if (pointsTeamOne == neededPoints || pointsTeamTwo == neededPoints) {
+            setStatus(match, rounds);
+            matchDao.save(match);
+        } else {
+            throw new Exception("Wprowadzono błędne wyniki");
+        }
+
     }
 
     private void setStatus(Match match, List<Round> rounds) {
