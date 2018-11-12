@@ -138,17 +138,19 @@
                                 <v-card-title primary class="title">Turnieje w których bierzesz udział</v-card-title>
                                 <v-card-text>
                                     <v-data-table class="mb-5" :headers="tournamentHeaders" :items="joinedTournaments">
-                                        <template slot="items" slot-scope="props">
-                                            <td>{{props.item.name}}</td>
-                                            <td>{{props.item.status}}</td>
-                                            <td>{{props.item.ruleSet.pointsToWin}}</td>
-                                            <td>{{props.item.ruleSet.roundsToWin}}</td>
-                                            <td>{{props.item.ruleSet.teamSize}}</td>
-                                            <td>{{moment(props.item.timeCreated).format('LT')}}
-                                                {{moment(props.item.timeCreated).format('dddd')}}
-                                                <br>
-                                                {{moment(props.item.timeCreated).format('ll')}}
-                                            </td>
+                                        <template  slot="items" slot-scope="props">
+                                            <tr @click="openTournamentPage(props.item.id)">
+                                                <td>{{props.item.name}}</td>
+                                                <td>{{props.item.status}}</td>
+                                                <td>{{props.item.ruleSet.pointsToWin}}</td>
+                                                <td>{{props.item.ruleSet.roundsToWin}}</td>
+                                                <td>{{props.item.ruleSet.teamSize}}</td>
+                                                <td>{{moment(props.item.timeCreated).format('LT')}}
+                                                    {{moment(props.item.timeCreated).format('dddd')}}
+                                                    <br>
+                                                    {{moment(props.item.timeCreated).format('ll')}}
+                                                </td>
+                                            </tr>
                                         </template>
                                     </v-data-table>
                                 </v-card-text>
@@ -237,6 +239,8 @@
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
                 });
+                this.$store.dispatch(USER_REQUEST)
+
             },
             openTournamentPage(tournamentId) {
                 this.$router.push({path: "/tournament/" + tournamentId})
@@ -246,7 +250,6 @@
                     url: ApiConstants.START_TOURNAMENT(tournamentId),
                     method: "POST"
                 }).then(() => {
-                    this.$store.dispatch(USER_REQUEST)
                     this.loadData()
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
