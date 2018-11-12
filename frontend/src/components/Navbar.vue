@@ -52,7 +52,11 @@
         </v-navigation-drawer>
         <v-toolbar color="green" dark fixed app>
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title>Foosball League</v-toolbar-title>
+            <v-toolbar-title>
+                <router-link to="/" style="text-decoration: none; color:white">
+                    Foosball League
+                </router-link>
+            </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn v-if="!loggedIn" flat @click="goToLogin">Zaloguj się</v-btn>
         </v-toolbar>

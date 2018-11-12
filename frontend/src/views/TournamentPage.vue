@@ -63,7 +63,7 @@
                                         <v-card-title>
                                             <p class="subheading">Drużyny</p>
                                             <v-spacer></v-spacer>
-                                            <v-btn v-if="!isParticipant && tournament.status === 'Otwarty'" class="green"
+                                            <v-btn v-if="!isParticipant && tournament.status === 'Otwarty' && !isTournamentFull" class="green"
                                                     @click="dialog=!dialog"
                                                     dark>Dołącz do turnieju
                                             </v-btn>
@@ -93,7 +93,7 @@
                                                                 </v-list-tile>
                                                             </v-list>
                                                             <v-layout justify-end>
-                                                                <v-btn v-if="!isParticipant && tournament.status==='Otwarty'"
+                                                                <v-btn v-if="!isParticipant && tournament.status==='Otwarty' && !isTournamentFull"
                                                                         @click="joinToTeam(props.item)" icon
                                                                         dark
                                                                         color="green">
@@ -156,7 +156,8 @@
                                                             <h3 class="subheading">vs.</h3>
                                                         </v-flex>
                                                         <v-flex xs5>
-                                                            <h3 class="subheading">{{match.teamTwo.name}}</h3>
+                                                            <h3 v-if="!!match.teamTwo" class="subheading">{{match.teamTwo.name}}</h3>
+                                                            <h3 v-else class="subheading">Oczekiwanie na drużynę</h3>
                                                         </v-flex>
                                                     </v-layout>
                                                     <h2 class="display-1">{{match.scoreOne}} - {{match.scoreTwo}}</h2>
@@ -173,7 +174,7 @@
                                         <v-icon>account_circle</v-icon>
                                         <v-icon>close</v-icon>
                                     </v-btn>
-                                    <v-btn v-if="tournament.status==='Otwarty'" @click="startTournament" fab dark small
+                                    <v-btn v-if="tournament.status==='Otwarty' && isTournamentFull" @click="startTournament" fab dark small
                                             color="green">
                                         <v-icon>play_arrow</v-icon>
                                     </v-btn>
@@ -328,14 +329,19 @@
                 }, 1000)
             },
             startTournament() {
-                axios({
-                    url: ApiConstants.START_TOURNAMENT(this.tournament.id),
-                    method: "POST"
-                }).then(() => {
-                    this.loadData()
-                }).catch(err => {
-                    this.errors = [...this.errors, err.response.data]
-                })
+                if(this.isTournamentFull){
+                    axios({
+                        url: ApiConstants.START_TOURNAMENT(this.tournament.id),
+                        method: "POST"
+                    }).then(() => {
+                        this.loadData()
+                    }).catch(err => {
+                        this.errors = [...this.errors, err.response.data]
+                    })
+                } else {
+                    this.errors = [...this.errors, "Wystąpił błąd"]
+                }
+
             },
             isInMatch(id) {
                 return this.$store.getters.getProfile.teams.filter(team => {
@@ -366,6 +372,9 @@
                 return this.$store.getters.getProfile.ownedTournaments.filter(tournament => {
                     return tournament.id === this.tournament.id;
                 }).length !== 0;
+            },
+            isTournamentFull(){
+                return this.tournament.teams.length === this.tournament.teamsNeeded
             },
             hasErrors() {
                 return !!this.errors.length

@@ -22,7 +22,7 @@
                                                         <p class="subheading pb-0 mb-0 green--text"
                                                                 v-if="props.item.status==='Otwarty'">{{props.item.status}}</p>
                                                         <p class="subheading pb-0 mb-0 orange--text"
-                                                                v-if="props.item.status==='W trakcie'">{{props.item.status}}</p>
+                                                                v-if="props.item.status==='Trwający'">{{props.item.status}}</p>
                                                         <p class="subheading pb-0 mb-0 red--text"
                                                                 v-if="props.item.status==='Zakończony'">{{props.item.status}}</p>
                                                     </v-flex>

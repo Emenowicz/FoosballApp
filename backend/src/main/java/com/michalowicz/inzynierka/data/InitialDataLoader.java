@@ -72,30 +72,29 @@ public class InitialDataLoader implements ApplicationRunner {
             Tournament tournament = new Tournament(tournamentName);
             tournament.addOwner(users.get(random.nextInt(users.size())));
             tournament.addRuleSet(standardRuleSet);
+            tournament.setTeamsNeeded(8);
             tournaments.add(tournament);
         }
         tournamentDao.saveAll(tournaments);
 
         //PLAYERS
-        String[] teamNames = {"Super drużyna", "Najlepsi","TurboGracze", "Janusze", "Drużyna śmierci", "Andrzej", "Tygrysy", "Cośtam", "Inne cośtam"};
+        String[] teamNames = {"Super drużyna", "Najlepsi", "TurboGracze", "Janusze", "Drużyna śmierci", "Andrzej", "Tygrysy", "Cośtam"};
         List<Team> teams = new ArrayList<>();
-        for(String teamName : teamNames){
-            Team team = new Team();
-            team.setName(teamName);
-            Tournament teamTournament = tournaments.get(random.nextInt(tournaments.size()));
-            team.addTournament(teamTournament);
-            for(int i=0;i<teamTournament.getRuleSet().getTeamSize();i++){
-                if(team.getPlayers().isEmpty()){
-                    while(team.getPlayers().isEmpty()){
+        for (Tournament tournament : tournaments) {
+            for (String teamName : teamNames) {
+                Team team = new Team();
+                team.setName(teamName);
+                team.addTournament(tournament);
+                for (int i = 0; i < tournament.getRuleSet().getTeamSize(); i++) {
+                    while (team.getPlayers().size() != tournament.getRuleSet().getTeamSize()) {
                         team.addPlayer(users.get(random.nextInt(users.size())));
                     }
-                }else{
-                    team.addPlayer(users.get(random.nextInt(users.size())));
+                    teams.add(team);
                 }
             }
-            teams.add(team);
         }
         teamDao.saveAll(teams);
+
         //DAWID
         Tournament dawidTournament = new Tournament("Dawdziakowy turniej");
         dawidTournament.addOwner(dawid);
@@ -106,7 +105,7 @@ public class InitialDataLoader implements ApplicationRunner {
         team.setName("dawdziakowyTeam");
         team.setPrivate(true);
         team.setPassword("password");
-        team.addPlayer(users.get(random.nextInt(users.size())));
+        team.addPlayer(dawid);
         team.addPlayer(users.get(random.nextInt(users.size())));
         team.addTournament(dawidTournament);
         teamDao.save(team);
@@ -132,3 +131,4 @@ public class InitialDataLoader implements ApplicationRunner {
 
     }
 }
+

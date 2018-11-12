@@ -15,6 +15,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class TournamentService {
@@ -26,6 +28,8 @@ public class TournamentService {
 
     @Resource
     MatchService matchService;
+
+    Random random = new Random();
 
 
     public List<Tournament> getAllTournaments() {
@@ -74,5 +78,20 @@ public class TournamentService {
             tournament.setStatus(TournamentStatus.Trwający);
             tournamentDao.save(tournament);
         }
+    }
+
+    public void advance(final Tournament tournament, final Team winner, final int level) {
+        List<Match> matches = tournament.getMatches().stream().filter(match -> match.getLevel()==level+1 && match.getTeamOne()!=null && match.getTeamTwo()==null).collect(Collectors.toList());
+        if(matches.size()==0){
+            Match match = new Match();
+            match.setTeamOne(winner);
+            match.setLevel(level+1);
+            tournament.addMatch(match);
+        } else {
+            Match match = matches.get(random.nextInt(matches.size()));
+            match.setTeamTwo(winner);
+        }
+        tournamentDao.save(tournament);
+
     }
 }

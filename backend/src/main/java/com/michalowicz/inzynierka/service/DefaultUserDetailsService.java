@@ -1,7 +1,7 @@
 package com.michalowicz.inzynierka.service;
 
-import com.michalowicz.inzynierka.entity.User;
 import com.michalowicz.inzynierka.dao.UserDao;
+import com.michalowicz.inzynierka.entity.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -41,6 +41,11 @@ public class Round {
         this.match = match;
     }
 
+    public void addMatch(final Match match) {
+        this.match = match;
+        match.getRounds().add(this);
+    }
+
     public int getScoreTeamOne() {
         return scoreTeamOne;
     }

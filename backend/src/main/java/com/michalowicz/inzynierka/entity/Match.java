@@ -11,8 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PostLoad;
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +19,8 @@ public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    private int level = 0;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @Cascade(CascadeType.SAVE_UPDATE)
@@ -41,11 +41,15 @@ public class Match {
     @JsonIgnoreProperties("match")
     private List<Round> rounds = new ArrayList<>();
 
-    @Transient
+    private String status = "Open";
+
     private int scoreOne;
 
-    @Transient
     private int scoreTwo;
+
+    @ManyToOne
+    @JsonIgnoreProperties({"tournament",""})
+    private Team winner;
 
     public Long getId() {
         return id;
@@ -53,6 +57,14 @@ public class Match {
 
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(final int level) {
+        this.level = level;
     }
 
     public Team getTeamOne() {
@@ -102,22 +114,32 @@ public class Match {
         return scoreOne;
     }
 
-    @PostLoad
-    public void setScores() {
-        scoreOne = 0;
-        scoreTwo = 0;
-        rounds.forEach(round -> {
-            if (round.getScoreTeamOne() == round.getPointsToWin()) {
-                scoreOne++;
-            } else if (round.getScoreTeamTwo() == round.getPointsToWin()) {
-                scoreTwo++;
-            }
-        });
-
-    }
 
     public int getScoreTwo() {
         return scoreTwo;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public Team getWinner() {
+        return winner;
+    }
+
+    public void setStatus(final String status) {
+        this.status = status;
+    }
+
+    public void setScoreOne(final int scoreOne) {
+        this.scoreOne = scoreOne;
+    }
+
+    public void setScoreTwo(final int scoreTwo) {
+        this.scoreTwo = scoreTwo;
+    }
+
+    public void setWinner(final Team winner) {
+        this.winner = winner;
+    }
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MatchDao extends JpaRepository<Match, Long> {
+    Match getById(Long id);
 }

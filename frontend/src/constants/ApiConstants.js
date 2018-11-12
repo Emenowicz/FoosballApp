@@ -11,6 +11,7 @@ export default {
     CREATE_NEW_TOURNAMENT: API_ROOT + "tournaments/create",
     GET_DEFAULT_RULESETS: API_ROOT + "rulesets/default",
     GET_TOURNAMENT: API_ROOT + "tournaments/",
+    GET_AWAITING_MATCHES: API_ROOT + "matches/awaiting",
     /**
      * @return {string}
      */
@@ -30,6 +31,13 @@ export default {
      */
     START_TOURNAMENT: function (tournamentId) {
         return this.GET_TOURNAMENT + tournamentId + "/start"
+    },
+
+    /**
+     * @return {string}
+     */
+    SAVE_SCORE: function (matchId) {
+        return this.API_ROOT + "matches/" + matchId + "/setScore"
     }
 
 }
