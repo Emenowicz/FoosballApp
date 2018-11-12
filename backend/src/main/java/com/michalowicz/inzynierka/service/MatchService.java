@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -19,16 +21,6 @@ public class MatchService {
     MatchDao matchDao;
     @Resource
     RoundService roundService;
-
-    public void generateRounds(Match match, int roundsQuantity, final int pointsToWin) {
-        List<Round> rounds = new ArrayList<>();
-        for (int i = 0; i < (roundsQuantity * 2) - 1; i++) {
-            Round round = new Round();
-            round.setPointsToWin(pointsToWin);
-            rounds.add(round);
-        }
-        match.setRounds(rounds);
-    }
 
     public List<Match> getAwaitingMatches(User user) {
         List<Match> matches = matchDao.getAllByStatus("Open");
@@ -73,10 +65,22 @@ public class MatchService {
         });
         match.setScoreOne(scoreOne.get());
         match.setScoreTwo(scoreTwo.get());
-        match.setStatus(match.getScoreOne() == match.getTournament().getRuleSet().getRoundsToWin() || match.getScoreTwo() == match.getTournament().getRuleSet().getRoundsToWin() ? "Closed" : "Open");
+        if(match.getScoreOne() == match.getTournament().getRuleSet().getRoundsToWin() || match.getScoreTwo() == match.getTournament().getRuleSet().getRoundsToWin()){
+            match.setStatus("Closed");
+            match.setClosedTime(LocalDateTime.now());
+        }
         if (match.getStatus().equals("Closed")) {
             match.setWinner(scoreOne.get() > scoreTwo.get() ? match.getTeamOne() : match.getTeamTwo());
         }
     }
 
+    public List<Match> getUsersLastMatches(final User loggedUser) {
+        List<Match> matches =  matchDao.getAllByStatus("Closed");
+        matches = matches.stream().filter(match -> match.getTeamOne().getPlayers().contains(loggedUser) ||
+                match.getTeamTwo().getPlayers().contains(loggedUser)
+        ).collect(Collectors.toList());
+        Collections.sort(matches, Comparator.comparing(Match::getClosedTime));
+
+        return matches.stream().limit(5).collect(Collectors.toList());
+    }
 }

@@ -19,22 +19,30 @@
 
                                 <v-textarea prepend-icon="subject" name="Description" label="Opis turnieju" counter
                                         v-model="description"></v-textarea>
+                                <v-select prepend-icon="people" name="teamsNeeded" label="Liczba drużyn w turnieju"
+                                        v-model="teamsNeeded" :items="teamsNeeds"></v-select>
                                 <v-select prepend-icon="gamepad" name="RuleSet" label="Zestaw zasad" v-model="ruleSetSelected"
                                         :items="ruleSets" item-text="value.name" item-value="value"></v-select>
                                 <div v-if="isCustomSelected">
                                     <p>Dodaj własne zasady</p>
                                     <v-layout row wrap align-center justify-center>
+                                        <v-text-field prepend-icon="people" name="playersInTeam"
+                                                label="Liczba graczy w drużynie"
+                                                class="mx-4" v-model="ruleSetSelected.teamsNeeded"
+                                                :mask="mask"></v-text-field>
                                         <v-text-field prepend-icon="star_border" name="pointsToWin"
                                                 label="Punkty do zwycięstwa setu"
                                                 class="mx-4" v-model="ruleSetSelected.pointsToWin"
                                                 :mask="pointsMask"></v-text-field>
                                         <v-text-field prepend-icon="star" name="roundsToWin" label="Sety do zwycięstwa meczu"
-                                                class="mx-4" v-model="ruleSetSelected.roundsToWin" :mask="mask"></v-text-field>
-                                        <v-text-field prepend-icon="people" name="playersInTeam" label="Liczba graczy w drużynie"
-                                                class="mx-4" v-model="ruleSetSelected.teamSize" :mask="mask"></v-text-field>
+                                                class="mx-4" v-model="ruleSetSelected.roundsToWin"
+                                                :mask="mask"></v-text-field>
+
                                     </v-layout>
                                 </div>
-                                <v-btn type="submit">Utwórz turniej</v-btn>
+                                <v-layout justify-center>
+                                    <v-btn type="submit">Utwórz turniej</v-btn>
+                                </v-layout>
                             </v-form>
                         </v-card-text>
                     </v-card>
@@ -59,8 +67,10 @@
             return {
                 name: '',
                 description: '',
+                teamsNeeded: '',
                 ruleSetSelected: {},
                 ruleSets: [],
+                teamsNeeds: ['4','8','16','32'],
                 mask: "#",
                 pointsMask: "##",
                 errors: []
@@ -96,6 +106,7 @@
                     data: {
                         name: this.name,
                         description: this.description,
+                        teamsNeeded: this.teamsNeeded,
                         ruleSet: this.ruleSetSelected,
                     },
                     method: "POST"

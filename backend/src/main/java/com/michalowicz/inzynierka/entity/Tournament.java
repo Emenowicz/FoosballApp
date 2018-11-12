@@ -1,6 +1,7 @@
 package com.michalowicz.inzynierka.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.michalowicz.inzynierka.validators.OneOf;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,6 +33,7 @@ public class Tournament {
 
     private String description;
 
+    @OneOf({2,4,8,16,32})
     private int teamsNeeded;
 
     @Enumerated(EnumType.STRING)
@@ -40,7 +42,7 @@ public class Tournament {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timeCreated = LocalDateTime.now();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(optional = false,fetch = FetchType.EAGER)
     @Cascade({CascadeType.SAVE_UPDATE, CascadeType.MERGE})
     @JsonIgnoreProperties(value = {"ownedTournaments", "joinedTournaments", "teams", "usergroup"})
     private User owner;
@@ -52,7 +54,7 @@ public class Tournament {
     @JsonIgnoreProperties(value = {"tournament"})
     private Set<Team> teams = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(optional = false,fetch = FetchType.EAGER)
     @Cascade(CascadeType.SAVE_UPDATE)
     @JsonIgnoreProperties(value = {"tournaments"})
     private RuleSet ruleSet;

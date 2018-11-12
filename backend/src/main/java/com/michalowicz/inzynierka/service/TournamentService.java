@@ -26,9 +26,6 @@ public class TournamentService {
     @Resource
     RuleSetDao ruleSetDao;
 
-    @Resource
-    MatchService matchService;
-
     Random random = new Random();
 
 
@@ -44,10 +41,10 @@ public class TournamentService {
             tournament.setDescription(form.getDescription());
             tournament.addOwner(user);
             tournament.addRuleSet(form.getRuleSet());
-
+            tournament.setTeamsNeeded(form.getTeamsNeeded());
             tournamentDao.save(tournament);
         } catch (Exception e) {
-            throw new Exception("Błąd danych");
+            throw new Exception("Podane błędne dane, sprawdź poprawość danych i spróbuj ponownie");
         }
     }
 
@@ -70,7 +67,6 @@ public class TournamentService {
         if (teams.size() == tournament.getTeamsNeeded()) {
             for (int i = 0; i < teams.size(); i += 2) {
                 Match match = new Match();
-//                matchService.generateRounds(match,tournament.getRuleSet().getRoundsToWin(),tournament.getRuleSet().getPointsToWin());
                 match.setTeamOne(teams.get(i));
                 match.setTeamTwo(teams.get(i + 1));
                 tournament.addMatch(match);

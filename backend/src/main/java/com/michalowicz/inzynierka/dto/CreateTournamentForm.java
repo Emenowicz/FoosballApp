@@ -5,6 +5,7 @@ import com.michalowicz.inzynierka.entity.RuleSet;
 public class CreateTournamentForm {
     private String name;
     private RuleSet ruleSet;
+    private int teamsNeeded;
     private String description;
 
     public String getName() {
@@ -21,6 +22,14 @@ public class CreateTournamentForm {
 
     public void setRuleSet(final RuleSet ruleSet) {
         this.ruleSet = ruleSet;
+    }
+
+    public int getTeamsNeeded() {
+        return teamsNeeded;
+    }
+
+    public void setTeamsNeeded(final int teamsNeeded) {
+        this.teamsNeeded = teamsNeeded;
     }
 
     public String getDescription() {

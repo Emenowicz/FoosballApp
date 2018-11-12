@@ -12,6 +12,7 @@ export default {
     GET_DEFAULT_RULESETS: API_ROOT + "rulesets/default",
     GET_TOURNAMENT: API_ROOT + "tournaments/",
     GET_AWAITING_MATCHES: API_ROOT + "matches/awaiting",
+    GET_LAST_MATCHES: API_ROOT + "matches/last",
     /**
      * @return {string}
      */
@@ -39,5 +40,6 @@ export default {
     SAVE_SCORE: function (matchId) {
         return this.API_ROOT + "matches/" + matchId + "/setScore"
     }
+
 
 }

@@ -24,7 +24,8 @@
                                 </v-flex>
                                 <v-flex>
                                     <v-layout column align-center justify-center>
-                                        <v-flex v-if="!!tournament.owner" xs12 sm4 class="text-xs-center">Właściciel turnieju: {{tournament.owner.username}}
+                                        <v-flex v-if="!!tournament.owner" xs12 sm4
+                                                class="text-xs-center">Właściciel turnieju: {{tournament.owner.username}}
                                         </v-flex>
                                         <v-flex xs12 sm4 class="text-xs-center">
                                             Utworzony:
@@ -58,12 +59,27 @@
                             </v-layout>
                             <v-divider></v-divider>
                             <v-layout class="mb-3" wrap>
+                                <v-flex v-if="tournament.status==='Zakończony'" xs12>
+                                    <v-card>
+                                        <v-card-title class="text-xs-center">
+                                            <p class="headline">Zwycięzca: {{tournament.winner.name}}</p>
+                                        </v-card-title>
+                                        <v-card-text>
+                                            <v-list>
+                                                <v-list-tile v-for="(player,index) in tournament.winner.players" :key="index">
+                                                    <v-list-tile-content>{{index}}. {{player.username}}</v-list-tile-content>
+                                                </v-list-tile>
+                                            </v-list>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-flex>
                                 <v-flex>
                                     <v-card>
                                         <v-card-title>
                                             <p class="subheading">Drużyny</p>
                                             <v-spacer></v-spacer>
-                                            <v-btn v-if="!isParticipant && tournament.status === 'Otwarty' && !isTournamentFull" class="green"
+                                            <v-btn v-if="!isParticipant && tournament.status === 'Otwarty' && !isTournamentFull"
+                                                    class="green"
                                                     @click="dialog=!dialog"
                                                     dark>Dołącz do turnieju
                                             </v-btn>
@@ -156,7 +172,8 @@
                                                             <h3 class="subheading">vs.</h3>
                                                         </v-flex>
                                                         <v-flex xs5>
-                                                            <h3 v-if="!!match.teamTwo" class="subheading">{{match.teamTwo.name}}</h3>
+                                                            <h3 v-if="!!match.teamTwo"
+                                                                    class="subheading">{{match.teamTwo.name}}</h3>
                                                             <h3 v-else class="subheading">Oczekiwanie na drużynę</h3>
                                                         </v-flex>
                                                     </v-layout>
@@ -174,7 +191,8 @@
                                         <v-icon>account_circle</v-icon>
                                         <v-icon>close</v-icon>
                                     </v-btn>
-                                    <v-btn v-if="tournament.status==='Otwarty' && isTournamentFull" @click="startTournament" fab dark small
+                                    <v-btn v-if="tournament.status==='Otwarty' && isTournamentFull" @click="startTournament" fab
+                                            dark small
                                             color="green">
                                         <v-icon>play_arrow</v-icon>
                                     </v-btn>
@@ -329,7 +347,7 @@
                 }, 1000)
             },
             startTournament() {
-                if(this.isTournamentFull){
+                if (this.isTournamentFull) {
                     axios({
                         url: ApiConstants.START_TOURNAMENT(this.tournament.id),
                         method: "POST"
@@ -373,7 +391,7 @@
                     return tournament.id === this.tournament.id;
                 }).length !== 0;
             },
-            isTournamentFull(){
+            isTournamentFull() {
                 return this.tournament.teams.length === this.tournament.teamsNeeded
             },
             hasErrors() {

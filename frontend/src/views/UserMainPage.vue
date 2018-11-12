@@ -4,12 +4,13 @@
             <v-layout column>
                 <v-flex>
                     <v-layout row wrap justify-center>
-                        <v-flex d-flex>
+                        <v-flex xs12 sm6>
                             <v-card>
                                 <v-card-title primary class="title">Twoje oczekujące mecze</v-card-title>
                                 <v-card-text>
                                     <v-list>
-                                        <v-list-tile @click="setScoreDialog(match)" v-for="match in awaitingMatches" :key="match.id">
+                                        <v-list-tile @click="setScoreDialog(match)" v-for="match in awaitingMatches"
+                                                :key="match.id">
                                             <v-list-tile-content>
                                                 <v-list-tile-title v-if="!!match.teamTwo"
                                                         class="green--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
@@ -71,6 +72,23 @@
                                             </v-card-text>
                                         </v-card>
                                     </v-dialog>
+                                </v-card-text>
+                            </v-card>
+                        </v-flex>
+                        <v-flex xs12 sm6>
+                            <v-card>
+                                <v-card-title primary class="title">Twoje ostatnie mecze</v-card-title>
+                                <v-card-text>
+                                    <v-list>
+                                        <v-list-tile v-for="match in lastMatches"
+                                                :key="match.id">
+                                            <v-list-tile-content>
+                                                <v-list-tile-title class="blue-grey--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
+                                                </v-list-tile-title>
+                                                <v-list-tile-sub-title>{{match.tournament.name}}</v-list-tile-sub-title>
+                                            </v-list-tile-content>
+                                        </v-list-tile>
+                                    </v-list>
                                 </v-card-text>
                             </v-card>
                         </v-flex>
@@ -154,6 +172,7 @@
         data() {
             return {
                 awaitingMatches: [],
+                lastMatches:[],
                 scoreDialog: false,
                 matchToSetScore: {},
                 tournamentHeaders: [
@@ -209,7 +228,15 @@
                     this.awaitingMatches = resp.data
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
-                })
+                });
+                axios({
+                    url: ApiConstants.GET_LAST_MATCHES,
+                    method:"GET"
+                }).then(resp =>{
+                    this.lastMatches = resp.data
+                }).catch(err => {
+                    this.errors = [...this.errors, err.response.data]
+                });
             },
             openTournamentPage(tournamentId) {
                 this.$router.push({path: "/tournament/" + tournamentId})

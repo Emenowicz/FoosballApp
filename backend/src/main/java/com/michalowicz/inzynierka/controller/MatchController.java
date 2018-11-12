@@ -56,4 +56,11 @@ public class MatchController {
             return new ResponseEntity("Wystąpił błąd, Spróbuj ponownie później", HttpStatus.FORBIDDEN);
         }
     }
+
+    @RequestMapping(value="/last", method = RequestMethod.GET)
+    public ResponseEntity getLastMatches(Principal principal){
+        User loggedUser = userService.getLoggedUser(principal.getName());
+        List<Match> lastMatches = matchService.getUsersLastMatches(loggedUser);
+        return new ResponseEntity(lastMatches,HttpStatus.OK);
+    }
 }

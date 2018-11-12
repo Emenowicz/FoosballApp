@@ -5,11 +5,9 @@
                 <v-flex d-flex fill-height>
                     <v-card>
                         <v-card-title class="headline">Wszystkie turnieje</v-card-title>
-                        <v-card-text>
                             <v-card-text>
-                                <v-data-iterator :items="tournaments" content-tag="v-layout" no-data-text="Brak turniejów" row
-                                        wrap
-                                        hide-actions>
+                                <v-data-iterator :items="tournaments" :rows-per-page-items="rowsPerPageItems" :pagination.sync="pagination" content-tag="v-layout" no-data-text="Brak turniejów" row
+                                        wrap>
                                     <v-flex @click="openTournament(props.item.id)" slot="item" slot-scope="props" xs12 sm6 md4 xl3>
                                         <v-card ripple v-if="props.item.size!==0">
                                             <v-card-title class="subheading font-weight-bold pb-0">
@@ -49,7 +47,6 @@
                                         </v-card>
                                     </v-flex>
                                 </v-data-iterator>
-                            </v-card-text>
                         </v-card-text>
                     </v-card>
                 </v-flex>
@@ -67,7 +64,9 @@
         name: "AllTournaments",
         data() {
             return {
-                tournaments: []
+                tournaments: [],
+                rowsPerPageItems:[6,9,12],
+                pagination: 6
             }
         },
         methods: {

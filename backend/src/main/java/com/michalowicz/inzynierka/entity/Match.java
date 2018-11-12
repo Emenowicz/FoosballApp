@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,8 @@ public class Match {
     private List<Round> rounds = new ArrayList<>();
 
     private String status = "Open";
+
+    private LocalDateTime closedTime;
 
     private int scoreOne;
 
@@ -141,5 +144,13 @@ public class Match {
 
     public void setWinner(final Team winner) {
         this.winner = winner;
+    }
+
+    public LocalDateTime getClosedTime() {
+        return closedTime;
+    }
+
+    public void setClosedTime(final LocalDateTime closedTime) {
+        this.closedTime = closedTime;
     }
 }
