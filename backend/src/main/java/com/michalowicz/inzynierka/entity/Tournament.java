@@ -19,7 +19,9 @@ import javax.persistence.PostLoad;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -53,7 +55,7 @@ public class Tournament {
     @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, orphanRemoval = true)
     @Cascade({CascadeType.DELETE})
     @JsonIgnoreProperties(value = {"tournament"})
-    private Set<Team> teams = new HashSet<>();
+    private List<Team> teams = new ArrayList<>();
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @Cascade(CascadeType.SAVE_UPDATE)
@@ -68,6 +70,9 @@ public class Tournament {
     @ManyToOne
     @JsonIgnoreProperties({"tournament"})
     private Team winner;
+
+    @Transient
+    private boolean isReadyToStart;
 
     public Tournament() {
     }
@@ -133,10 +138,9 @@ public class Tournament {
     }
 
     @PostLoad
-    public void setParticipants() {
-        Set<User> participants = new HashSet<>();
-        teams.stream().map(Team::getPlayers).forEach(participants::addAll);
-        this.participants = participants;
+    public void postLoad() {
+        setParticipants();
+        setReadyToStart();
     }
 
     public void addParticipant(final User user) {
@@ -144,11 +148,11 @@ public class Tournament {
         user.getJoinedTournaments().add(this);
     }
 
-    public Set<Team> getTeams() {
+    public List<Team> getTeams() {
         return teams;
     }
 
-    public void setTeams(final Set<Team> teams) {
+    public void setTeams(final List<Team> teams) {
         this.teams = teams;
     }
 
@@ -205,5 +209,19 @@ public class Tournament {
 
     public void setWinner(final Team winner) {
         this.winner = winner;
+    }
+
+    public boolean isReadyToStart() {
+        return isReadyToStart;
+    }
+
+    private void setParticipants(){
+        Set<User> participants = new HashSet<>();
+        teams.stream().map(Team::getPlayers).forEach(participants::addAll);
+        this.participants = participants;
+    }
+
+    private void setReadyToStart() {
+        isReadyToStart = teams.size() == teamsNeeded && teams.stream().noneMatch(team -> team.getPlayers().size() < ruleSet.getTeamSize());
     }
 }

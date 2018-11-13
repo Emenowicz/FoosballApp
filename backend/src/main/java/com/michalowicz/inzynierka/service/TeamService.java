@@ -15,14 +15,20 @@ public class TeamService {
     @Resource
     TeamDao teamDao;
 
-    public Team createNewTeam(final NewTeamForm teamForm, final Tournament tournament, User user) {
+    public Team createNewTeam(final NewTeamForm teamForm, final Tournament tournament, User user) throws Exception {
         Team team = new Team();
+        if(tournament.getTeams().stream().anyMatch(t -> t.getName().equals(teamForm.getName()))){
+            throw new Exception("Nazwa zespołu zajęta");
+        }
         team.setName(teamForm.getName());
         team.setPrivate(teamForm.getPrivacy().equals("private"));
         if (team.isPrivate()) {
             team.setPassword(teamForm.getPassword());
         }
         team.addTournament(tournament);
+        if(tournament.getParticipants().stream().anyMatch(p -> p.equals(user))) {
+            throw new Exception("Gracz już bierze udział w turnieju");
+        }
         team.addPlayer(user);
         teamDao.save(team);
         return team;
@@ -38,8 +44,17 @@ public class TeamService {
             team.addPlayer(user);
             teamDao.save(team);
         } else {
-            throw new Exception("Użytkownik jest już dołączony do turnieju");
+            throw new Exception("Gracz już bierze udział w turnieju");
         }
     }
 
+    public void removePlayerFromTeam(final Long teamId, final User loggedUser) {
+        Team team = teamDao.getById(teamId);
+        if(team.getPlayers().size()<=1){
+            teamDao.delete(team);
+        } else {
+            team.getPlayers().remove(loggedUser);
+            teamDao.save(team);
+        }
+    }
 }

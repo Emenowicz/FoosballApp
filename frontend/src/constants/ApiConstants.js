@@ -30,6 +30,13 @@ export default {
     /**
      * @return {string}
      */
+    LEAVE_TEAM: function (teamId) {
+        return API_ROOT + "teams/" + teamId + "/leave"
+    },
+
+    /**
+     * @return {string}
+     */
     START_TOURNAMENT: function (tournamentId) {
         return this.GET_TOURNAMENT + tournamentId + "/start"
     },
@@ -41,8 +48,11 @@ export default {
         return this.API_ROOT + "matches/" + matchId + "/setScore"
     },
 
-    TOURNAMENT: function(tournamentId){
-      return this.GET_TOURNAMENT + tournamentId
+    /**
+     * @return {string}
+     */
+    TOURNAMENT: function (tournamentId) {
+        return this.GET_TOURNAMENT + tournamentId
     }
 
 

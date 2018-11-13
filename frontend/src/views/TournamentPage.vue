@@ -78,7 +78,7 @@
                                         <v-card-title>
                                             <p class="subheading">Drużyny</p>
                                             <v-spacer></v-spacer>
-                                            <v-btn v-if="!isParticipant && tournament.status === 'Otwarty' && !isTournamentFull"
+                                            <v-btn v-if="!isParticipant && tournament.status === 'Otwarty' && !tournament.readyToStart"
                                                     class="green"
                                                     @click="dialog=!dialog"
                                                     dark>Dołącz do turnieju
@@ -92,6 +92,17 @@
                                                         <v-card-title class="pb-1">
                                                             <h4>{{props.item.name}}</h4>
                                                             <v-spacer></v-spacer>
+                                                            <v-btn v-if="!isParticipant && tournament.status==='Otwarty' && !tournament.readyToStart && props.item.players.length < tournament.ruleSet.teamSize"
+                                                                    @click="joinToTeam(props.item)" icon
+                                                                    dark
+                                                            >
+                                                                <v-icon color="green">add</v-icon>
+                                                            </v-btn>
+                                                            <v-btn v-if="isInTeam(props.item.players)"
+                                                                    @click="leaveTeam(props.item)" icon
+                                                                    dark>
+                                                                <v-icon color="red">clear</v-icon>
+                                                            </v-btn>
                                                         </v-card-title>
                                                         <v-card-text class="pt-1">
                                                             <v-list>
@@ -109,12 +120,6 @@
                                                                 </v-list-tile>
                                                             </v-list>
                                                             <v-layout justify-end>
-                                                                <v-btn v-if="!isParticipant && tournament.status==='Otwarty' && !isTournamentFull"
-                                                                        @click="joinToTeam(props.item)" icon
-                                                                        dark
-                                                                        color="green">
-                                                                    <v-icon>add</v-icon>
-                                                                </v-btn>
                                                                 <v-dialog v-model="passwordDialog" persistent max-width="300">
                                                                     <v-card>
                                                                         <v-card-title
@@ -191,7 +196,7 @@
                                         <v-icon>account_circle</v-icon>
                                         <v-icon>close</v-icon>
                                     </v-btn>
-                                    <v-btn v-if="tournament.status==='Otwarty' && isTournamentFull" @click="startTournament" fab
+                                    <v-btn v-if="tournament.status==='Otwarty' && tournament.readyToStart" @click="startTournament" fab
                                             dark small
                                             color="green">
                                         <v-icon>play_arrow</v-icon>
@@ -346,6 +351,18 @@
 
                 }, 1000)
             },
+            leaveTeam(team) {
+                axios({
+                    url: ApiConstants.LEAVE_TEAM(team.id),
+                    method: "POST"
+                }).then(() => {
+                    this.loadData()
+                }).catch(err => {
+                    this.closeAlerts()
+                    this.errors = [...this.errors, err.response.data]
+
+                })
+            },
             startTournament() {
                 if (this.isTournamentFull) {
                     axios({
@@ -360,14 +377,26 @@
                     this.errors = [...this.errors, "Wystąpił błąd"]
                 }
 
-            },
+            }
+            ,
             isInMatch(id) {
                 return this.$store.getters.getProfile.teams.filter(team => {
                     return team.id === id;
                 }).length !== 0;
-            },
+            }
+            ,
             closeAlerts() {
                 this.errors = []
+            }
+            ,
+            isInTeam(players) {
+                let isInTeam = false
+                players.forEach(player => {
+                    if (player.id === this.$store.getters.getProfile.id) {
+                        isInTeam = true;
+                    }
+                })
+                return isInTeam
             }
         },
         validations: {
@@ -411,7 +440,7 @@
                 !this.$v.confirmPassword.required && errors.push('Powtórzenie hasła jest wymagane')
                 !this.$v.confirmPassword.sameAsPassword && errors.push('Hasła muszą się zgadzać')
                 return errors
-            },
+            }
         }
     }
 </script>
