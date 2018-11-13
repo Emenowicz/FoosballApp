@@ -39,6 +39,10 @@ export default {
      */
     SAVE_SCORE: function (matchId) {
         return this.API_ROOT + "matches/" + matchId + "/setScore"
+    },
+
+    TOURNAMENT: function(tournamentId){
+      return this.GET_TOURNAMENT + tournamentId
     }
 
 

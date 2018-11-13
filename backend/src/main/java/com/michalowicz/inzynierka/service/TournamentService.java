@@ -96,4 +96,10 @@ public class TournamentService {
         tournamentDao.save(tournament);
 
     }
+
+    public void deleteTournamentWithId(final Long id, final User loggedUser) {
+        if (tournamentDao.getById(id).getOwner().equals(loggedUser)) {
+            tournamentDao.deleteById(id);
+        }
+    }
 }

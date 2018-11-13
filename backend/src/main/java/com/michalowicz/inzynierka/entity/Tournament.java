@@ -33,7 +33,7 @@ public class Tournament {
 
     private String description;
 
-    @OneOf({2,4,8,16,32})
+    @OneOf({2, 4, 8, 16, 32})
     private int teamsNeeded;
 
     @Enumerated(EnumType.STRING)
@@ -42,7 +42,7 @@ public class Tournament {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime timeCreated = LocalDateTime.now();
 
-    @ManyToOne(optional = false,fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @Cascade({CascadeType.SAVE_UPDATE, CascadeType.MERGE})
     @JsonIgnoreProperties(value = {"ownedTournaments", "joinedTournaments", "teams", "usergroup"})
     private User owner;
@@ -50,11 +50,12 @@ public class Tournament {
     @JsonIgnoreProperties(value = {"joinedTournaments", "ownedTournaments", "teams", "usergroup"})
     private Set<User> participants = new HashSet<>();
 
-    @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, orphanRemoval = true)
+    @Cascade({CascadeType.DELETE})
     @JsonIgnoreProperties(value = {"tournament"})
     private Set<Team> teams = new HashSet<>();
 
-    @ManyToOne(optional = false,fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @Cascade(CascadeType.SAVE_UPDATE)
     @JsonIgnoreProperties(value = {"tournaments"})
     private RuleSet ruleSet;
@@ -66,7 +67,7 @@ public class Tournament {
 
     @ManyToOne
     @JsonIgnoreProperties({"tournament"})
-    Team winner;
+    private Team winner;
 
     public Tournament() {
     }

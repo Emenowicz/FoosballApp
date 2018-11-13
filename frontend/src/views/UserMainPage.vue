@@ -83,7 +83,8 @@
                                         <v-list-tile v-for="match in lastMatches"
                                                 :key="match.id">
                                             <v-list-tile-content>
-                                                <v-list-tile-title class="blue-grey--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
+                                                <v-list-tile-title
+                                                        class="blue-grey--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
                                                 </v-list-tile-title>
                                                 <v-list-tile-sub-title>{{match.tournament.name}}</v-list-tile-sub-title>
                                             </v-list-tile-content>
@@ -124,7 +125,18 @@
                                                         <v-btn @click="startTournament(props.item.id)"
                                                                 v-if="props.item.status==='Otwarty' && isTournamentFull(props.item.id)">Rozpocznij
                                                         </v-btn>
-                                                        <v-btn v-if="props.item.status==='W trakcie'">Zakończ</v-btn>
+                                                        <v-btn @click="deleteDialog=true" v-if="props.item.status==='Otwarty'">Usuń</v-btn>
+                                                        <v-dialog v-model="deleteDialog" max-width="300">
+                                                            <v-card>
+                                                                <v-card-title class="headline">Jesteś pewien że chcesz usunąć turniej <b>{{props.item.name}}</b>?</v-card-title>
+                                                                <v-card-text>
+                                                                    <v-layout justify-center>
+                                                                        <v-btn @click="deleteDialog=false">Anuluj</v-btn>
+                                                                        <v-btn @click="deleteTournament(props.item.id)">Usuń</v-btn>
+                                                                    </v-layout>
+                                                                </v-card-text>
+                                                            </v-card>
+                                                        </v-dialog>
                                                     </v-card-text>
                                                 </v-card>
                                             </v-flex>
@@ -138,7 +150,7 @@
                                 <v-card-title primary class="title">Turnieje w których bierzesz udział</v-card-title>
                                 <v-card-text>
                                     <v-data-table class="mb-5" :headers="tournamentHeaders" :items="joinedTournaments">
-                                        <template  slot="items" slot-scope="props">
+                                        <template slot="items" slot-scope="props">
                                             <tr @click="openTournamentPage(props.item.id)">
                                                 <td>{{props.item.name}}</td>
                                                 <td>{{props.item.status}}</td>
@@ -174,8 +186,9 @@
         data() {
             return {
                 awaitingMatches: [],
-                lastMatches:[],
+                lastMatches: [],
                 scoreDialog: false,
+                deleteDialog: false,
                 matchToSetScore: {},
                 tournamentHeaders: [
                     {
@@ -233,8 +246,8 @@
                 });
                 axios({
                     url: ApiConstants.GET_LAST_MATCHES,
-                    method:"GET"
-                }).then(resp =>{
+                    method: "GET"
+                }).then(resp => {
                     this.lastMatches = resp.data
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
@@ -284,6 +297,16 @@
                 }).then(() => {
                     this.loadData()
                     this.scoreDialog = false
+                }).catch(err => {
+                    this.errors = [...this.errors, err.response.data]
+                })
+            },
+            deleteTournament(tournamentId){
+                axios({
+                    url: ApiConstants.TOURNAMENT(tournamentId),
+                    method:"DELETE"
+                }).then(()=>{
+                    this.loadData()
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
                 })

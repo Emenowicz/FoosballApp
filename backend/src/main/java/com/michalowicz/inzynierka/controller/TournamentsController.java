@@ -59,6 +59,13 @@ public class TournamentsController {
         }
     }
 
+    @RequestMapping(value = "/{tournamentId}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteTournament(@PathVariable("tournamentId") Long id, Principal principal) {
+        User loggedUser = userService.getLoggedUser(principal.getName());
+        tournamentService.deleteTournamentWithId(id, loggedUser);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/{tournamentId}/createTeam", method = RequestMethod.POST)
     public ResponseEntity createTeam(@PathVariable("tournamentId") Long id, @RequestBody NewTeamForm form, Principal principal) {
         try {
@@ -72,16 +79,16 @@ public class TournamentsController {
     }
 
     @RequestMapping(value = "/{tournamentId}/start", method = RequestMethod.POST)
-    public ResponseEntity startTournament(@PathVariable("tournamentId") Long id, Principal principal){
+    public ResponseEntity startTournament(@PathVariable("tournamentId") Long id, Principal principal) {
         try {
             Tournament tournament = tournamentService.getTournamentWithId(id);
             User loggedUser = userService.getLoggedUser(principal.getName());
-            if(tournament.getOwner().equals(loggedUser)){
+            if (tournament.getOwner().equals(loggedUser)) {
                 tournamentService.startTournament(tournament);
             }
             return new ResponseEntity(HttpStatus.OK);
         } catch (NotFoundException e) {
-            return new ResponseEntity(e.getMessage(),HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 }
