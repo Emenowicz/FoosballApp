@@ -38,16 +38,12 @@ public class UserService {
     }
 
     public void updateUserDetails(User user, UpdateUserDetailsForm form) throws Exception {
-        User conflictUser = userDao.findByUsername(form.getUsername());
-        if (conflictUser != null && !conflictUser.equals(user)) {
-            throw new Exception("Login zajęty");
-        }
-        conflictUser = userDao.findByEmail(form.getEmail());
+
+        User conflictUser = userDao.findByEmail(form.getEmail());
         if (conflictUser != null && !conflictUser.equals(user)) {
             throw new Exception("Email zajęty");
         }
         try {
-            user.setUsername(form.getUsername());
             user.setEmail(form.getEmail());
             userDao.save(user);
         } catch (Exception e) {

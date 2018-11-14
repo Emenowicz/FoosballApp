@@ -1,15 +1,15 @@
 <template>
     <v-fade-transition>
-        <v-container>
+        <v-container fill-height>
             <v-layout align-center justify-center>
                 <v-flex xs6 text-xs-center>
                     <div class="my-4 headline">Zarządzanie kontem</div>
                     <v-alert class="my-0" :value="hasErrors" type="error" @click="closeAlert"
-                             transition="fade-transition">
+                            transition="fade-transition">
                         {{errors[0]}}
                     </v-alert>
                     <v-alert class="my-0" :value="hasInfos" type="success" @click="closeInfos"
-                             transition="fade-transition">
+                            transition="fade-transition">
                         {{infos[0]}}
                     </v-alert>
                     <v-tabs v-model="activeTab" color="green" dark grow>
@@ -19,11 +19,10 @@
                         <v-tab-item>
                             <v-form @submit.prevent="saveUserDetails">
                                 <v-text-field readonly prepend-icon="person" name="Username" label="Login" v-model="username"
-                                              :error-messages="usernameErrors" @input="$v.username.$touch()"
-                                              @blur="$v.username.$touch()"></v-text-field>
+                                ></v-text-field>
                                 <v-text-field prepend-icon="mail" name="Email" label="E-mail" v-model="email"
-                                              :error-messages="emailErrors" @blur="$v.email.$touch()"
-                                              @input="$v.email.$touch()"></v-text-field>
+                                        :error-messages="emailErrors" @blur="$v.email.$touch()"
+                                        @input="$v.email.$touch()"></v-text-field>
                                 <v-btn type="submit">Zapisz zmiany</v-btn>
 
                             </v-form>
@@ -35,22 +34,24 @@
                         <v-tab-item>
                             <v-form @submit.prevent="updatePassword">
                                 <v-text-field prepend-icon="lock" name="Password" label="Aktualne hasło" type="password"
-                                              v-model="currentPassword" :error-messages="currentPasswordErrors"
-                                              @blur="$v.currentPassword.$touch()"
-                                              @click="$v.currentPassword.$touch()"></v-text-field>
+                                        v-model="currentPassword" :error-messages="currentPasswordErrors"
+                                        @blur="$v.currentPassword.$touch()"
+                                        @click="$v.currentPassword.$touch()"></v-text-field>
                                 <v-text-field prepend-icon="lock" name="Password" label="Nowe hasło" type="password"
-                                              v-model="newPassword" :error-messages="newPasswordErrors"
-                                              @blur="$v.newPassword.$touch()"
-                                              @click="$v.newPassword.$touch()"></v-text-field>
+                                        v-model="newPassword" :error-messages="newPasswordErrors"
+                                        @blur="$v.newPassword.$touch()"
+                                        @click="$v.newPassword.$touch()"></v-text-field>
                                 <v-text-field prepend-icon="repeat" name="ConfirmPassword" label="Potwierdź hasło"
-                                              type="password" v-model="confirmPassword"
-                                              :error-messages="confirmPasswordErrors"
-                                              @blur="$v.confirmPassword.$touch()"
-                                              @input="$v.confirmPassword.$touch()"></v-text-field>
+                                        type="password" v-model="confirmPassword"
+                                        :error-messages="confirmPasswordErrors"
+                                        @blur="$v.confirmPassword.$touch()"
+                                        @input="$v.confirmPassword.$touch()"></v-text-field>
                                 <v-btn type="submit">Zapisz zmiany</v-btn>
                             </v-form>
                         </v-tab-item>
-                        <v-btn flat icon v-on:click="loadUserData"><v-icon>replay</v-icon></v-btn>
+                        <v-btn flat icon v-on:click="loadUserData">
+                            <v-icon>replay</v-icon>
+                        </v-btn>
                     </v-tabs>
                 </v-flex>
             </v-layout>
@@ -93,16 +94,14 @@
                 this.email = this.userProfile.email
             },
             saveUserDetails() {
-                this.$v.username.$touch()
                 this.$v.email.$touch()
-                if (!this.$v.username.$anyError && !this.$v.email.$anyError) {
+                if (!this.$v.email.$anyError) {
                     this.errors = [];
 
                     axios(
                         {
                             url: ApiConstants.UPDATE_USER_DETAILS,
                             data: {
-                                'username': this.username,
                                 'email': this.email
                             },
                             method: 'POST'
@@ -145,11 +144,6 @@
             }
         },
         validations: {
-            username: {
-                required,
-                minLength: minLength(4),
-                maxLength: maxLength(10)
-            },
             email: {
                 required,
                 email
@@ -176,14 +170,6 @@
             },
             hasInfos() {
                 return !!this.infos.length
-            },
-            usernameErrors() {
-                const errors = []
-                if (!this.$v.username.$dirty) return errors
-                !this.$v.username.minLength && errors.push('Login musi składać się z conajmniej 4 znaków')
-                !this.$v.username.maxLength && errors.push('Login może składać się maksymalnie z 10 znaków')
-                !this.$v.username.required && errors.push('Login jest wymagany')
-                return errors
             },
             currentPasswordErrors() {
                 const errors = []

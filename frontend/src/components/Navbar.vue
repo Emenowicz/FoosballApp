@@ -8,8 +8,8 @@
             <v-img v-if="loggedIn" :aspect-ratio="16/9" src="https://www.htmlcsscolor.com/preview/gallery/4CAF50.png">
                 <v-layout column fill-height>
                     <v-spacer></v-spacer>
-                    <v-layout pa-2 row align-end class="lightbox white--text">
-                        <v-flex shrink>
+                    <v-layout pa-2 row align-end justify-space-between class="white--text">
+                        <v-flex>
                             <div class="title">{{ userProfile.username }}</div>
                             <div class="body-1">{{ userProfile.email }}</div>
                             <v-layout justify-space-between row>
@@ -18,15 +18,17 @@
                                 <div class="body-2">WR: {{userProfile.roundsWon}}</div>
                             </v-layout>
                         </v-flex>
-                        <v-btn small flat dark icon @click="helpDialog=true">
-                            <v-icon>help</v-icon>
-                        </v-btn>
-                        <v-btn to="/myaccount" small flat dark icon>
-                            <v-icon>person</v-icon>
-                        </v-btn>
-                        <v-btn @click="logout" small flat dark icon>
-                            <v-icon>power_settings_new</v-icon>
-                        </v-btn>
+                        <v-flex>
+                            <v-btn small flat dark icon @click="helpDialog=true">
+                                <v-icon>help</v-icon>
+                            </v-btn>
+                            <v-btn small flat dark icon to="/myaccount">
+                                <v-icon>person</v-icon>
+                            </v-btn>
+                            <v-btn small flat dark icon @click="logout">
+                                <v-icon>power_settings_new</v-icon>
+                            </v-btn>
+                        </v-flex>
                     </v-layout>
                 </v-layout>
             </v-img>

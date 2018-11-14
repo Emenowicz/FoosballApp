@@ -53,7 +53,7 @@ public class UsersController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/updatePassword")
+    @RequestMapping(value = "/updatePassword", method=RequestMethod.POST)
     public ResponseEntity updatePassword(@RequestBody UpdatePasswordForm form, Principal principal) {
         try {
             userService.updatePassword(getLoggedUser(principal), form);
