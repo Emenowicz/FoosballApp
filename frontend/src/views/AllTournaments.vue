@@ -79,7 +79,7 @@
             return {
                 tournaments: [],
                 rowsPerPageItems: [6, 9, 12],
-                pagination: 6,
+                pagination: {'rowsPerPage':6},
                 search: ''
             }
         },

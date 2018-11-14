@@ -25,7 +25,7 @@ public class TeamController {
     UserService userService;
 
     @RequestMapping(value = "/{teamId}/join", method = RequestMethod.POST)
-    public ResponseEntity joinToTournament(@PathVariable("teamId") Long teamId, @RequestBody(required = false) TeamPasswordForm teamPasswordForm, Principal principal) {
+    public ResponseEntity joinToTeam(@PathVariable("teamId") Long teamId, @RequestBody(required = false) TeamPasswordForm teamPasswordForm, Principal principal) {
         try {
             Team team = teamService.getTeam(teamId);
             User loggedUser = userService.getLoggedUser(principal.getName());

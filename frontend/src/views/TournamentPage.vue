@@ -107,8 +107,7 @@
                                         </v-card-title>
                                         <v-card-text>
                                             <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap
-                                                    :pagination.sync="teamPagination"
-                                                    hide-actions>
+                                                    :pagination.sync="teamPagination" :rows-per-page-items="rowsPerPageItems">
                                                 <v-flex slot="item" slot-scope="props" xs12 md6 d-flex>
                                                     <v-card v-if="props.item.size!==0">
                                                         <v-card-title class="pb-1">
@@ -330,7 +329,8 @@
                     {text: 'Porażki', value: 'loses'}
                 ],
                 pagination: {'sortBy': 'wins', 'descending': true, 'rowsPerPage': -1},
-                teamPagination: {'sortBy': 'name'}
+                rowsPerPageItems: [4, 8, 16, 32],
+                teamPagination: {'sortBy': 'name', 'rowsPerPage': 4}
             }
         },
         mounted() {

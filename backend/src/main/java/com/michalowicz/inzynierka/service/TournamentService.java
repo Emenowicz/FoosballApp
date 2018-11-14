@@ -71,6 +71,7 @@ public class TournamentService {
     public void startTournament(final Tournament tournament) {
         List<Team> teams = new ArrayList<>(tournament.getTeams());
         Collections.shuffle(teams);
+        List<Tournament> tournaments = new ArrayList<>();
         if (teams.size() == tournament.getTeamsNeeded()) {
             for (int i = 0; i < teams.size(); i += 2) {
                 Match match = new Match();
@@ -89,7 +90,9 @@ public class TournamentService {
             tournament.setWinner(winner);
             tournament.setStatus(TournamentStatus.Zakończony);
         } else {
-            List<Match> matches = tournament.getMatches().stream().filter(match -> match.getLevel() == level + 1 && match.getTeamOne() != null && match.getTeamTwo() == null).collect(Collectors.toList());
+            List<Match> matches = tournament.getMatches().stream()
+                    .filter(match -> match.getLevel() == level + 1 && match.getTeamOne() != null && match.getTeamTwo() == null)
+                    .collect(Collectors.toList());
             if (matches.size() == 0) {
                 Match match = new Match();
                 match.setTeamOne(winner);

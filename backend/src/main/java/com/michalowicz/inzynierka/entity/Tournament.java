@@ -21,6 +21,7 @@ import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -65,7 +66,7 @@ public class Tournament {
     @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     @JsonIgnoreProperties(value = {"tournament"})
-    private Set<Match> matches = new HashSet<>();
+    private Set<Match> matches = new LinkedHashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties({"tournament"})
