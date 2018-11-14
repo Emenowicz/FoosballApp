@@ -44,7 +44,11 @@ public class TeamController {
     @RequestMapping(value = "/{teamId}/leave", method = RequestMethod.POST)
     public ResponseEntity leaveTournament(@PathVariable("teamId") Long teamId, Principal principal){
         User loggedUser = userService.getLoggedUser(principal.getName());
-        teamService.removePlayerFromTeam(teamId,loggedUser);
+        try {
+            teamService.removePlayerFromTeam(teamId,loggedUser);
+        } catch (Exception e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
         return new ResponseEntity(HttpStatus.OK);
     }
 

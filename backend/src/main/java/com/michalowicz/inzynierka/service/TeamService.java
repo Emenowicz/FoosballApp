@@ -4,6 +4,7 @@ import com.michalowicz.inzynierka.dao.TeamDao;
 import com.michalowicz.inzynierka.dto.NewTeamForm;
 import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.Tournament;
+import com.michalowicz.inzynierka.entity.TournamentStatus;
 import com.michalowicz.inzynierka.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -48,13 +49,17 @@ public class TeamService {
         }
     }
 
-    public void removePlayerFromTeam(final Long teamId, final User loggedUser) {
+    public void removePlayerFromTeam(final Long teamId, final User loggedUser) throws Exception {
         Team team = teamDao.getById(teamId);
-        if(team.getPlayers().size()<=1){
-            teamDao.delete(team);
-        } else {
-            team.getPlayers().remove(loggedUser);
-            teamDao.save(team);
+        if(team.getTournament().getStatus().equals(TournamentStatus.Otwarty)){
+            if(team.getPlayers().size()<=1){
+                teamDao.delete(team);
+            } else {
+                team.getPlayers().remove(loggedUser);
+                teamDao.save(team);
+            }
+        }else{
+            throw new Exception("Wystąpił błąd");
         }
     }
 }

@@ -150,15 +150,14 @@ public class User {
     }
 
     private void setStatistics() {
-        this.tournamentsWon = (int) this.joinedTournaments.stream().filter(tournament -> {
-            if (tournament.getStatus().equals(TournamentStatus.Zakończony)) {
-                return tournament.getWinner().getPlayers().contains(this);
-            }
-            return false;
-        }).count();
+        this.tournamentsWon = (int) this.joinedTournaments.stream()
+                .filter(tournament -> tournament.getStatus().equals(TournamentStatus.Zakończony))
+                .filter(tournament -> tournament.getWinner() != null)
+                .filter(tournament -> tournament.getWinner().getPlayers().contains(this))
+                .count();
 
         this.matchesWon = this.teams.stream().mapToInt(Team::getWins).sum();
-        this.roundsWon = this.teams.stream().mapToInt(Team::getWins).sum();
+        this.roundsWon = this.teams.stream().mapToInt(Team::getRoundsWin).sum();
     }
 
 

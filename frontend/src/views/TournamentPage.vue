@@ -106,7 +106,8 @@
                                             </v-btn>
                                         </v-card-title>
                                         <v-card-text>
-                                            <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap :pagination.sync="teamPagination"
+                                            <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap
+                                                    :pagination.sync="teamPagination"
                                                     hide-actions>
                                                 <v-flex slot="item" slot-scope="props" xs12 md6 d-flex>
                                                     <v-card v-if="props.item.size!==0">
@@ -119,7 +120,7 @@
                                                             >
                                                                 <v-icon color="green">add</v-icon>
                                                             </v-btn>
-                                                            <v-btn v-if="isInTeam(props.item.players)"
+                                                            <v-btn v-if="isInTeam(props.item.players)&& tournament.status==='Otwarty'"
                                                                     @click="leaveTeam(props.item)" icon
                                                                     dark>
                                                                 <v-icon color="red">clear</v-icon>
@@ -320,7 +321,7 @@
                 confirmPassword: '',
                 dialog: false,
                 passwordDialog: false,
-                deleteDialog:false,
+                deleteDialog: false,
                 errors: [],
                 statisticsHeaders: [
                     {text: 'Nazwa', value: 'name', sortable: false},
@@ -328,8 +329,8 @@
                     {text: 'Wygrane rundy', value: 'roundsWin'},
                     {text: 'Porażki', value: 'loses'}
                 ],
-                pagination: {'sortBy': 'wins', 'descending': true, 'rowsPerPage':-1},
-                teamPagination: {'sortBy':'name'}
+                pagination: {'sortBy': 'wins', 'descending': true, 'rowsPerPage': -1},
+                teamPagination: {'sortBy': 'name'}
             }
         },
         mounted() {
