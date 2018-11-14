@@ -12,12 +12,19 @@
                         <v-flex shrink>
                             <div class="title">{{ userProfile.username }}</div>
                             <div class="body-1">{{ userProfile.email }}</div>
+                            <v-layout justify-space-between row>
+                                <div class="body-2 text-xs-center">WT: {{userProfile.tournamentsWon}}</div>
+                                <div class="body-2">WM: {{userProfile.matchesWon}}</div>
+                                <div class="body-2">WR: {{userProfile.roundsWon}}</div>
+                            </v-layout>
                         </v-flex>
-                        <v-spacer />
-                        <v-btn to="/myaccount" large flat dark icon>
+                        <v-btn small flat dark icon @click="helpDialog=true">
+                            <v-icon>help</v-icon>
+                        </v-btn>
+                        <v-btn to="/myaccount" small flat dark icon>
                             <v-icon>person</v-icon>
                         </v-btn>
-                        <v-btn @click="logout" large flat dark icon>
+                        <v-btn @click="logout" small flat dark icon>
                             <v-icon>power_settings_new</v-icon>
                         </v-btn>
                     </v-layout>
@@ -63,9 +70,22 @@
         <v-content>
             <router-view />
         </v-content>
+        <v-dialog v-model="helpDialog" max-width="200">
+            <v-card>
+                <v-card-title class="headline">
+                    Skróty
+                </v-card-title>
+                <v-card-text class="text-xs-center">
+                    <div class="subheading">WT: Wygrane turnieje</div>
+                    <div class="subheading">WM: Wygrane mecze</div>
+                    <div class="subheading">WT: Wygrane rundy</div>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="primary" flat @click="helpDialog=false">Zamknij</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-layout>
-
-
 </template>
 
 <script>
@@ -74,7 +94,8 @@
     export default {
         name: "Navbar",
         data: () => ({
-            drawer: null
+            drawer: null,
+            helpDialog: false
         }),
         computed: {
 

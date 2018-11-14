@@ -55,7 +55,6 @@
                 </v-flex>
             </v-layout>
         </v-container>
-
     </v-fade-transition>
 
 </template>
@@ -96,7 +95,7 @@
             saveUserDetails() {
                 this.$v.username.$touch()
                 this.$v.email.$touch()
-                if (!this.$v.username.$anyError&&!this.$v.email.$anyError) {
+                if (!this.$v.username.$anyError && !this.$v.email.$anyError) {
                     this.errors = [];
 
                     axios(
@@ -116,11 +115,11 @@
                     })
                 }
             },
-            updatePassword(){
+            updatePassword() {
                 this.$v.currentPassword.$touch()
                 this.$v.newPassword.$touch()
                 this.$v.confirmPassword.$touch()
-                if(!this.$v.currentPassword.$anyError && !this.$v.newPassword.$anyError && !this.$v.confirmPassword.$anyError){
+                if (!this.$v.currentPassword.$anyError && !this.$v.newPassword.$anyError && !this.$v.confirmPassword.$anyError) {
                     axios(
                         {
                             url: ApiConstants.UPDATE_USER_PASSWORD,
@@ -169,13 +168,13 @@
             },
         },
         computed: {
-            userProfile(){
+            userProfile() {
                 return this.$store.getters.getProfile
             },
             hasErrors() {
                 return !!this.errors.length
             },
-            hasInfos(){
+            hasInfos() {
                 return !!this.infos.length
             },
             usernameErrors() {

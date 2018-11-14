@@ -42,7 +42,7 @@ public class User {
     @JsonIgnoreProperties(value = {"users"})
     private Set<Usergroup> usergroups = new HashSet<>();
 
-    @OneToMany(mappedBy = "owner",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"owner"})
     private Set<Tournament> ownedTournaments = new HashSet<>();
 
@@ -50,9 +50,18 @@ public class User {
     @JsonIgnoreProperties(value = {"participants"})
     private Set<Tournament> joinedTournaments = new HashSet<>();
 
-    @ManyToMany(mappedBy = "players",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "players", fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"players"})
     private List<Team> teams = new ArrayList<>();
+
+    @Transient
+    private int tournamentsWon = 0;
+
+    @Transient
+    private int matchesWon = 0;
+
+    @Transient
+    private int roundsWon = 0;
 
     public User() {
     }
@@ -135,7 +144,25 @@ public class User {
     }
 
     @PostLoad
-    public void setJoinedTournaments(){
+    public void postLoad() {
+        setJoinedTournaments();
+        setStatistics();
+    }
+
+    private void setStatistics() {
+        this.tournamentsWon = (int) this.joinedTournaments.stream().filter(tournament -> {
+            if (tournament.getStatus().equals(TournamentStatus.Zakończony)) {
+                return tournament.getWinner().getPlayers().contains(this);
+            }
+            return false;
+        }).count();
+
+        this.matchesWon = this.teams.stream().mapToInt(Team::getWins).sum();
+        this.roundsWon = this.teams.stream().mapToInt(Team::getWins).sum();
+    }
+
+
+    public void setJoinedTournaments() {
         this.joinedTournaments = teams.stream().map(Team::getTournament).collect(Collectors.toSet());
     }
 
@@ -155,5 +182,17 @@ public class User {
     public void addTeam(Team team) {
         this.teams.add(team);
         team.getPlayers().add(this);
+    }
+
+    public int getTournamentsWon() {
+        return tournamentsWon;
+    }
+
+    public int getMatchesWon() {
+        return matchesWon;
+    }
+
+    public int getRoundsWon() {
+        return roundsWon;
     }
 }
