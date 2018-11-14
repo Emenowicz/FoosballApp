@@ -58,8 +58,9 @@
                                 </v-flex>
                             </v-layout>
                             <v-divider></v-divider>
-                            <v-layout class="mb-3" wrap>
-                                <v-flex v-if="tournament.status==='Zakończony'" xs12>
+                            <v-layout wrap fill-height>
+                                <!--<v-layout wrap justify-center>-->
+                                <v-flex v-if="tournament.status==='Zakończony'" xs12 md6 d-flex>
                                     <v-card>
                                         <v-card-title class="text-xs-center">
                                             <p class="headline">Zwycięzca: {{tournament.winner.name}}</p>
@@ -73,7 +74,27 @@
                                         </v-card-text>
                                     </v-card>
                                 </v-flex>
-                                <v-flex>
+                                <v-flex xs12 sm6 d-flex>
+                                    <v-card>
+                                        <v-card-title>
+                                            <p class="headline">Tabela statystyk</p>
+                                        </v-card-title>
+                                        <v-card-text>
+                                            <v-data-table :headers="statisticsHeaders" :items="tournament.teams"
+                                                    class="elevation-1">
+                                                <template slot="items" slot-scope="props">
+                                                    <td>{{props.item.name}}</td>
+                                                    <td>{{props.item.wins}}</td>
+                                                    <td>{{props.item.roundsWin}}</td>
+                                                    <td>{{props.item.loses}}</td>
+                                                </template>
+                                            </v-data-table>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-flex>
+                                <!--</v-layout>-->
+                                <!--<v-layout wrap>-->
+                                <v-flex xs12 md6 d-flex>
                                     <v-card>
                                         <v-card-title>
                                             <p class="subheading">Drużyny</p>
@@ -87,7 +108,7 @@
                                         <v-card-text>
                                             <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap
                                                     hide-actions>
-                                                <v-flex slot="item" slot-scope="props" xs12 md6>
+                                                <v-flex slot="item" slot-scope="props" xs12 md6 d-flex>
                                                     <v-card v-if="props.item.size!==0">
                                                         <v-card-title class="pb-1">
                                                             <h4>{{props.item.name}}</h4>
@@ -161,7 +182,7 @@
                                         </v-card-text>
                                     </v-card>
                                 </v-flex>
-                                <v-flex v-if="tournament.status!=='Otwarty'">
+                                <v-flex v-if="tournament.status!=='Otwarty'" xs12 sm6 d-flex>
                                     <v-card>
                                         <v-card-title>
                                             <p class="subheading">Mecze</p>
@@ -189,6 +210,7 @@
                                         </v-card-text>
                                     </v-card>
                                 </v-flex>
+                                <!--</v-layout>-->
                             </v-layout>
                             <v-layout v-if="isOwner">
                                 <v-speed-dial fixed right bottom class="floating-button-corner">
@@ -196,23 +218,36 @@
                                         <v-icon>account_circle</v-icon>
                                         <v-icon>close</v-icon>
                                     </v-btn>
-                                    <v-btn v-if="tournament.status==='Otwarty' && tournament.readyToStart" @click="startTournament" fab
+                                    <v-btn v-if="tournament.status==='Otwarty' && tournament.readyToStart"
+                                            @click="startTournament" fab
                                             dark small
                                             color="green">
                                         <v-icon>play_arrow</v-icon>
                                     </v-btn>
-                                    <v-btn fab dark small color="indigo">
-                                        <v-icon>add</v-icon>
-                                    </v-btn>
-                                    <v-btn fab dark small color="red">
+                                    <v-btn @click="deleteDialog=true" fab dark small color="red">
                                         <v-icon>delete</v-icon>
                                     </v-btn>
+
                                 </v-speed-dial>
                             </v-layout>
                         </v-card-text>
                     </v-card>
                 </v-flex>
             </v-layout>
+            <v-dialog v-model="deleteDialog" max-width="300">
+                <v-card>
+                    <v-card-title
+                            class="headline">Jesteś pewien że chcesz usunąć turniej
+                        <b>{{tournament.name}}</b>?
+                    </v-card-title>
+                    <v-card-text>
+                        <v-layout justify-center>
+                            <v-btn @click="deleteDialog=false">Anuluj</v-btn>
+                            <v-btn @click="deleteTournament(tournament.id)">Usuń</v-btn>
+                        </v-layout>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
             <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
                 <v-card>
                     <v-toolbar dark color="green">
@@ -285,7 +320,14 @@
                 confirmPassword: '',
                 dialog: false,
                 passwordDialog: false,
-                errors: []
+                deleteDialog:false,
+                errors: [],
+                statisticsHeaders: [
+                    {text: 'Nazwa', value: 'name'},
+                    {text: 'Zwycięstwa', value: 'wins'},
+                    {text: 'Wygrane rundy', value: 'roundsWin'},
+                    {text: 'Porażki', value: 'loses'}
+                ]
             }
         },
         mounted() {
@@ -377,18 +419,15 @@
                     this.errors = [...this.errors, "Wystąpił błąd"]
                 }
 
-            }
-            ,
+            },
             isInMatch(id) {
                 return this.$store.getters.getProfile.teams.filter(team => {
                     return team.id === id;
                 }).length !== 0;
-            }
-            ,
+            },
             closeAlerts() {
                 this.errors = []
-            }
-            ,
+            },
             isInTeam(players) {
                 let isInTeam = false
                 players.forEach(player => {
@@ -397,7 +436,17 @@
                     }
                 })
                 return isInTeam
-            }
+            },
+            deleteTournament(tournamentId) {
+                axios({
+                    url: ApiConstants.TOURNAMENT(tournamentId),
+                    method: "DELETE"
+                }).then(() => {
+                    this.$router.push("/")
+                }).catch(err => {
+                    this.errors = [...this.errors, err.response.data]
+                })
+            },
         },
         validations: {
             password: {

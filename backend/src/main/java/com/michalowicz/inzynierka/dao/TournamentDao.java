@@ -11,4 +11,5 @@ import java.util.Set;
 public interface TournamentDao extends JpaRepository<Tournament, Long> {
     Set<Tournament> getAllByOwner(User user);
     Tournament getById(Long id);
+    Tournament getByName(String name);
 }

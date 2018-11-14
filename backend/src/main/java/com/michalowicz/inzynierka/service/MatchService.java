@@ -65,17 +65,27 @@ public class MatchService {
         });
         match.setScoreOne(scoreOne.get());
         match.setScoreTwo(scoreTwo.get());
-        if(match.getScoreOne() == match.getTournament().getRuleSet().getRoundsToWin() || match.getScoreTwo() == match.getTournament().getRuleSet().getRoundsToWin()){
+        if (match.getScoreOne() == match.getTournament().getRuleSet().getRoundsToWin() || match.getScoreTwo() == match.getTournament().getRuleSet().getRoundsToWin()) {
             match.setStatus("Closed");
             match.setClosedTime(LocalDateTime.now());
         }
         if (match.getStatus().equals("Closed")) {
-            match.setWinner(scoreOne.get() > scoreTwo.get() ? match.getTeamOne() : match.getTeamTwo());
+            if (scoreOne.get() > scoreTwo.get()) {
+                match.getTeamOne().addWin();
+                match.getTeamTwo().addLose();
+                match.setWinner(match.getTeamOne());
+            } else {
+                match.getTeamOne().addLose();
+                match.getTeamTwo().addWin();
+                match.setWinner(match.getTeamTwo());
+            }
         }
+        match.getTeamOne().addRoundWin(scoreOne.get());
+        match.getTeamTwo().addRoundWin(scoreTwo.get());
     }
 
     public List<Match> getUsersLastMatches(final User loggedUser) {
-        List<Match> matches =  matchDao.getAllByStatus("Closed");
+        List<Match> matches = matchDao.getAllByStatus("Closed");
         matches = matches.stream().filter(match -> match.getTeamOne().getPlayers().contains(loggedUser) ||
                 match.getTeamTwo().getPlayers().contains(loggedUser)
         ).collect(Collectors.toList());

@@ -53,7 +53,7 @@ public class Tournament {
     private Set<User> participants = new HashSet<>();
 
     @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Cascade({CascadeType.DELETE})
+    @Cascade(CascadeType.ALL)
     @JsonIgnoreProperties(value = {"tournament"})
     private List<Team> teams = new ArrayList<>();
 

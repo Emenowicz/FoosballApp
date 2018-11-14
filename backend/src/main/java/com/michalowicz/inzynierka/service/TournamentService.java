@@ -26,6 +26,9 @@ public class TournamentService {
     @Resource
     RuleSetDao ruleSetDao;
 
+    @Resource
+    TeamService teamService;
+
     Random random = new Random();
 
 
@@ -35,8 +38,10 @@ public class TournamentService {
 
     public void createTournament(CreateTournamentForm form, User user) throws Exception {
         try {
-            ruleSetDao.save(form.getRuleSet());
             Tournament tournament = new Tournament();
+            if(tournamentDao.getByName(form.getName())!=null){
+                throw new Exception("Nazwa turnieju zajęta");
+            }
             tournament.setName(form.getName());
             tournament.setDescription(form.getDescription());
             tournament.addOwner(user);
@@ -50,6 +55,7 @@ public class TournamentService {
 
     public Tournament getTournamentWithId(Long id) throws NotFoundException {
         Tournament tournament = tournamentDao.getById(id);
+
         if (tournament != null) {
             return tournament;
         }

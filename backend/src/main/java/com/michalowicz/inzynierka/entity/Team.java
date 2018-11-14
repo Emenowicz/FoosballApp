@@ -26,11 +26,21 @@ public class Team {
 
     private boolean isPrivate;
 
+    private int wins = 0;
+
+    private int loses = 0;
+
+    private int played = 0;
+
+    private int roundsWin = 0;
+
+    private int roundsLost = 0;
+
     @JsonIgnore
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JsonIgnoreProperties(value = {"teams","joinedTournaments","ownedTournaments", "usergroups"})
+    @JsonIgnoreProperties(value = {"teams", "joinedTournaments", "ownedTournaments", "usergroups"})
     private Set<User> players = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -95,5 +105,39 @@ public class Team {
     public void setPassword(final String password) {
         this.password = password;
     }
+
+    public int getWins() {
+        return wins;
+    }
+
+    public int getLoses() {
+        return loses;
+    }
+
+    public int getPlayed() {
+        return played;
+    }
+
+    public int getRoundsWin() {
+        return roundsWin;
+    }
+
+    public int getRoundsLost() {
+        return roundsLost;
+    }
+
+    public void addWin() {
+        this.played++;
+        this.wins++;
+    }
+    public void addLose() {
+        this.played++;
+        this.loses++;
+    }
+
+    public void addRoundWin(int roundsWin){
+        this.roundsWin+=roundsWin;
+    }
+
 
 }

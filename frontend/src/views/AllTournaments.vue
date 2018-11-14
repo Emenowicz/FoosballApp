@@ -8,7 +8,7 @@
                             <v-card-text>
                                 <v-data-iterator :items="tournaments" :rows-per-page-items="rowsPerPageItems" :pagination.sync="pagination" content-tag="v-layout" no-data-text="Brak turniejów" row
                                         wrap>
-                                    <v-flex @click="openTournament(props.item.id)" slot="item" slot-scope="props" xs12 sm6 md4 xl3>
+                                    <v-flex @click="openTournament(props.item.id)" slot="item" slot-scope="props" xs12 sm6 md4 xl3 d-flex>
                                         <v-card ripple v-if="props.item.size!==0">
                                             <v-card-title class="subheading font-weight-bold pb-0">
                                                 <v-layout justify-space-between>

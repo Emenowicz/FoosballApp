@@ -4,7 +4,7 @@
             <v-layout column>
                 <v-flex>
                     <v-layout row wrap justify-center>
-                        <v-flex xs12 sm6>
+                        <v-flex xs12 sm6 d-flex>
                             <v-card>
                                 <v-card-title primary class="title">Twoje oczekujące mecze</v-card-title>
                                 <v-card-text>
@@ -75,7 +75,7 @@
                                 </v-card-text>
                             </v-card>
                         </v-flex>
-                        <v-flex xs12 sm6>
+                        <v-flex xs12 sm6 d-flex>
                             <v-card>
                                 <v-card-title primary class="title">Twoje ostatnie mecze</v-card-title>
                                 <v-card-text>
@@ -83,8 +83,8 @@
                                         <v-list-tile v-for="match in lastMatches"
                                                 :key="match.id">
                                             <v-list-tile-content>
-                                                <v-list-tile-title
-                                                        class="blue-grey--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
+                                                <v-list-tile-title class="blue-grey--text">
+                                                    {{match.teamOne.name}} ({{match.scoreOne}} - {{match.scoreTwo}}) {{match.teamTwo.name}}
                                                 </v-list-tile-title>
                                                 <v-list-tile-sub-title>{{match.tournament.name}}</v-list-tile-sub-title>
                                             </v-list-tile-content>
@@ -125,10 +125,15 @@
                                                         <v-btn @click="startTournament(props.item.id)"
                                                                 v-if="props.item.status==='Otwarty' && isTournamentFull(props.item.id)">Rozpocznij
                                                         </v-btn>
-                                                        <v-btn @click="deleteDialog=true" v-if="props.item.status==='Otwarty'">Usuń</v-btn>
+                                                        <v-btn @click="deleteDialog=true"
+                                                                v-if="props.item.status==='Otwarty'">Usuń
+                                                        </v-btn>
                                                         <v-dialog v-model="deleteDialog" max-width="300">
                                                             <v-card>
-                                                                <v-card-title class="headline">Jesteś pewien że chcesz usunąć turniej <b>{{props.item.name}}</b>?</v-card-title>
+                                                                <v-card-title
+                                                                        class="headline">Jesteś pewien że chcesz usunąć turniej
+                                                                    <b>{{props.item.name}}</b>?
+                                                                </v-card-title>
                                                                 <v-card-text>
                                                                     <v-layout justify-center>
                                                                         <v-btn @click="deleteDialog=false">Anuluj</v-btn>
@@ -301,11 +306,11 @@
                     this.errors = [...this.errors, err.response.data]
                 })
             },
-            deleteTournament(tournamentId){
+            deleteTournament(tournamentId) {
                 axios({
                     url: ApiConstants.TOURNAMENT(tournamentId),
-                    method:"DELETE"
-                }).then(()=>{
+                    method: "DELETE"
+                }).then(() => {
                     this.loadData()
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
