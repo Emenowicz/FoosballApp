@@ -38,6 +38,7 @@ public class TournamentService {
 
     public void createTournament(CreateTournamentForm form, User user) throws Exception {
         try {
+            ruleSetDao.save(form.getRuleSet());
             Tournament tournament = new Tournament();
             if(tournamentDao.getByName(form.getName())!=null){
                 throw new Exception("Nazwa turnieju zajęta");

@@ -81,7 +81,7 @@
                                         </v-card-title>
                                         <v-card-text>
                                             <v-data-table :headers="statisticsHeaders" :items="tournament.teams"
-                                                    class="elevation-1">
+                                                    v-bind:pagination.sync="pagination" hide-actions class="elevation-1">
                                                 <template slot="items" slot-scope="props">
                                                     <td>{{props.item.name}}</td>
                                                     <td>{{props.item.wins}}</td>
@@ -106,7 +106,7 @@
                                             </v-btn>
                                         </v-card-title>
                                         <v-card-text>
-                                            <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap
+                                            <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap :pagination.sync="teamPagination"
                                                     hide-actions>
                                                 <v-flex slot="item" slot-scope="props" xs12 md6 d-flex>
                                                     <v-card v-if="props.item.size!==0">
@@ -323,11 +323,13 @@
                 deleteDialog:false,
                 errors: [],
                 statisticsHeaders: [
-                    {text: 'Nazwa', value: 'name'},
+                    {text: 'Nazwa', value: 'name', sortable: false},
                     {text: 'Zwycięstwa', value: 'wins'},
                     {text: 'Wygrane rundy', value: 'roundsWin'},
                     {text: 'Porażki', value: 'loses'}
-                ]
+                ],
+                pagination: {'sortBy': 'wins', 'descending': true, 'rowsPerPage':-1},
+                teamPagination: {'sortBy':'name'}
             }
         },
         mounted() {

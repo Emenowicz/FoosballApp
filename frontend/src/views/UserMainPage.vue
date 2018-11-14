@@ -99,9 +99,20 @@
                     <v-layout row wrap justify-center>
                         <v-flex d-flex xs12 sm6>
                             <v-card>
-                                <v-card-title primary class="title">Twoje turnieje</v-card-title>
+                                <v-card-title primary class="title">Twoje turnieje
+                                    <v-spacer>
+                                    </v-spacer>
+                                    <v-text-field
+                                            v-model="ownedSearch"
+                                            append-icon="search"
+                                            label="Search"
+                                            single-line
+                                            hide-details
+                                    ></v-text-field>
+                                </v-card-title>
                                 <v-card-text fill-height>
-                                    <v-data-table class="mb-5" :headers="tournamentHeaders" :items="ownedTournaments">
+                                    <v-data-table class="mb-5" :headers="tournamentHeaders" :items="ownedTournaments"
+                                            :search="ownedSearch">
                                         <template slot="items" slot-scope="props">
                                             <tr @click="props.expanded = !props.expanded">
                                                 <td>{{props.item.name}}</td>
@@ -152,9 +163,20 @@
                         </v-flex>
                         <v-flex d-flex xs12 sm6>
                             <v-card>
-                                <v-card-title primary class="title">Turnieje w których bierzesz udział</v-card-title>
+                                <v-card-title primary class="title">Turnieje w których bierzesz udział
+                                    <v-spacer>
+                                    </v-spacer>
+                                    <v-text-field
+                                            v-model="joinedSearch"
+                                            append-icon="search"
+                                            label="Search"
+                                            single-line
+                                            hide-details
+                                    ></v-text-field>
+                                </v-card-title>
                                 <v-card-text>
-                                    <v-data-table class="mb-5" :headers="tournamentHeaders" :items="joinedTournaments">
+                                    <v-data-table class="mb-5" :headers="tournamentHeaders" :items="joinedTournaments"
+                                            :search="joinedSearch">
                                         <template slot="items" slot-scope="props">
                                             <tr @click="openTournamentPage(props.item.id)">
                                                 <td>{{props.item.name}}</td>
@@ -223,6 +245,8 @@
                     },
                 ],
                 errors: [],
+                joinedSearch: '',
+                ownedSearch: ''
             }
         },
         computed: {

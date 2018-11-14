@@ -4,49 +4,62 @@
             <v-layout row align-center justify-center>
                 <v-flex d-flex fill-height>
                     <v-card>
-                        <v-card-title class="headline">Wszystkie turnieje</v-card-title>
-                            <v-card-text>
-                                <v-data-iterator :items="tournaments" :rows-per-page-items="rowsPerPageItems" :pagination.sync="pagination" content-tag="v-layout" no-data-text="Brak turniejów" row
-                                        wrap>
-                                    <v-flex @click="openTournament(props.item.id)" slot="item" slot-scope="props" xs12 sm6 md4 xl3 d-flex>
-                                        <v-card ripple v-if="props.item.size!==0">
-                                            <v-card-title class="subheading font-weight-bold pb-0">
-                                                <v-layout justify-space-between>
-                                                    <v-flex>
-                                                        <p class="text-uppercase pb-0 mb-0">{{props.item.name}}</p>
-                                                    </v-flex>
-                                                    <v-flex no-wrap class="text-xs-right">
-                                                        <p class="subheading pb-0 mb-0">Status:&nbsp;</p>
-                                                        <p class="subheading pb-0 mb-0 green--text"
-                                                                v-if="props.item.status==='Otwarty'">{{props.item.status}}</p>
-                                                        <p class="subheading pb-0 mb-0 orange--text"
-                                                                v-if="props.item.status==='Trwający'">{{props.item.status}}</p>
-                                                        <p class="subheading pb-0 mb-0 red--text"
-                                                                v-if="props.item.status==='Zakończony'">{{props.item.status}}</p>
-                                                    </v-flex>
-                                                </v-layout>
-                                            </v-card-title>
-                                            <v-card-text class="pt-1">
-                                                <v-subheader v-if="!!props.item.description">{{props.item.description}}</v-subheader>
-                                                <v-subheader>Zasady</v-subheader>
-                                                <v-layout column align-center justify-start>
-                                                    <v-flex>
-                                                        <v-text-field flat readonly label="Liczba graczy w drużynie"
-                                                                v-model="props.item.ruleSet.teamSize"></v-text-field>
-                                                    </v-flex>
-                                                    <v-flex>
-                                                        <v-text-field flat readonly label="Punkty do zwycięstwa"
-                                                                v-model="props.item.ruleSet.pointsToWin"></v-text-field>
-                                                    </v-flex>
-                                                    <v-flex>
-                                                        <v-text-field flat readonly label="Rundy do zwycięstwa"
-                                                                v-model="props.item.ruleSet.roundsToWin"></v-text-field>
-                                                    </v-flex>
-                                                </v-layout>
-                                            </v-card-text>
-                                        </v-card>
-                                    </v-flex>
-                                </v-data-iterator>
+                        <v-card-title class="headline">
+                            Wszystkie turnieje
+                            <v-spacer></v-spacer>
+                            <v-text-field
+                                    v-model="search"
+                                    append-icon="search"
+                                    label="Search"
+                                    single-line
+                                    hide-details
+                            ></v-text-field>
+                        </v-card-title>
+                        <v-card-text>
+                            <v-data-iterator :items="tournaments" :rows-per-page-items="rowsPerPageItems"
+                                    :pagination.sync="pagination" content-tag="v-layout" no-data-text="Brak turniejów"
+                                    :search="search" row
+                                    wrap>
+                                <v-flex @click="openTournament(props.item.id)" slot="item" slot-scope="props" xs12 sm6 md4 xl3
+                                        d-flex>
+                                    <v-card ripple v-if="props.item.size!==0">
+                                        <v-card-title class="subheading font-weight-bold pb-0">
+                                            <v-layout justify-space-between>
+                                                <v-flex>
+                                                    <p class="text-uppercase pb-0 mb-0">{{props.item.name}}</p>
+                                                </v-flex>
+                                                <v-flex no-wrap class="text-xs-right">
+                                                    <p class="subheading pb-0 mb-0">Status:&nbsp;</p>
+                                                    <p class="subheading pb-0 mb-0 green--text"
+                                                            v-if="props.item.status==='Otwarty'">{{props.item.status}}</p>
+                                                    <p class="subheading pb-0 mb-0 orange--text"
+                                                            v-if="props.item.status==='Trwający'">{{props.item.status}}</p>
+                                                    <p class="subheading pb-0 mb-0 red--text"
+                                                            v-if="props.item.status==='Zakończony'">{{props.item.status}}</p>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-card-title>
+                                        <v-card-text class="pt-1">
+                                            <v-subheader v-if="!!props.item.description">{{props.item.description}}</v-subheader>
+                                            <v-subheader>Zasady {{props.item.ruleSet.name}}</v-subheader>
+                                            <v-layout column align-center justify-start>
+                                                <v-flex>
+                                                    <v-text-field flat readonly label="Liczba graczy w drużynie"
+                                                            v-model="props.item.ruleSet.teamSize"></v-text-field>
+                                                </v-flex>
+                                                <v-flex>
+                                                    <v-text-field flat readonly label="Punkty do zwycięstwa"
+                                                            v-model="props.item.ruleSet.pointsToWin"></v-text-field>
+                                                </v-flex>
+                                                <v-flex>
+                                                    <v-text-field flat readonly label="Rundy do zwycięstwa"
+                                                            v-model="props.item.ruleSet.roundsToWin"></v-text-field>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-flex>
+                            </v-data-iterator>
                         </v-card-text>
                     </v-card>
                 </v-flex>
@@ -65,8 +78,9 @@
         data() {
             return {
                 tournaments: [],
-                rowsPerPageItems:[6,9,12],
-                pagination: 6
+                rowsPerPageItems: [6, 9, 12],
+                pagination: 6,
+                search: ''
             }
         },
         methods: {
@@ -79,8 +93,8 @@
                     this.tournaments = resp.data
                 })
             },
-            openTournament(id){
-                this.$router.push("/tournament/"+id);
+            openTournament(id) {
+                this.$router.push("/tournament/" + id);
             }
         },
         mounted() {
