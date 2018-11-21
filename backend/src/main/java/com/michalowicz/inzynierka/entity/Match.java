@@ -3,6 +3,7 @@ package com.michalowicz.inzynierka.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -37,7 +38,7 @@ public class Match {
     @JsonIgnoreProperties("tournament")
     private Team teamTwo;
 
-    @OneToMany(mappedBy = "match", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "match", fetch = FetchType.EAGER, orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     @JsonIgnoreProperties("match")
     private List<Round> rounds = new ArrayList<>();
@@ -45,6 +46,9 @@ public class Match {
     private String status = "Open";
 
     private LocalDateTime closedTime;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime timeCreated = LocalDateTime.now();
 
     private int scoreOne;
 
@@ -152,5 +156,9 @@ public class Match {
 
     public void setClosedTime(final LocalDateTime closedTime) {
         this.closedTime = closedTime;
+    }
+
+    public LocalDateTime getTimeCreated() {
+        return timeCreated;
     }
 }

@@ -60,21 +60,25 @@
                             <v-divider></v-divider>
                             <v-layout wrap fill-height>
                                 <!--<v-layout wrap justify-center>-->
-                                <v-flex v-if="tournament.status==='Zakończony'" xs12 md6 d-flex>
+                                <v-flex v-if="tournament.status==='Zakończony'" d-flex>
                                     <v-card>
                                         <v-card-title class="text-xs-center">
-                                            <p class="headline">Zwycięzca: {{tournament.winner.name}}</p>
+                                            <p class="headline">Zwycięzca: &nbsp;</p>
+                                            <p class="headline green--text">{{tournament.winner.name}} </p>
                                         </v-card-title>
                                         <v-card-text>
-                                            <v-list>
+                                            <v-list class="headline text-xs-center">
+                                                Skład drużyny
                                                 <v-list-tile v-for="(player,index) in tournament.winner.players" :key="index">
-                                                    <v-list-tile-content>{{index}}. {{player.username}}</v-list-tile-content>
+                                                    <v-list-tile-content
+                                                            class="title align-center">{{index+1}}. {{player.username}}
+                                                    </v-list-tile-content>
                                                 </v-list-tile>
                                             </v-list>
                                         </v-card-text>
                                     </v-card>
                                 </v-flex>
-                                <v-flex xs12 sm6 d-flex>
+                                <v-flex d-flex>
                                     <v-card>
                                         <v-card-title>
                                             <p class="headline">Tabela statystyk</p>
@@ -94,7 +98,7 @@
                                 </v-flex>
                                 <!--</v-layout>-->
                                 <!--<v-layout wrap>-->
-                                <v-flex xs12 md6 d-flex>
+                                <v-flex d-flex>
                                     <v-card>
                                         <v-card-title>
                                             <p class="subheading">Drużyny</p>
@@ -119,7 +123,7 @@
                                                             >
                                                                 <v-icon color="green">add</v-icon>
                                                             </v-btn>
-                                                            <v-btn v-if="isInTeam(props.item.players)&& tournament.status==='Otwarty'"
+                                                            <v-btn v-if="isInTeam(props.item.players) && tournament.status==='Otwarty'"
                                                                     @click="leaveTeam(props.item)" icon
                                                                     dark>
                                                                 <v-icon color="red">clear</v-icon>
@@ -182,31 +186,37 @@
                                         </v-card-text>
                                     </v-card>
                                 </v-flex>
-                                <v-flex v-if="tournament.status!=='Otwarty'" xs12 sm6 d-flex>
+                                <v-flex v-if="tournament.status!=='Otwarty'" d-flex>
                                     <v-card>
                                         <v-card-title>
                                             <p class="subheading">Mecze</p>
                                         </v-card-title>
                                         <v-card-text>
-                                            <v-card v-for="match in tournament.matches" :key="match.id" class="text-xs-center">
-                                                <v-card-text>
-                                                    <v-layout justify-space-between>
-                                                        <v-flex xs5>
-                                                            <h3 class="subheading">{{match.teamOne.name}}</h3>
-                                                        </v-flex>
-                                                        <v-flex xs2>
-                                                            <h3 class="subheading">vs.</h3>
-                                                        </v-flex>
-                                                        <v-flex xs5>
-                                                            <h3 v-if="!!match.teamTwo"
-                                                                    class="subheading">{{match.teamTwo.name}}</h3>
-                                                            <h3 v-else class="subheading">Oczekiwanie na drużynę</h3>
-                                                        </v-flex>
-                                                    </v-layout>
-                                                    <h2 class="display-1">{{match.scoreOne}} - {{match.scoreTwo}}</h2>
-                                                    <v-btn v-if="isInMatch(match.id)"></v-btn>
-                                                </v-card-text>
-                                            </v-card>
+                                            <v-data-iterator :items="tournament.matches" content-tag="v-layout" row wrap
+                                                    :pagination.sync="matchPagination">
+                                                <v-flex xs12 slot="item" slot-scope="props"
+                                                        class="text-xs-center">
+                                                    <v-card>
+                                                        <v-card-text>
+                                                            <v-layout justify-space-between wrap class="text-truncate">
+                                                                <v-flex xs12 sm5>
+                                                                    <h3 class="subheading">{{props.item.teamOne.name}}</h3>
+                                                                </v-flex>
+                                                                <v-flex xs12 sm2>
+                                                                    <h3 class="subheading">vs</h3>
+                                                                </v-flex>
+                                                                <v-flex xs12 sm5>
+                                                                    <h3 v-if="!!props.item.teamTwo"
+                                                                            class="subheading">{{props.item.teamTwo.name}}</h3>
+                                                                    <h3 v-else class="subheading">Oczekiwanie na drużynę</h3>
+                                                                </v-flex>
+                                                            </v-layout>
+                                                            <h2 class="display-1">{{props.item.scoreOne}} - {{props.item.scoreTwo}}</h2>
+                                                            <v-btn v-if="isInMatch(props.item.id)"></v-btn>
+                                                        </v-card-text>
+                                                    </v-card>
+                                                </v-flex>
+                                            </v-data-iterator>
                                         </v-card-text>
                                     </v-card>
                                 </v-flex>
@@ -323,14 +333,15 @@
                 deleteDialog: false,
                 errors: [],
                 statisticsHeaders: [
-                    {text: 'Nazwa', value: 'name', sortable: false},
+                    {text: 'Nazwa', value: 'name'},
                     {text: 'Zwycięstwa', value: 'wins'},
                     {text: 'Wygrane rundy', value: 'roundsWin'},
                     {text: 'Porażki', value: 'loses'}
                 ],
                 pagination: {'sortBy': 'wins', 'descending': true, 'rowsPerPage': -1},
                 rowsPerPageItems: [4, 8, 16, 32],
-                teamPagination: {'sortBy': 'name', 'rowsPerPage': 4}
+                teamPagination: {'sortBy': 'name', 'rowsPerPage': 4},
+                matchPagination: {'sortBy': 'timeCreated', 'descending': true}
             }
         },
         mounted() {
@@ -405,7 +416,6 @@
                 }).catch(err => {
                     this.closeAlerts()
                     this.errors = [...this.errors, err.response.data]
-
                 })
             },
             startTournament() {

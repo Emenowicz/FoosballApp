@@ -12,6 +12,7 @@ import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.Tournament;
 import com.michalowicz.inzynierka.entity.User;
 import com.michalowicz.inzynierka.entity.Usergroup;
+import com.michalowicz.inzynierka.service.TournamentService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,6 +40,8 @@ public class InitialDataLoader implements ApplicationRunner {
     MatchDao matchDao;
     @Resource
     PasswordEncoder passwordEncoder;
+    @Resource
+    TournamentService tournamentService;
 
     Random random = new Random();
 
@@ -66,7 +69,7 @@ public class InitialDataLoader implements ApplicationRunner {
         ruleSetDao.save(standardRuleSet);
 
         //TOURNAMENTS
-        String[] tournamentNames = {"Wyborna rozgrywka Kielce", "Nowa nazwa turnieju", "Robimy turniej", "Soccer 11", "MiniSoccer18", "Fajna gra", "Turniej Polski", "Turniej Czeski", "Weekendowe granie", "Na śmierć i życie", "Teksańska masakra grillem piłkarzykowym", "Piłkarzyki 2011", "Firmowe granie", "PWr piłkarzyki", "Zagrajmy w grę"};
+        String[] tournamentNames = {"Wyborna rozgrywka Kielce", "Nowa nazwa turnieju", "Robimy turniej", "Soccer 11", "MiniSoccer18", "Fajna gra", "Turniej Polski", "Turniej Czeski", "Weekendowe granie", "Na śmierć i życie", "Teksańska masakra piłkarzykami", "Piłkarzyki 2011", "Firmowe granie", "PWr piłkarzyki", "Zagrajmy w grę"};
         List<Tournament> tournaments = new ArrayList<>();
         for (String tournamentName : tournamentNames) {
             Tournament tournament = new Tournament(tournamentName);
@@ -95,6 +98,11 @@ public class InitialDataLoader implements ApplicationRunner {
         }
         teamDao.saveAll(teams);
 
+        //MATCHES
+        for (int i=0; i<tournaments.size(); i+=3){
+            tournamentService.startTournament(tournaments.get(i));
+        }
+
         //DAWID
         Tournament dawidTournament = new Tournament("Dawdziakowy turniej");
         dawidTournament.addOwner(dawid);
@@ -111,7 +119,7 @@ public class InitialDataLoader implements ApplicationRunner {
         teamDao.save(team);
 
         Team team2 = new Team();
-        team2.setName("antydawdziakowyTeam");
+        team2.setName("antydawdziaki");
         team2.addPlayer(users.get(random.nextInt(users.size())));
         team2.addPlayer(users.get(random.nextInt(users.size())));
         team2.addTournament(dawidTournament);

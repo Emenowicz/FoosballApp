@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.michalowicz.inzynierka.validators.OneOf;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
@@ -32,8 +33,10 @@ public class Tournament {
     private Long id;
 
     @NotBlank
+    @Length(min = 5, max = 30)
     private String name;
 
+    @Length(max = 200)
     private String description;
 
     @OneOf({2, 4, 8, 16, 32})
@@ -51,10 +54,10 @@ public class Tournament {
     private User owner;
     @Transient
     @JsonIgnoreProperties(value = {"joinedTournaments", "ownedTournaments", "teams", "usergroup"})
-    private Set<User> participants = new HashSet<>();
+    private Set<User> participants = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, orphanRemoval = true)
-    @Cascade(CascadeType.ALL)
+    @Cascade({CascadeType.SAVE_UPDATE ,CascadeType.DELETE})
     @JsonIgnoreProperties(value = {"tournament"})
     private List<Team> teams = new ArrayList<>();
 
@@ -63,7 +66,7 @@ public class Tournament {
     @JsonIgnoreProperties(value = {"tournaments"})
     private RuleSet ruleSet;
 
-    @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     @JsonIgnoreProperties(value = {"tournament"})
     private Set<Match> matches = new LinkedHashSet<>();

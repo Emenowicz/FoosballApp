@@ -112,7 +112,7 @@
                                 </v-card-title>
                                 <v-card-text fill-height>
                                     <v-data-table class="mb-5" :headers="tournamentHeaders" :items="ownedTournaments"
-                                            :search="ownedSearch">
+                                            :search="ownedSearch" :pagination.sync="pagination">
                                         <template slot="items" slot-scope="props">
                                             <tr @click="props.expanded = !props.expanded">
                                                 <td>{{props.item.name}}</td>
@@ -176,7 +176,7 @@
                                 </v-card-title>
                                 <v-card-text>
                                     <v-data-table class="mb-5" :headers="tournamentHeaders" :items="joinedTournaments"
-                                            :search="joinedSearch">
+                                            :search="joinedSearch" :pagination.sync="pagination">
                                         <template slot="items" slot-scope="props">
                                             <tr @click="openTournamentPage(props.item.id)">
                                                 <td>{{props.item.name}}</td>
@@ -220,7 +220,6 @@
                 tournamentHeaders: [
                     {
                         text: 'Nazwa turnieju',
-                        sortable: false,
                         value: 'name'
                     },
                     {
@@ -244,6 +243,10 @@
                         value: 'timeCreated'
                     },
                 ],
+                pagination: {
+                  'sortBy':'timeCreated',
+                    'descending': true
+                },
                 errors: [],
                 joinedSearch: '',
                 ownedSearch: ''

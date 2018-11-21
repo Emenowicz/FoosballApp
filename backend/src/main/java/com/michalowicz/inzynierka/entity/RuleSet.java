@@ -20,7 +20,7 @@ public class RuleSet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name = "Niestandardowe";
+    private String name = "Niestandardowy";
 
     @Enumerated(EnumType.STRING)
     private RuleSetType ruleSetType = RuleSetType.CUSTOM;

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,8 +20,9 @@ import javax.persistence.PostLoad;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,25 +33,27 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotBlank
+    @Length(min = 4, max = 10)
     private String username;
     @NotBlank
     @JsonIgnore
     private String password;
     @Email
+    @NotBlank
     private String email;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Cascade(CascadeType.SAVE_UPDATE)
     @JsonIgnoreProperties(value = {"users"})
-    private Set<Usergroup> usergroups = new HashSet<>();
+    private Set<Usergroup> usergroups = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"owner"})
-    private Set<Tournament> ownedTournaments = new HashSet<>();
+    private Set<Tournament> ownedTournaments = new LinkedHashSet<>();
 
     @Transient
     @JsonIgnoreProperties(value = {"participants"})
-    private Set<Tournament> joinedTournaments = new HashSet<>();
+    private Set<Tournament> joinedTournaments = new LinkedHashSet<>();
 
     @ManyToMany(mappedBy = "players", fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = {"players"})
@@ -62,6 +67,9 @@ public class User {
 
     @Transient
     private int roundsWon = 0;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime timeCreated = LocalDateTime.now();
 
     public User() {
     }
@@ -152,7 +160,7 @@ public class User {
     private void setStatistics() {
         long count = 0L;
         for (Tournament tournament : this.joinedTournaments) {
-            if (tournament.getStatus().equals(TournamentStatus.Zakończony)) {
+            if (tournament.getStatus()!= null && tournament.getStatus().equals(TournamentStatus.Zakończony)) {
                 if (tournament.getWinner() != null) {
                     if (tournament.getWinner().getPlayers().contains(this)) {
                         count++;
@@ -199,5 +207,9 @@ public class User {
 
     public int getRoundsWon() {
         return roundsWon;
+    }
+
+    public LocalDateTime getTimeCreated() {
+        return timeCreated;
     }
 }

@@ -77,10 +77,10 @@
                 <v-card-title class="headline">
                     Skróty
                 </v-card-title>
-                <v-card-text class="text-xs-center">
+                <v-card-text>
                     <div class="subheading">WT: Wygrane turnieje</div>
                     <div class="subheading">WM: Wygrane mecze</div>
-                    <div class="subheading">WT: Wygrane rundy</div>
+                    <div class="subheading">WR: Wygrane rundy</div>
                 </v-card-text>
                 <v-card-actions>
                     <v-btn color="primary" flat @click="helpDialog=false">Zamknij</v-btn>
