@@ -28,7 +28,7 @@
                                     <v-layout row wrap align-center justify-center>
                                         <v-text-field prepend-icon="people" name="playersInTeam"
                                                 label="Liczba graczy w drużynie"
-                                                class="mx-4" v-model="ruleSetSelected.teamsNeeded"
+                                                class="mx-4" v-model="ruleSetSelected.teamSize"
                                                 :mask="mask"></v-text-field>
                                         <v-text-field prepend-icon="star_border" name="pointsToWin"
                                                 label="Punkty do zwycięstwa setu"
