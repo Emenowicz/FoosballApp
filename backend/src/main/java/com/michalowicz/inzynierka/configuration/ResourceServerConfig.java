@@ -13,7 +13,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/users/register", "/tournaments/").permitAll()
+                .antMatchers("/users/register",
+                        "/swagger-ui.html/**",
+                        "/webjars/**",
+                        "/swagger-resources/**",
+                        "/v2/api-docs").permitAll()
                 .anyRequest()
                 .authenticated();
     }

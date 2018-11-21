@@ -21,7 +21,7 @@ public class DefaultUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao.findByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameNotFoundException("Zły login lub hasło");
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                         user.getPassword(),
