@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,12 +84,16 @@ public class MatchService {
     }
 
     public List<Match> getUsersLastMatches(final User loggedUser) {
+        return getUsersMatchHistory(loggedUser).stream().limit(5).collect(Collectors.toList());
+    }
+
+    public List<Match> getUsersMatchHistory(final User loggedUser) {
         List<Match> matches = matchDao.getAllByStatus("Closed");
         matches = matches.stream().filter(match -> match.getTeamOne().getPlayers().contains(loggedUser) ||
                 match.getTeamTwo().getPlayers().contains(loggedUser)
         ).collect(Collectors.toList());
-        Collections.sort(matches, Comparator.comparing(Match::getClosedTime));
-
-        return matches.stream().limit(5).collect(Collectors.toList());
+        matches.sort(Comparator.comparing(Match::getClosedTime).reversed());
+        return matches;
     }
+
 }

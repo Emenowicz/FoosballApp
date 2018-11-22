@@ -63,4 +63,11 @@ public class MatchController {
         List<Match> lastMatches = matchService.getUsersLastMatches(loggedUser);
         return new ResponseEntity(lastMatches,HttpStatus.OK);
     }
+
+    @RequestMapping(value="/history", method=RequestMethod.GET)
+    public ResponseEntity getMatchHistory(Principal principal){
+        User loggedUser = userService.getLoggedUser(principal.getName());
+        List<Match> matchHistory = matchService.getUsersMatchHistory(loggedUser);
+        return new ResponseEntity(matchHistory,HttpStatus.OK);
+    }
 }

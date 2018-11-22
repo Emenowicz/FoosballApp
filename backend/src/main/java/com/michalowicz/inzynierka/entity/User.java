@@ -160,7 +160,7 @@ public class User {
     private void setStatistics() {
         long count = 0L;
         for (Tournament tournament : this.joinedTournaments) {
-            if (tournament.getStatus()!= null && tournament.getStatus().equals(TournamentStatus.Zakończony)) {
+            if (tournament!=null && tournament.getStatus()!= null && tournament.getStatus().equals(TournamentStatus.Zakończony)) {
                 if (tournament.getWinner() != null) {
                     if (tournament.getWinner().getPlayers().contains(this)) {
                         count++;

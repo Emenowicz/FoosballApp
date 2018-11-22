@@ -13,6 +13,7 @@ export default {
     GET_TOURNAMENT: API_ROOT + "tournaments/",
     GET_AWAITING_MATCHES: API_ROOT + "matches/awaiting",
     GET_LAST_MATCHES: API_ROOT + "matches/last",
+    GET_MATCH_HISTORY: API_ROOT + "matches/history",
     /**
      * @return {string}
      */

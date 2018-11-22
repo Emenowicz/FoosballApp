@@ -8,6 +8,7 @@ import NewTournament from './views/NewTournament.vue'
 import UserMainPage from './views/UserMainPage.vue'
 import TournamentPage from './views/TournamentPage'
 import AllTournaments from './views/AllTournaments'
+import Statistics from './views/Statistics'
 
 Vue.use(Router)
 
@@ -70,6 +71,12 @@ export default new Router({
             path: '/all-tournaments',
             name: 'AllTournaments',
             component: AllTournaments,
+            beforeEnter: ifAuthenticated
+        },
+        {
+            path: '/my-statistics',
+            name: 'Statistics',
+            component: Statistics,
             beforeEnter: ifAuthenticated
         }
     ]

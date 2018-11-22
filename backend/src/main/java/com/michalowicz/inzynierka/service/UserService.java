@@ -1,10 +1,12 @@
 package com.michalowicz.inzynierka.service;
 
+import com.michalowicz.inzynierka.dto.StatisticsData;
 import com.michalowicz.inzynierka.dto.UpdatePasswordForm;
 import com.michalowicz.inzynierka.dto.UpdateUserDetailsForm;
 import com.michalowicz.inzynierka.entity.User;
 import com.michalowicz.inzynierka.dao.UserDao;
 import com.michalowicz.inzynierka.dao.UsergroupDao;
+import com.michalowicz.inzynierka.populators.StatisticsPopulator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,9 @@ public class UserService {
 
     @Resource
     PasswordEncoder passwordEncoder;
+
+    @Resource
+    StatisticsPopulator statisticsPopulator;
 
     public List<User> getAllUsers() {
         return userDao.findAll();
@@ -63,6 +68,10 @@ public class UserService {
         } else {
             throw new Exception("Aktualne hasło niepoprawne");
         }
+    }
+
+    public StatisticsData getUserStatistics(User user){
+        return statisticsPopulator.populate(user);
     }
 
 
