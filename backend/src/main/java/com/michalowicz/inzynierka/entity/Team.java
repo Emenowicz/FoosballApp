@@ -25,7 +25,7 @@ public class Team {
     private Long id;
 
     @NotBlank
-    @Length(min=4,max=15)
+    @Length(min = 4, max = 15)
     private String name;
 
     private boolean isPrivate;
@@ -134,13 +134,18 @@ public class Team {
         this.played++;
         this.wins++;
     }
+
     public void addLose() {
         this.played++;
         this.loses++;
     }
 
-    public void addRoundWin(int roundsWin){
-        this.roundsWin+=roundsWin;
+    public void addRoundWin(int roundsWin) {
+        this.roundsWin += roundsWin;
+    }
+
+    public void addRoundLost(int roundsLost) {
+        this.roundsLost += roundsLost;
     }
 
 

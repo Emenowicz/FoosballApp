@@ -6,6 +6,7 @@ import com.michalowicz.inzynierka.entity.TournamentStatus;
 import com.michalowicz.inzynierka.entity.User;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class StatisticsPopulator {
         );
         stats.setTournamentsWon((int) user.getJoinedTournaments()
                 .stream()
-                .filter(tournament -> tournament.getWinner()
+                .filter(tournament -> tournament.getStatus().equals(TournamentStatus.Zakończony)&& tournament.getWinner()
                         .getPlayers()
                         .contains(user))
                 .count()
@@ -52,11 +53,11 @@ public class StatisticsPopulator {
 
         Map<User, Long> users = new HashMap<>();
 
-        user.getTeams().stream().map(team -> team.getPlayers()).flatMap(players -> players.stream()).filter(player -> !player.equals(user)).forEach(player -> {
+        user.getTeams().stream().map(Team::getPlayers).flatMap(Collection::stream).filter(player -> !player.equals(user)).forEach(player -> {
             if (users.containsKey(player)) {
-                users.put(user, users.get(player) + 1);
+                users.put(player, users.get(player) + 1);
             } else {
-                users.put(user, 1L);
+                users.put(player, 1L);
             }
         });
         Optional<Map.Entry<User,Long>> mostPlayedUserEntry = users.entrySet().stream().max(Map.Entry.comparingByValue());

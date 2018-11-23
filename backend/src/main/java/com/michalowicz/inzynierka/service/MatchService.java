@@ -80,7 +80,9 @@ public class MatchService {
             }
         }
         match.getTeamOne().addRoundWin(scoreOne.get());
+        match.getTeamOne().addRoundLost(scoreTwo.get());
         match.getTeamTwo().addRoundWin(scoreTwo.get());
+        match.getTeamTwo().addRoundLost(scoreOne.get());
     }
 
     public List<Match> getUsersLastMatches(final User loggedUser) {
