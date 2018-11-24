@@ -71,12 +71,16 @@ public class TournamentsController {
         try {
             User user = userService.getLoggedUser(principal.getName());
             Tournament tournament = tournamentService.getTournamentWithId(id);
-            Team team = teamService.createNewTeam(form, tournament, user);
-            return new ResponseEntity(HttpStatus.OK);
+            if (tournament.getTeams().size() != tournament.getTeamsNeeded()) {
+                Team team = teamService.createNewTeam(form, tournament, user);
+                return new ResponseEntity(HttpStatus.OK);
+            } else {
+                return new ResponseEntity("Liczba drużyn jest za duża, dołącz do istniejącej", HttpStatus.FORBIDDEN);
+            }
         } catch (NotFoundException e) {
             return new ResponseEntity(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(),HttpStatus.FORBIDDEN);
+            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
 

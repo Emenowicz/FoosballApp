@@ -34,8 +34,12 @@ public class TeamController {
                     throw new Exception("Hasło się nie zgadza");
                 }
             }
-            teamService.addPlayer(team, loggedUser);
-            return new ResponseEntity(HttpStatus.OK);
+            if(team.getPlayers().size()<team.getTournament().getRuleSet().getTeamSize()){
+                teamService.addPlayer(team, loggedUser);
+                return new ResponseEntity(HttpStatus.OK);
+            }else{
+                return new ResponseEntity("Drużyna pełna", HttpStatus.FORBIDDEN);
+            }
         } catch (Exception e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
         }

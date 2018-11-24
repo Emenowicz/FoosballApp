@@ -103,7 +103,7 @@
                                         <v-card-title>
                                             <p class="subheading">Drużyny</p>
                                             <v-spacer></v-spacer>
-                                            <v-btn v-if="!isParticipant && tournament.status === 'Otwarty' && !tournament.readyToStart"
+                                            <v-btn v-if="!isParticipant && !isTournamentFull && tournament.status === 'Otwarty' && !tournament.readyToStart"
                                                     class="green"
                                                     @click="dialog=!dialog"
                                                     dark>Dołącz do turnieju
@@ -118,7 +118,7 @@
                                                             <h4>{{props.item.name}}</h4>
                                                             <v-spacer></v-spacer>
                                                             <v-btn v-if="!isParticipant && tournament.status==='Otwarty' && !tournament.readyToStart && props.item.players.length < tournament.ruleSet.teamSize"
-                                                                    @click="joinToTeam(props.item)" icon
+                                                                    @click="joinToTeamDialog(props.item)" icon
                                                                     dark
                                                             >
                                                                 <v-icon color="green">add</v-icon>
@@ -167,8 +167,7 @@
                                                                                         @blur="$v.confirmPassword.$touch()"
                                                                                         @click="$v.confirmPassword.$touch()"></v-text-field>
                                                                                 <v-card-actions>
-                                                                                    <v-btn flat type="submit" color="green"
-                                                                                            @click.native="joinToTeam(props.item)">Potwierdź
+                                                                                    <v-btn flat type="submit" color="green">Potwierdź
                                                                                     </v-btn>
                                                                                     <v-btn flat color="green"
                                                                                             @click="passwordDialog=false">Anuluj
@@ -326,6 +325,7 @@
                     name: '',
                     privacy: 'open',
                 },
+                teamToJoin: {},
                 password: '',
                 confirmPassword: '',
                 dialog: false,
@@ -379,14 +379,20 @@
                         this.errors = [...this.errors, err.response.data]
                     })
             },
-            joinToTeam(team) {
+            joinToTeamDialog(team){
+                this.teamToJoin = team;
                 if (team.private && !this.passwordDialog) {
                     this.passwordDialog = true
-                } else if (!this.isParticipant) {
+                } else {
+                    this.joinToTeam();
+                }
+            },
+            joinToTeam() {
+                if (!this.isParticipant) {
                     axios({
-                        url: ApiConstants.JOIN_TO_TEAM(team.id),
+                        url: ApiConstants.JOIN_TO_TEAM(this.teamToJoin.id),
                         data: {
-                            password: team.private ? this.password : ''
+                            password: this.teamToJoin.private ? this.password : ''
                         },
                         method: "POST"
                     }).then(() => {
@@ -397,6 +403,7 @@
                         this.errors = [...this.errors, err.response.data]
                     }).finally(() => {
                         this.passwordDialog = false
+                        this.teamToJoin = {}
                         setTimeout(() => {
                             this.password = ''
                             this.confirmPassword = ''
