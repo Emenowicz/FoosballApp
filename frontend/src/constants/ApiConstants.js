@@ -14,6 +14,7 @@ export default {
     GET_AWAITING_MATCHES: API_ROOT + "matches/awaiting",
     GET_LAST_MATCHES: API_ROOT + "matches/last",
     GET_MATCH_HISTORY: API_ROOT + "matches/history",
+    GET_STATISTICS: API_ROOT + "statistics/",
     /**
      * @return {string}
      */

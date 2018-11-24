@@ -8,7 +8,7 @@ public class StatisticsData {
     private int roundsWon;
     private int roundsPlayed;
     private int pointsScored;
-    private long matchWinRatio;
+    private double matchWinRatio;
     private String mostPlayedWith;
 
     public int getTournamentsWon() {
@@ -67,11 +67,11 @@ public class StatisticsData {
         this.pointsScored = pointsScored;
     }
 
-    public long getMatchWinRatio() {
+    public double getMatchWinRatio() {
         return matchWinRatio;
     }
 
-    public void setMatchWinRatio(final long matchWinRatio) {
+    public void setMatchWinRatio(final double matchWinRatio) {
         this.matchWinRatio = matchWinRatio;
     }
 

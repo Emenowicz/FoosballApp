@@ -307,9 +307,10 @@
                 return tournaments[0].teams.length === tournaments[0].teamsNeeded
             },
             setScoreDialog(match) {
-                if (match.teamTwo) {
+                if (!!match.teamTwo) {
                     this.scoreDialog = true;
                     this.matchToSetScore = match
+                    this.errors=[]
                 }
             },
             addRound() {

@@ -13,7 +13,47 @@
                                     <h5 class="headline">Statystyki</h5>
                                 </v-card-title>
                                 <v-card-text>
-
+                                    <v-layout v-if="statisticsLoaded" wrap align-center justify-space-around>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Wygrane turnieje"
+                                                    v-model="statistics.tournamentsWon">
+                                            </v-text-field>
+                                        </v-flex>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Rozegrane turnieje"
+                                                    v-model="statistics.tournamentsPlayed"></v-text-field>
+                                        </v-flex>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Wygrane mecze"
+                                                    v-model="statistics.matchesWon"></v-text-field>
+                                        </v-flex>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Rozegrane mecze"
+                                                    v-model="statistics.matchesPlayed"></v-text-field>
+                                        </v-flex>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Wygrane rundy"
+                                                    v-model="statistics.roundsWon">
+                                            </v-text-field>
+                                        </v-flex>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Rozegrane rundy"
+                                                    v-model="statistics.roundsPlayed"></v-text-field>
+                                        </v-flex>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Suma zdobytych punktów"
+                                                    v-model="statistics.pointsScored"></v-text-field>
+                                        </v-flex>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Procent wygranych meczy"
+                                                    v-model="statistics.matchWinRatio" suffix="%"></v-text-field>
+                                        </v-flex>
+                                        <v-flex>
+                                            <v-text-field flat readonly label="Ulubiony teammate"
+                                                    v-model="statistics.mostPlayedWith">
+                                            </v-text-field>
+                                        </v-flex>
+                                    </v-layout>
                                 </v-card-text>
                             </v-card>
                         </v-flex>
@@ -59,18 +99,43 @@
         name: "Statistics",
         data() {
             return {
-                lastMatches: []
+                statistics: {
+                    tournamentsWon: '',
+                    tournamentsPlayed: '',
+                    matchesWon: '',
+                    matchesPlayed: '',
+                    roundsWon: '',
+                    roundsPlayed: '',
+                    pointsScored: '',
+                    matchWinRatio: '',
+                    mostPlayedWith: '',
+                },
+                lastMatches: [],
+                errors: [],
+                statisticsLoaded: false,
             }
         },
         methods: {
+            loadStatistics() {
+                axios({
+                    url: ApiConstants.GET_STATISTICS,
+                    method: "GET"
+                }).then(resp => {
+                    this.statistics = resp.data
+                }).catch(err => {
+                    this.errors = [...this.errors, err.response.data]
+                })
+            },
             loadMatches() {
                 axios({
                     url: ApiConstants.GET_MATCH_HISTORY,
                     method: "GET"
                 }).then(resp => {
                     this.lastMatches = resp.data
+                    this.statisticsLoaded = true
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
+                    this.statisticsLoaded = false
                 });
             },
             calculateColor(match) {
@@ -90,6 +155,7 @@
             }
         },
         mounted() {
+            this.loadStatistics();
             this.loadMatches();
         },
 

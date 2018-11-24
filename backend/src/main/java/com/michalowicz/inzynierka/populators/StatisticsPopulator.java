@@ -1,6 +1,7 @@
 package com.michalowicz.inzynierka.populators;
 
 import com.michalowicz.inzynierka.dto.StatisticsData;
+import com.michalowicz.inzynierka.entity.Round;
 import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.TournamentStatus;
 import com.michalowicz.inzynierka.entity.User;
@@ -22,7 +23,7 @@ public class StatisticsPopulator {
         );
         stats.setTournamentsWon((int) user.getJoinedTournaments()
                 .stream()
-                .filter(tournament -> tournament.getStatus().equals(TournamentStatus.Zakończony)&& tournament.getWinner()
+                .filter(tournament -> tournament.getStatus().equals(TournamentStatus.Zakończony) && tournament.getWinner()
                         .getPlayers()
                         .contains(user))
                 .count()
@@ -39,9 +40,9 @@ public class StatisticsPopulator {
                                 match.getStatus().equals("Closed") && (match.getTeamOne().getPlayers().contains(user) || match.getTeamTwo().getPlayers().contains(user)))
                         .mapToInt(match -> {
                             if (match.getTeamOne().getPlayers().contains(user)) {
-                                return match.getScoreOne();
+                                return match.getRounds().stream().mapToInt(Round::getScoreTeamOne).sum();
                             } else if (match.getTeamTwo().getPlayers().contains(user)) {
-                                return match.getScoreTwo();
+                                return match.getRounds().stream().mapToInt(Round::getScoreTeamTwo).sum();
                             } else {
                                 return 0;
                             }
@@ -49,7 +50,7 @@ public class StatisticsPopulator {
                         .sum())
                 .sum()
         );
-        stats.setMatchWinRatio(stats.getMatchesWon() / stats.getMatchesPlayed());
+        stats.setMatchWinRatio(Math.round((((double) stats.getMatchesWon()) / (double) (stats.getMatchesPlayed())) * 100));
 
         Map<User, Long> users = new HashMap<>();
 
@@ -60,8 +61,8 @@ public class StatisticsPopulator {
                 users.put(player, 1L);
             }
         });
-        Optional<Map.Entry<User,Long>> mostPlayedUserEntry = users.entrySet().stream().max(Map.Entry.comparingByValue());
-        if(mostPlayedUserEntry.isPresent()){
+        Optional<Map.Entry<User, Long>> mostPlayedUserEntry = users.entrySet().stream().max(Map.Entry.comparingByValue());
+        if (mostPlayedUserEntry.isPresent()) {
             stats.setMostPlayedWith(mostPlayedUserEntry.get().getKey().getUsername());
         } else {
             stats.setMostPlayedWith("Brak współgraczy w historii");
