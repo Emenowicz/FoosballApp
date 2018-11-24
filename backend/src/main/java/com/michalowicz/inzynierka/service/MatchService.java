@@ -36,13 +36,22 @@ public class MatchService {
     @Transactional
     public void finishMatch(final Match match, final List<Round> rounds) throws Exception {
         List<Round> validRounds = rounds.stream().filter(round -> roundService.validateRound(round)).collect(Collectors.toList());
+        if(rounds.size()==(match.getTournament().getRuleSet().getRoundsToWin()*2)-1){
+            if(validRounds.size()==rounds.size()){
+                validRounds.remove(validRounds.size()-1);
+            }
+            Round lastRound = rounds.get(rounds.size()-1);
+            if(roundService.validateLastRound(lastRound)){
+                validRounds.add(lastRound);
+            }
+        }
         if (validRounds.size() != rounds.size()) {
             throw new Exception("Wprowadzono błędne wyniki");
         }
-        int pointsTeamOne = validRounds.stream().filter(round -> round.getScoreTeamOne() == round.getPointsToWin()).collect(Collectors.toList()).size();
-        int pointsTeamTwo = validRounds.stream().filter(round -> round.getScoreTeamTwo() == round.getPointsToWin()).collect(Collectors.toList()).size();
+        int pointsTeamOne = validRounds.stream().filter(round -> round.getScoreTeamOne() >= round.getPointsToWin()).collect(Collectors.toList()).size();
+        int pointsTeamTwo = validRounds.stream().filter(round -> round.getScoreTeamTwo() >= round.getPointsToWin()).collect(Collectors.toList()).size();
         int neededPoints = match.getTournament().getRuleSet().getRoundsToWin();
-        if (pointsTeamOne == neededPoints || pointsTeamTwo == neededPoints) {
+        if (pointsTeamOne >= neededPoints || pointsTeamTwo >= neededPoints) {
             setStatus(match, rounds);
             matchDao.save(match);
         } else {
@@ -56,9 +65,9 @@ public class MatchService {
         final AtomicInteger scoreTwo = new AtomicInteger();
         rounds.forEach(round -> {
             round.addMatch(match);
-            if (round.getScoreTeamOne() == round.getPointsToWin()) {
+            if (round.getScoreTeamOne() >= round.getPointsToWin()) {
                 scoreOne.getAndIncrement();
-            } else if (round.getScoreTeamTwo() == round.getPointsToWin()) {
+            } else if (round.getScoreTeamTwo() >= round.getPointsToWin()) {
                 scoreTwo.getAndIncrement();
             }
         });
