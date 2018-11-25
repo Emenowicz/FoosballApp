@@ -13,10 +13,21 @@
                                                 :key="match.id">
                                             <v-list-tile-content>
                                                 <v-list-tile-title v-if="match.teamTwo"
-                                                        class="green--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
+                                                        class="green--text">
+                                                    <v-icon small color="green"
+                                                            v-if="isInTeam(match.teamOne.players)">lens
+                                                    </v-icon>
+                                                    {{match.teamOne.name}} vs {{match.teamTwo.name}}
+                                                    <v-icon small color="green"
+                                                            v-if="isInTeam(match.teamTwo.players)">lens
+                                                    </v-icon>
                                                 </v-list-tile-title>
                                                 <v-list-tile-title v-else
-                                                        class="orange--text">{{match.teamOne.name}} vs Oczekiwanie na drużynę
+                                                        class="orange--text">
+                                                    <v-icon small color="green"
+                                                            v-if="isInTeam(match.teamOne.players)">lens
+                                                    </v-icon>
+                                                    {{match.teamOne.name}} vs Oczekiwanie na drużynę
                                                 </v-list-tile-title>
                                                 <v-list-tile-sub-title>{{match.tournament.name}}</v-list-tile-sub-title>
                                             </v-list-tile-content>
@@ -29,7 +40,21 @@
                                                     transition="fade-transition">
                                                 {{errors[0]}}
                                             </v-alert>
-                                            <p class="subheading font-weight-bold text-xs-center">{{matchToSetScore.teamOne.name}} vs {{matchToSetScore.teamTwo.name}}</p>
+                                            <v-layout row justify-center>
+                                                <p class="subheading font-weight-bold text-xs-center">
+                                                    <v-icon small color="green"
+                                                            v-if="isInTeam(matchToSetScore.teamOne.players)">lens
+                                                    </v-icon>
+                                                </p>
+                                                <p class="subheading font-weight-bold text-xs-center">{{matchToSetScore.teamOne.name}}
+                                                <p class="subheading font-weight-bold text-xs-center">&nbsp;vs&nbsp; </p>
+                                                <p class="subheading font-weight-bold text-xs-center">{{matchToSetScore.teamTwo.name}}</p>
+                                                <p class="subheading font-weight-bold text-xs-center">
+                                                    <v-icon small color="green"
+                                                            v-if="isInTeam(matchToSetScore.teamTwo.players)">lens
+                                                    </v-icon>
+                                                </p>
+                                            </v-layout>
                                             <p class="subheading text-xs-center">Rundy do zwycięstwa meczu:
                                                 <b>{{matchToSetScore.tournament.ruleSet.roundsToWin}}</b></p>
                                             <p class="subheading text-xs-center">Punkty do zwycięstwa rundy:
@@ -84,7 +109,13 @@
                                                 :key="match.id">
                                             <v-list-tile-content>
                                                 <v-list-tile-title class="blue-grey--text">
+                                                    <v-icon small color="blue-grey"
+                                                            v-if="isInTeam(match.teamOne.players)">lens
+                                                    </v-icon>
                                                     {{match.teamOne.name}} ({{match.scoreOne}} - {{match.scoreTwo}}) {{match.teamTwo.name}}
+                                                    <v-icon small color="blue-grey"
+                                                            v-if="isInTeam(match.teamTwo.players)">lens
+                                                    </v-icon>
                                                 </v-list-tile-title>
                                                 <v-list-tile-sub-title>{{match.tournament.name}}</v-list-tile-sub-title>
                                             </v-list-tile-content>
@@ -351,6 +382,15 @@
                 }).catch(err => {
                     this.errors = [...this.errors, err.response.data]
                 })
+            },
+            isInTeam(players) {
+                let isInTeam = false
+                players.forEach(player => {
+                    if (player.id === this.$store.getters.getProfile.id) {
+                        isInTeam = true;
+                    }
+                })
+                return isInTeam
             },
             closeAlerts() {
                 this.errors = []

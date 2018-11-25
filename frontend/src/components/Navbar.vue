@@ -1,6 +1,6 @@
 <template>
     <v-layout>
-        <v-navigation-drawer
+        <v-navigation-drawer v-if="this.$store.getters.isAuthenticated"
                 v-model="drawer"
                 fixed
                 app
@@ -41,7 +41,7 @@
                         <v-list-tile-title>Strona główna</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
-                <v-list-tile ripple @click="goToSearchTournament">
+                <v-list-tile v-if="this.$store.getters.isAuthenticated" ripple @click="goToSearchTournament">
                     <v-list-tile-action>
                         <v-icon>list</v-icon>
                     </v-list-tile-action>
@@ -68,7 +68,7 @@
             </v-list>
         </v-navigation-drawer>
         <v-toolbar color="green" dark fixed app>
-            <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+            <v-toolbar-side-icon v-if="this.$store.getters.isAuthenticated" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
             <v-toolbar-title>
                 <router-link to="/" style="text-decoration: none; color:white">
                     FoosballApp
@@ -80,7 +80,7 @@
         <v-content>
             <router-view />
         </v-content>
-        <v-dialog v-model="helpDialog" max-width="200">
+        <v-dialog v-model="helpDialog" max-width="400">
             <v-card>
                 <v-card-title class="headline">
                     Skróty
@@ -89,6 +89,10 @@
                     <div class="subheading">WT: Wygrane turnieje</div>
                     <div class="subheading">WM: Wygrane mecze</div>
                     <div class="subheading">WR: Wygrane rundy</div>
+                    <div class="subheading">
+                        <v-icon small>lens</v-icon>
+                        (Różne kolory): Użytkownik w drużynie/turnieju
+                    </div>
                 </v-card-text>
                 <v-card-actions>
                     <v-btn color="primary" flat @click="helpDialog=false">Zamknij</v-btn>

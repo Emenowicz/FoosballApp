@@ -87,7 +87,11 @@
                                             <v-data-table :headers="statisticsHeaders" :items="tournament.teams"
                                                     :pagination.sync="pagination" hide-actions class="elevation-1">
                                                 <template slot="items" slot-scope="props">
-                                                    <td>{{props.item.name}}</td>
+                                                    <td>{{props.item.name}}
+                                                        <v-icon small color="green"
+                                                                v-if="isInTeam(props.item.players)">lens
+                                                        </v-icon>
+                                                    </td>
                                                     <td>{{props.item.wins}}</td>
                                                     <td>{{props.item.roundsWin}}</td>
                                                     <td>{{props.item.loses}}</td>
@@ -117,7 +121,11 @@
                                                 <v-flex slot="item" slot-scope="props" xs12 md6 d-flex>
                                                     <v-card v-if="props.item.size!==0">
                                                         <v-card-title class="pb-1">
-                                                            <h4>{{props.item.name}}</h4>
+                                                            <h4>{{props.item.name}}
+                                                                <v-icon small color="green"
+                                                                        v-if="isInTeam(props.item.players)">lens
+                                                                </v-icon>
+                                                            </h4>
                                                             <v-spacer></v-spacer>
                                                             <v-btn v-if="!isParticipant && tournament.status==='Otwarty' && !tournament.readyToStart && props.item.players.length < tournament.ruleSet.teamSize"
                                                                     @click="joinToTeamDialog(props.item)" icon
@@ -206,14 +214,23 @@
                                                         <v-card-text>
                                                             <v-layout justify-space-between wrap class="text-truncate">
                                                                 <v-flex xs12 sm5>
-                                                                    <h3 class="subheading">{{props.item.teamOne.name}}</h3>
+                                                                    <h3 class="subheading">
+                                                                        <v-icon small color="green"
+                                                                                v-if="isInTeam(props.item.teamOne.players)">lens
+                                                                        </v-icon>
+                                                                        {{props.item.teamOne.name}}
+                                                                    </h3>
                                                                 </v-flex>
                                                                 <v-flex xs12 sm2>
                                                                     <h3 class="subheading">vs</h3>
                                                                 </v-flex>
                                                                 <v-flex xs12 sm5>
                                                                     <h3 v-if="!!props.item.teamTwo"
-                                                                            class="subheading">{{props.item.teamTwo.name}}</h3>
+                                                                            class="subheading">{{props.item.teamTwo.name}}
+                                                                        <v-icon small color="green"
+                                                                                v-if="isInTeam(props.item.teamTwo.players)">lens
+                                                                        </v-icon>
+                                                                    </h3>
                                                                     <h3 v-else class="subheading">Oczekiwanie na drużynę</h3>
                                                                 </v-flex>
                                                             </v-layout>
@@ -443,6 +460,7 @@
                     }).then(() => {
                         this.loadData()
                     }).catch(err => {
+                        this.closeAlerts()
                         this.errors = [...this.errors, err.response.data]
                     })
                 } else {
@@ -474,6 +492,7 @@
                 }).then(() => {
                     this.$router.push("/")
                 }).catch(err => {
+                    this.closeAlerts()
                     this.errors = [...this.errors, err.response.data]
                 })
             },

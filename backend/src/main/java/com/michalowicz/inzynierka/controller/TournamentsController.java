@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.security.Principal;
+import java.util.Comparator;
+import java.util.List;
 
 @RestController
 @RequestMapping("/tournaments")
@@ -34,7 +36,9 @@ public class TournamentsController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity getAllTournaments() {
-        return new ResponseEntity(tournamentService.getAllTournaments(), HttpStatus.OK);
+        List<Tournament> sortedTournaments = tournamentService.getAllTournaments();
+        sortedTournaments.sort(Comparator.comparing(Tournament::getStatus));
+        return new ResponseEntity(sortedTournaments, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)

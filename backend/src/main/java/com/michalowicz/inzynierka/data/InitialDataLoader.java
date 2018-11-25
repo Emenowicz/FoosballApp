@@ -57,7 +57,7 @@ public class InitialDataLoader implements ApplicationRunner {
         User dawid = new User("dawid", passwordEncoder.encode("dawid"), "dawid@dawid.dawid");
         dawid.addUsergroup(usergroup);
         users.add(dawid);
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50; i++) {
             String login = "user" + i;
             String email = login + "@" + login + login;
             users.add(new User(login, passwordEncoder.encode(login), email, usergroup));
@@ -90,7 +90,10 @@ public class InitialDataLoader implements ApplicationRunner {
                 team.addTournament(tournament);
                 for (int i = 0; i < tournament.getRuleSet().getTeamSize(); i++) {
                     while (team.getPlayers().size() != tournament.getRuleSet().getTeamSize()) {
-                        team.addPlayer(users.get(random.nextInt(users.size())));
+                        User userToTeam =users.get(random.nextInt(users.size()));
+                        if(!tournament.getParticipants().contains(userToTeam)){
+                            team.addPlayer(userToTeam);
+                        }
                     }
                     teams.add(team);
                 }
