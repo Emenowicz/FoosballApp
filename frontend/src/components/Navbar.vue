@@ -71,7 +71,7 @@
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
             <v-toolbar-title>
                 <router-link to="/" style="text-decoration: none; color:white">
-                    Foosball League
+                    FoosballApp
                 </router-link>
             </v-toolbar-title>
             <v-spacer></v-spacer>

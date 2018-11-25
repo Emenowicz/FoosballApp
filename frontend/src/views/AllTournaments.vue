@@ -17,7 +17,7 @@
                         </v-card-title>
                         <v-card-text>
                             <v-data-iterator :items="tournaments" :rows-per-page-items="rowsPerPageItems"
-                                    :pagination.sync="pagination" content-tag="v-layout" no-data-text="Brak turniejów"
+                                    :pagination.sync="pagination" content-tag="v-layout" no-data-text="Brak turniejów" rows-per-page-text="Liczba turniejów na stronę"
                                     :search="search" row
                                     wrap>
                                 <v-flex @click="openTournament(props.item.id)" slot="item" slot-scope="props" xs12 sm6 md4
@@ -59,6 +59,9 @@
                                         </v-card-text>
                                     </v-card>
                                 </v-flex>
+                                <template slot="pageText" slot-scope="props">
+                                    {{props.pageStart}}-{{props.pageStop}} na {{props.itemsLength}}
+                                </template>
                             </v-data-iterator>
                         </v-card-text>
                     </v-card>

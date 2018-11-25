@@ -112,7 +112,8 @@
                                 </v-card-title>
                                 <v-card-text fill-height>
                                     <v-data-table class="mb-5" :headers="tournamentHeaders" :items="ownedTournaments"
-                                            :search="ownedSearch" :pagination.sync="pagination">
+                                            :search="ownedSearch" :pagination.sync="pagination" no-data-text="Brak turniejów"
+                                            rows-per-page-text="Liczba wierszy na stronę">
                                         <template slot="items" slot-scope="props">
                                             <tr @click="props.expanded = !props.expanded">
                                                 <td>{{props.item.name}}</td>
@@ -157,6 +158,9 @@
                                                 </v-card>
                                             </v-flex>
                                         </template>
+                                        <template slot="pageText" slot-scope="props">
+                                            {{props.pageStart}}-{{props.pageStop}} na {{props.itemsLength}}
+                                        </template>
                                     </v-data-table>
                                 </v-card-text>
                             </v-card>
@@ -176,7 +180,8 @@
                                 </v-card-title>
                                 <v-card-text>
                                     <v-data-table class="mb-5" :headers="tournamentHeaders" :items="joinedTournaments"
-                                            :search="joinedSearch" :pagination.sync="pagination">
+                                            :search="joinedSearch" :pagination.sync="pagination" no-data-text="Brak turniejów"
+                                            rows-per-page-text="Liczba wierszy na stronę">
                                         <template slot="items" slot-scope="props">
                                             <tr @click="openTournamentPage(props.item.id)">
                                                 <td>{{props.item.name}}</td>
@@ -190,6 +195,9 @@
                                                     {{moment(props.item.timeCreated).format('ll')}}
                                                 </td>
                                             </tr>
+                                        </template>
+                                        <template slot="pageText" slot-scope="props">
+                                            {{props.pageStart}}-{{props.pageStop}} na {{props.itemsLength}}
                                         </template>
                                     </v-data-table>
                                 </v-card-text>
@@ -244,7 +252,7 @@
                     },
                 ],
                 pagination: {
-                  'sortBy':'timeCreated',
+                    'sortBy': 'timeCreated',
                     'descending': true
                 },
                 errors: [],
@@ -310,7 +318,7 @@
                 if (!!match.teamTwo) {
                     this.scoreDialog = true;
                     this.matchToSetScore = match
-                    this.errors=[]
+                    this.errors = []
                 }
             },
             addRound() {

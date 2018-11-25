@@ -85,7 +85,7 @@
                                         </v-card-title>
                                         <v-card-text>
                                             <v-data-table :headers="statisticsHeaders" :items="tournament.teams"
-                                                    v-bind:pagination.sync="pagination" hide-actions class="elevation-1">
+                                                    :pagination.sync="pagination" hide-actions class="elevation-1">
                                                 <template slot="items" slot-scope="props">
                                                     <td>{{props.item.name}}</td>
                                                     <td>{{props.item.wins}}</td>
@@ -111,7 +111,9 @@
                                         </v-card-title>
                                         <v-card-text>
                                             <v-data-iterator :items="tournament.teams" content-tag="v-layout" row wrap
-                                                    :pagination.sync="teamPagination" :rows-per-page-items="rowsPerPageItems">
+                                                    :pagination.sync="teamPagination" :rows-per-page-items="rowsPerPageItems"
+                                                    no-data-text="Brak drużyn"
+                                                    rows-per-page-text="Liczba drużyn na stronę">
                                                 <v-flex slot="item" slot-scope="props" xs12 md6 d-flex>
                                                     <v-card v-if="props.item.size!==0">
                                                         <v-card-title class="pb-1">
@@ -167,7 +169,8 @@
                                                                                         @blur="$v.confirmPassword.$touch()"
                                                                                         @click="$v.confirmPassword.$touch()"></v-text-field>
                                                                                 <v-card-actions>
-                                                                                    <v-btn flat type="submit" color="green">Potwierdź
+                                                                                    <v-btn flat type="submit"
+                                                                                            color="green">Potwierdź
                                                                                     </v-btn>
                                                                                     <v-btn flat color="green"
                                                                                             @click="passwordDialog=false">Anuluj
@@ -181,6 +184,9 @@
                                                         </v-card-text>
                                                     </v-card>
                                                 </v-flex>
+                                                <template slot="pageText" slot-scope="props">
+                                                    {{props.pageStart}}-{{props.pageStop}} na {{props.itemsLength}}
+                                                </template>
                                             </v-data-iterator>
                                         </v-card-text>
                                     </v-card>
@@ -192,7 +198,8 @@
                                         </v-card-title>
                                         <v-card-text>
                                             <v-data-iterator :items="tournament.matches" content-tag="v-layout" row wrap
-                                                    :pagination.sync="matchPagination">
+                                                    :pagination.sync="matchPagination" no-data-text="Brak meczy"
+                                                    rows-per-page-text="Liczba meczów na stronę">
                                                 <v-flex xs12 slot="item" slot-scope="props"
                                                         class="text-xs-center">
                                                     <v-card>
@@ -215,6 +222,9 @@
                                                         </v-card-text>
                                                     </v-card>
                                                 </v-flex>
+                                                <template slot="pageText" slot-scope="props">
+                                                    {{props.pageStart}}-{{props.pageStop}} na {{props.itemsLength}}
+                                                </template>
                                             </v-data-iterator>
                                         </v-card-text>
                                     </v-card>
@@ -379,7 +389,7 @@
                         this.errors = [...this.errors, err.response.data]
                     })
             },
-            joinToTeamDialog(team){
+            joinToTeamDialog(team) {
                 this.teamToJoin = team;
                 if (team.private && !this.passwordDialog) {
                     this.passwordDialog = true
