@@ -12,7 +12,7 @@
                                         <v-list-tile @click="setScoreDialog(match)" v-for="match in awaitingMatches"
                                                 :key="match.id">
                                             <v-list-tile-content>
-                                                <v-list-tile-title v-if="!!match.teamTwo"
+                                                <v-list-tile-title v-if="match.teamTwo"
                                                         class="green--text">{{match.teamOne.name}} vs {{match.teamTwo.name}}
                                                 </v-list-tile-title>
                                                 <v-list-tile-title v-else
