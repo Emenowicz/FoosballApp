@@ -4,9 +4,7 @@
             <v-layout align-center justify-center>
                 <v-flex xs12 sm8>
                     <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert" transition="fade-transition">
-                        Coś poszło nie
-                        tak. Popraw dane
-                        i spróbuj ponownie
+                        {{errors[0]}}
                     </v-alert>
                     <h3 class="headline">Zarejestruj się</h3>
                     <v-form @submit.prevent="register">
@@ -124,7 +122,7 @@
                     ).then(() => {
                         this.$router.push('/')
                     }).catch(err => {
-                        this.errors = [...this.errors, err]
+                        this.errors = [...this.errors, err.response.data]
                     })
                 }
             },

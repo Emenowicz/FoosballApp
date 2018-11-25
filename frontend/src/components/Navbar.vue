@@ -18,7 +18,7 @@
                                 <div class="body-2">WR: {{userProfile.roundsWon}}</div>
                             </v-layout>
                         </v-flex>
-                        <v-flex>
+                        <v-flex d-flex>
                             <v-btn small flat dark icon @click="helpDialog=true">
                                 <v-icon>help</v-icon>
                             </v-btn>

@@ -4,19 +4,17 @@
             <v-layout align-center justify-center>
                 <v-flex xs12 sm6>
                     <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlert"
-                             transition="fade-transition">
-                        Coś poszło nie
-                        tak. Popraw dane
-                        logowania i spróbuj ponownie
+                            transition="fade-transition">
+                        {{errors[0]}}
                     </v-alert>
                     <div class="headline text-xs-center">Zaloguj się</div>
                     <v-form @submit.prevent="login">
                         <v-text-field prepend-icon="person" name="Username" label="Login"
-                                      v-model="username" :error-messages="usernameErrors" @input="$v.username.$touch()"
-                                      @blur="$v.username.$touch()"></v-text-field>
+                                v-model="username" :error-messages="usernameErrors" @input="$v.username.$touch()"
+                                @blur="$v.username.$touch()"></v-text-field>
                         <v-text-field prepend-icon="lock" name="Password" label="Hasło" type="password"
-                                      v-model="password" :error-messages="passwordErrors" @input="$v.password.$touch()"
-                                      @blur="$v.password.$touch()"></v-text-field>
+                                v-model="password" :error-messages="passwordErrors" @input="$v.password.$touch()"
+                                @blur="$v.password.$touch()"></v-text-field>
                         <v-layout>
                             <v-flex xs6>
                                 <v-btn block type="submit">Zaloguj</v-btn>
@@ -73,7 +71,11 @@
                         .then(() => {
                             this.$router.push('/')
                         }).catch(err => {
-                        this.errors = [...this.errors, err.response.data]
+                        if (err.response.data.error_description === "Bad credentials") {
+                            this.errors = [...this.errors, "Zły login lub hasło"]
+                        } else {
+                            this.errors = [...this.errors, "Coś poszło nie tak, spróbuj ponownie później"]
+                        }
                     })
                 }
             },
