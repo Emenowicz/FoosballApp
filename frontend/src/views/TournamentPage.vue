@@ -10,13 +10,17 @@
                         <v-card-title class="headline pb-0">
                             <p class="text-uppercase pb-0 mb-0">{{tournament.name}}</p>
                             <v-spacer />
-                            <p class="subheading pb-0 mb-0">Status: &nbsp;</p>
-                            <p class="subheading pb-0 mb-0 green--text"
-                                    v-if="tournament.status==='Otwarty'">{{tournament.status}}</p>
-                            <p class="subheading pb-0 mb-0 orange--text"
-                                    v-if="tournament.status==='Trwający'">{{tournament.status}}</p>
-                            <p class="subheading pb-0 mb-0 red--text"
-                                    v-if="tournament.status==='Zakończony'">{{tournament.status}}</p>
+                            <v-flex shrink>
+                                <v-layout>
+                                    <p class="subheading pb-0 mb-0">Status: &nbsp;</p>
+                                    <p class="subheading pb-0 mb-0 green--text"
+                                            v-if="tournament.status==='Otwarty'">{{tournament.status}}</p>
+                                    <p class="subheading pb-0 mb-0 orange--text"
+                                            v-if="tournament.status==='Trwający'">{{tournament.status}}</p>
+                                    <p class="subheading pb-0 mb-0 red--text"
+                                            v-if="tournament.status==='Zakończony'">{{tournament.status}}</p>
+                                </v-layout>
+                            </v-flex>
                         </v-card-title>
                         <v-card-text class="pt-0">
                             <v-layout wrap align-center justify-space-around>
@@ -291,12 +295,11 @@
                             <v-icon>close</v-icon>
                         </v-btn>
                         <v-toolbar-title>Utwórz drużynę</v-toolbar-title>
-                        <v-spacer></v-spacer>
-                        <v-toolbar-items>
-                            <v-btn dark flat @click.native="createNewTeam">Dołącz</v-btn>
-                        </v-toolbar-items>
                     </v-toolbar>
                     <v-card-text>
+                        <v-alert class="my-4" :value="hasErrors" type="error" @click="closeAlerts" transition="fade-transition">
+                            {{errors[0]}}
+                        </v-alert>
                         <v-layout wrap justify-space-around>
                             <v-flex xs12 md4>
                                 <v-card>
@@ -307,12 +310,12 @@
                                         <v-form @submit.prevent="createNewTeam">
                                             <v-text-field v-model="newTeam.name" label="Nazwa drużyny"></v-text-field>
                                             <v-radio-group v-model="newTeam.privacy" label="Prywatność">
-                                                <v-layout>
+                                                <v-layout wrap>
                                                     <v-radio value="open" label="Otwarta" color="green"></v-radio>
                                                     <v-radio value="private" label="Na zaproszenie" color="red"></v-radio>
                                                 </v-layout>
                                             </v-radio-group>
-                                            <v-layout v-if="newTeam.privacy==='private'">
+                                            <v-layout v-if="newTeam.privacy==='private'" wrap>
                                                 <v-text-field prepend-icon="lock" v-model="password" name="Password"
                                                         label="Hasło dołączania" type="password"
                                                         :error-messages="passwordErrors" @blur="$v.password.$touch()"
@@ -323,6 +326,7 @@
                                                         @blur="$v.confirmPassword.$touch()"
                                                         @click="$v.confirmPassword.$touch()"></v-text-field>
                                             </v-layout>
+                                            <v-btn type="submit">Dołącz</v-btn>
                                         </v-form>
                                     </v-card-text>
                                 </v-card>

@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,15 +22,19 @@ public class RuleSet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String name = "Niestandardowy";
 
     @Enumerated(EnumType.STRING)
     private RuleSetType ruleSetType = RuleSetType.CUSTOM;
 
+    @Min(1)
     private int pointsToWin;
 
+    @Min(1)
     private int roundsToWin;
 
+    @Min(1)
     private int teamSize;
 
     @OneToMany(mappedBy = "ruleSet",fetch = FetchType.EAGER)

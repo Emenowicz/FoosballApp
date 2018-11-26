@@ -49,7 +49,7 @@ public class TournamentsController {
 
             return new ResponseEntity(HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Sprawdź poprawność danych i spróbuj ponownie", HttpStatus.FORBIDDEN);
         }
     }
 
@@ -81,10 +81,8 @@ public class TournamentsController {
             } else {
                 return new ResponseEntity("Liczba drużyn jest za duża, dołącz do istniejącej", HttpStatus.FORBIDDEN);
             }
-        } catch (NotFoundException e) {
-            return new ResponseEntity(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Sprawdź poprawność danych i spróbuj ponownie", HttpStatus.FORBIDDEN);
         }
     }
 

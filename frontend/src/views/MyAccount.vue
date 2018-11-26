@@ -2,7 +2,7 @@
     <v-fade-transition>
         <v-container fill-height>
             <v-layout align-center justify-center>
-                <v-flex xs6 text-xs-center>
+                <v-flex xs12 sm8 md6 text-xs-center>
                     <div class="my-4 headline">Zarządzanie kontem</div>
                     <v-alert class="my-0" :value="hasErrors" type="error" @click="closeAlert"
                             transition="fade-transition">
