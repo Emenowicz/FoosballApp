@@ -21,8 +21,14 @@
                         <v-text-field prepend-icon="mail" name="Email" label="E-mail" v-model="email"
                                 :error-messages="emailErrors" @blur="$v.email.$touch()"
                                 @input="$v.email.$touch()"></v-text-field>
-                        <v-btn type="submit">Zarejestruj się</v-btn>
-                        <v-btn v-on:click="redirectToLogin">Posiadam konto</v-btn>
+                        <v-layout justify-space-around wrap>
+                            <v-flex d-flex>
+                                <v-btn type="submit">Zarejestruj się</v-btn>
+                            </v-flex>
+                            <v-flex d-flex>
+                                <v-btn v-on:click="redirectToLogin">Posiadam konto</v-btn>
+                            </v-flex>
+                        </v-layout>
                     </v-form>
                 </v-flex>
             </v-layout>
