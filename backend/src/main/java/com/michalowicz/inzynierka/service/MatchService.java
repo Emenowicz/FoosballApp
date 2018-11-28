@@ -4,6 +4,7 @@ import com.michalowicz.inzynierka.dao.MatchDao;
 import com.michalowicz.inzynierka.entity.Match;
 import com.michalowicz.inzynierka.entity.Round;
 import com.michalowicz.inzynierka.entity.User;
+import com.michalowicz.inzynierka.validators.RoundValidator;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,7 +20,7 @@ public class MatchService {
     @Resource
     MatchDao matchDao;
     @Resource
-    RoundService roundService;
+    RoundValidator roundValidator;
 
     public List<Match> getAwaitingMatches(User user) {
         List<Match> matches = matchDao.getAllByStatus("Open");
@@ -35,13 +36,13 @@ public class MatchService {
 
     @Transactional
     public void finishMatch(final Match match, final List<Round> rounds) throws Exception {
-        List<Round> validRounds = rounds.stream().filter(round -> roundService.validateRound(round)).collect(Collectors.toList());
+        List<Round> validRounds = rounds.stream().filter(round -> roundValidator.validateRound(round)).collect(Collectors.toList());
         if(rounds.size()==(match.getTournament().getRuleSet().getRoundsToWin()*2)-1){
             if(validRounds.size()==rounds.size()){
                 validRounds.remove(validRounds.size()-1);
             }
             Round lastRound = rounds.get(rounds.size()-1);
-            if(roundService.validateLastRound(lastRound)){
+            if(roundValidator.validateLastRound(lastRound)){
                 validRounds.add(lastRound);
             }
         }

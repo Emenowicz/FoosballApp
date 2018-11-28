@@ -1,10 +1,10 @@
-package com.michalowicz.inzynierka.service;
+package com.michalowicz.inzynierka.validators;
 
 import com.michalowicz.inzynierka.entity.Round;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class RoundService {
+@Component
+public class RoundValidator {
     public boolean validateRound(Round round) {
         return round.getScoreTeamOne() != round.getScoreTeamTwo()
                 && round.getScoreTeamOne() >= 0

@@ -3,6 +3,7 @@ package com.michalowicz.inzynierka.service;
 import com.michalowicz.inzynierka.dao.RuleSetDao;
 import com.michalowicz.inzynierka.dao.TournamentDao;
 import com.michalowicz.inzynierka.dto.CreateTournamentForm;
+import com.michalowicz.inzynierka.entity.Match;
 import com.michalowicz.inzynierka.entity.RuleSet;
 import com.michalowicz.inzynierka.entity.Team;
 import com.michalowicz.inzynierka.entity.Tournament;
@@ -46,7 +47,7 @@ public class TournamentServiceTest {
         User user = new User();
         when(tournamentDao.getByName("TestName")).thenReturn(null);
 //        when
-        tournamentService.createTournament(tournamentForm,user);
+        tournamentService.createTournament(tournamentForm, user);
 //        then
         Mockito.verify(tournamentDao).save(Mockito.any());
     }
@@ -62,7 +63,7 @@ public class TournamentServiceTest {
         User user = new User();
         when(tournamentDao.getByName("TestName")).thenReturn(Mockito.mock(Tournament.class));
 //        when
-        tournamentService.createTournament(tournamentForm,user);
+        tournamentService.createTournament(tournamentForm, user);
 //        then exception
     }
 
@@ -80,11 +81,11 @@ public class TournamentServiceTest {
         tournamentService.startTournament(tournament);
 //        then
         Mockito.verify(tournamentDao).save(tournament);
-        assertEquals(TournamentStatus.Trwający,tournament.getStatus());
+        assertEquals(TournamentStatus.Trwający, tournament.getStatus());
     }
 
     @Test
-    public void shouldNotStartTournament(){
+    public void shouldNotStartTournament() {
 //        given
         Tournament tournament = new Tournament();
         tournament.setTeamsNeeded(4);
@@ -95,13 +96,13 @@ public class TournamentServiceTest {
 //        when
         tournamentService.startTournament(tournament);
 //        then
-        Mockito.verify(tournamentDao,never()).save(tournament);
-        assertNotEquals(TournamentStatus.Trwający,tournament.getStatus());
+        Mockito.verify(tournamentDao, never()).save(tournament);
+        assertNotEquals(TournamentStatus.Trwający, tournament.getStatus());
 
     }
 
     @Test
-    public void shouldDeleteTournament(){
+    public void shouldDeleteTournament() {
 //        given
         Tournament tournament = new Tournament();
         tournament.setId(999L);
@@ -109,13 +110,13 @@ public class TournamentServiceTest {
         tournament.setOwner(user);
         when(tournamentDao.getById(999L)).thenReturn(tournament);
 //        when
-        tournamentService.deleteTournamentWithId(999L,user);
+        tournamentService.deleteTournamentWithId(999L, user);
 //        then
         Mockito.verify(tournamentDao).deleteById(999L);
     }
 
     @Test
-    public void shouldNotDeleteTournament(){
+    public void shouldNotDeleteTournament() {
 //        given
         Tournament tournament = new Tournament();
         tournament.setId(999L);
@@ -124,9 +125,9 @@ public class TournamentServiceTest {
         tournament.setOwner(owner);
         when(tournamentDao.getById(999L)).thenReturn(tournament);
 //        when
-        tournamentService.deleteTournamentWithId(999L,user);
+        tournamentService.deleteTournamentWithId(999L, user);
 //        then
-        Mockito.verify(tournamentDao,never()).deleteById(999L);
+        Mockito.verify(tournamentDao, never()).deleteById(999L);
     }
 
     @Test
@@ -139,6 +140,7 @@ public class TournamentServiceTest {
 //        then
         assertNotNull(result);
     }
+
     @Test(expected = NotFoundException.class)
     public void shouldNotFindTournamentAndThrowNotFoundException() throws NotFoundException {
 //        given
@@ -148,4 +150,52 @@ public class TournamentServiceTest {
 //        then
         assertNotNull(result);
     }
+
+    @Test
+    public void shouldSetWinnerAndFinishTournament() {
+//        given
+        Tournament tournament = new Tournament();
+        tournament.setTeamsNeeded(2);
+        Team winnerTeam = new Team();
+        int level = 0;
+//        when
+        tournamentService.advance(tournament, winnerTeam, level);
+//        then
+        assertEquals(winnerTeam, tournament.getWinner());
+        assertEquals(TournamentStatus.Zakończony,tournament.getStatus());
+        Mockito.verify(tournamentDao).save(tournament);
+    }
+
+    @Test
+    public void shouldCreateNewMatch(){
+//        given
+        Tournament tournament = new Tournament();
+        tournament.setTeamsNeeded(4);
+        Team winnerTeam = new Team();
+        int level = 0;
+//        when
+        tournamentService.advance(tournament, winnerTeam, level);
+//        then
+        assertEquals(1, tournament.getMatches().size());
+        Mockito.verify(tournamentDao).save(tournament);
+    }
+
+    @Test
+    public void shouldAddTeamToExistingMatch(){
+//        given
+        Tournament tournament = new Tournament();
+        tournament.setTeamsNeeded(4);
+        Match match = new Match();
+        match.setLevel(1);
+        match.setTeamOne(new Team());
+        tournament.getMatches().add(match);
+        Team winnerTeam = new Team();
+        int level = 0;
+//        when
+        tournamentService.advance(tournament, winnerTeam, level);
+//        then
+        assertEquals(winnerTeam, match.getTeamTwo());
+        Mockito.verify(tournamentDao).save(tournament);
+    }
+
 }

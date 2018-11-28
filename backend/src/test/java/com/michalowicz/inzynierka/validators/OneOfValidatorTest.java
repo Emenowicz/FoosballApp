@@ -21,7 +21,7 @@ public class OneOfValidatorTest {
     private int[] array = {2, 4, 6, 8};
 
     @Test
-    public void shouldValidateCorrectly() {
+    public void shouldValidationPass() {
 //      given
         when(oneOf.value()).thenReturn(array);
         OneOfValidator validator = new OneOfValidator();
@@ -33,7 +33,7 @@ public class OneOfValidatorTest {
     }
 
     @Test
-    public void shouldValidateFail() {
+    public void shouldValidationFail() {
 //      given
         when(oneOf.value()).thenReturn(array);
         OneOfValidator validator = new OneOfValidator();

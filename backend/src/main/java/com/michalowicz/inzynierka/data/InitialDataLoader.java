@@ -128,18 +128,6 @@ public class InitialDataLoader implements ApplicationRunner {
         team2.addTournament(dawidTournament);
         teamDao.save(team2);
 
-//        //MATCHES
-//        Set<Match> matches = new HashSet<>();
-//        Match match = new Match();
-//        match.addTournament(dawidTournament);
-//        match.setTeamOne(team);
-//        match.setTeamTwo(team2);
-//        matches.add(match);
-//        for(int i = 0; i<match.getTournament().getRuleSet().getRoundsToWin()*2 - 1; i++){
-//            match.addRound(new Round());
-//        }
-//        matchDao.saveAll(matches);
-
     }
 }
 
